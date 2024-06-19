@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket.TeamAction;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
 import com.velocityscoreboardapi.api.Scoreboard;
@@ -129,7 +130,7 @@ public class VelocityTeam implements Team {
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), name, (byte) 0, legacyDisplayName,
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamAction.REGISTER, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
                     new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
                     new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), entries));
@@ -144,7 +145,7 @@ public class VelocityTeam implements Team {
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), name, (byte) 2, legacyDisplayName,
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamAction.UPDATE, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
                     new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
                     new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), null));
@@ -263,5 +264,4 @@ public class VelocityTeam implements Team {
             );
         }
     }
-
 }

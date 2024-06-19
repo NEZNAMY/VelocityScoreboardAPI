@@ -6,16 +6,12 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Score reset packet for 1.20.3+ players.
  */
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Getter
 public class ScoreResetPacket implements MinecraftPacket {
 
     /** Packet priority (higher value = higher priority) */
@@ -26,6 +22,29 @@ public class ScoreResetPacket implements MinecraftPacket {
 
     /** Objective from which the holder should be removed (null for all objectives ?) */
     private String objectiveName;
+
+    /**
+     * Constructs new instance for packet decoding.
+     */
+    public ScoreResetPacket() {
+        this.packetPriority = 0;
+    }
+
+    /**
+     * Constructs new instance for packet sending.
+     *
+     * @param   packetPriority
+     *          Priority of this packet
+     * @param   scoreHolder
+     *          Score holder
+     * @param   objectiveName
+     *          Objective name
+     */
+    public ScoreResetPacket(int packetPriority, @NotNull String scoreHolder, @Nullable String objectiveName) {
+        this.packetPriority = packetPriority;
+        this.scoreHolder = scoreHolder;
+        this.objectiveName = objectiveName;
+    }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
@@ -43,5 +62,19 @@ public class ScoreResetPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
+    }
+
+    public int getPacketPriority() {
+        return packetPriority;
+    }
+
+    @NotNull
+    public String getScoreHolder() {
+        return scoreHolder;
+    }
+
+    @Nullable
+    public String getObjectiveName() {
+        return objectiveName;
     }
 }

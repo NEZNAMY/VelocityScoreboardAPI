@@ -4,35 +4,54 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
+import com.velocityscoreboardapi.api.DisplaySlot;
 import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Display objective packet for assigning slot to objectives.
  */
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Getter
 public class DisplayObjectivePacket implements MinecraftPacket {
 
     /** Packet priority (higher value = higher priority) */
     private final int packetPriority;
 
-    /** Display slot (0 = playerlist, 1 = sidebar, 2 = belowname) */
-    private int position;
+    /** Display slot */
+    private DisplaySlot position;
 
     /** Name of this objective (up to 16 characters) */
     private String objectiveName;
 
+    /**
+     * Constructs new instance for packet decoding.
+     */
+    public DisplayObjectivePacket() {
+        this.packetPriority = 0;
+    }
+
+    /**
+     * Constructs new instance for packet sending.
+     *
+     * @param   packetPriority
+     *          Priority of this packet
+     * @param   position
+     *          Display slot
+     * @param   objectiveName
+     *          Objective name
+     */
+    public DisplayObjectivePacket(int packetPriority, @NotNull DisplaySlot position, @NotNull String objectiveName) {
+        this.packetPriority = packetPriority;
+        this.position = position;
+        this.objectiveName = objectiveName;
+    }
+
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
-            position = ProtocolUtils.readVarInt(buf);
+            position = DisplaySlot.values()[ProtocolUtils.readVarInt(buf)]; //TODO something to prevent new array creation each time?
         } else {
-            position = buf.readByte();
+            position = DisplaySlot.values()[buf.readByte()]; //TODO something to prevent new array creation each time?
         }
         objectiveName = ProtocolUtils.readString(buf);
     }
@@ -40,9 +59,9 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
-            ProtocolUtils.writeVarInt(buf, position);
+            ProtocolUtils.writeVarInt(buf, position.ordinal());
         } else {
-            buf.writeByte(position);
+            buf.writeByte(position.ordinal());
         }
         ProtocolUtils.writeString(buf, objectiveName);
     }
@@ -50,5 +69,19 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
+    }
+
+    public int getPacketPriority() {
+        return packetPriority;
+    }
+
+    @NotNull
+    public DisplaySlot getPosition() {
+        return position;
+    }
+
+    @NotNull
+    public String getObjectiveName() {
+        return objectiveName;
     }
 }

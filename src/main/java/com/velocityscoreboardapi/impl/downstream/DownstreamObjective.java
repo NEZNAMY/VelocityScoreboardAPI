@@ -29,7 +29,7 @@ public class DownstreamObjective {
     public void update(@NonNull ObjectivePacket packet) {
         titleLegacy = packet.getTitleLegacy();
         titleModern = packet.getTitleModern();
-        healthDisplay = packet.getType();
+        healthDisplay = packet.getHealthDisplay();
         numberFormat = packet.getNumberFormat();
     }
 

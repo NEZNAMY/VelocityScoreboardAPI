@@ -41,7 +41,7 @@ public class VelocityObjective implements Objective {
         checkState();
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot.ordinal(), name));
+            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
         }
     }
 
@@ -108,11 +108,11 @@ public class VelocityObjective implements Objective {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
+                    ObjectivePacket.ObjectiveAction.REGISTER,
                     name,
                     legacyTitle,
                     new ComponentHolder(player.getProtocolVersion(), title),
                     healthDisplay,
-                    (byte) 0,
                     numberFormat
             ));
         }
@@ -124,11 +124,11 @@ public class VelocityObjective implements Objective {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
+                    ObjectivePacket.ObjectiveAction.UPDATE,
                     name,
                     legacyTitle,
                     new ComponentHolder(player.getProtocolVersion(), title),
                     healthDisplay,
-                    (byte) 2,
                     numberFormat
             ));
         }
@@ -140,11 +140,11 @@ public class VelocityObjective implements Objective {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
+                    ObjectivePacket.ObjectiveAction.UNREGISTER,
                     name,
                     "",
                     new ComponentHolder(player.getProtocolVersion(), title),
                     null,
-                    (byte) 1,
                     null
             ));
         }

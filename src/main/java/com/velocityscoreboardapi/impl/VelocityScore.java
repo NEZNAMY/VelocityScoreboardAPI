@@ -4,6 +4,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket.ScoreAction;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocityscoreboardapi.api.NumberFormat;
 import com.velocityscoreboardapi.api.Score;
@@ -48,7 +49,7 @@ public class VelocityScore implements Score {
     public void sendUpdate() {
         for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
             ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(player.getProtocolVersion(), displayName);
-            player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), holder, (byte) 0, objective.getName(), score, cHolder, numberFormat));
+            player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScoreAction.SET, holder, objective.getName(), score, cHolder, numberFormat));
         }
     }
 
@@ -59,7 +60,7 @@ public class VelocityScore implements Score {
             if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 player.getConnection().write(new ScoreResetPacket(objective.getScoreboard().getPriority(), holder, objective.getName()));
             } else {
-                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), holder, (byte) 1, objective.getName(),
+                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScoreAction.RESET, holder, objective.getName(),
                         0, null, null));
             }
         }

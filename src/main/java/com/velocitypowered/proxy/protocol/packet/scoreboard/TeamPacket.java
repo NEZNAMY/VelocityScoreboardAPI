@@ -9,10 +9,8 @@ import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
 import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,19 +19,16 @@ import java.util.HashSet;
 /**
  * Packet for setting scoreboard teams.
  */
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Getter
 public class TeamPacket implements MinecraftPacket {
 
     /** Packet priority (higher value = higher priority) */
     private final int packetPriority;
 
+    /** Packet action */
+    private TeamAction action;
+
     /** Team name, limited to 16 characters on <1.18 */
     private String name;
-
-    /** Packet action (0 = register, 1 = unregister, 2 = update properties, 3 = add player, 4 = remove player) */
-    private byte mode;
 
     /** Display name of the team (used somewhere in spectator gamemode?) for <1.13 */
     private String displayNameLegacy;
@@ -73,6 +68,43 @@ public class TeamPacket implements MinecraftPacket {
     private Collection<String> entries;
 
     /**
+     * Constructs new instance for packet decoding.
+     */
+    public TeamPacket() {
+        packetPriority = 0;
+    }
+
+    /**
+     * Constructs new instance with given priority.
+     *
+     * @param   packetPriority
+     *          Packet priority
+     */
+    public TeamPacket(int packetPriority) {
+        this.packetPriority = packetPriority;
+    }
+
+    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name, @Nullable String displayNameLegacy,
+                      @Nullable ComponentHolder displayNameModern, @Nullable String prefixLegacy, @Nullable ComponentHolder prefixModern,
+                      @Nullable String suffixLegacy, @Nullable ComponentHolder suffixModern, @NotNull NameVisibility nameTagVisibility,
+                      @NotNull CollisionRule collisionRule, int color, byte flags, @Nullable Collection<String> entries) {
+        this.packetPriority = packetPriority;
+        this.action = action;
+        this.name = name;
+        this.displayNameLegacy = displayNameLegacy;
+        this.displayNameModern = displayNameModern;
+        this.prefixLegacy = prefixLegacy;
+        this.prefixModern = prefixModern;
+        this.suffixLegacy = suffixLegacy;
+        this.suffixModern = suffixModern;
+        this.nameTagVisibility = nameTagVisibility;
+        this.collisionRule = collisionRule;
+        this.color = color;
+        this.flags = flags;
+        this.entries = entries;
+    }
+
+    /**
      * Creates a packet for unregistering team.
      *
      * @param   priority
@@ -81,10 +113,10 @@ public class TeamPacket implements MinecraftPacket {
      *          Team name
      * @return  Unregister team packet
      */
-    public static TeamPacket unregister(int priority, @NonNull String name) {
+    public static TeamPacket unregister(int priority, @NotNull String name) {
         TeamPacket packet = new TeamPacket(priority);
         packet.name = name;
-        packet.mode = 1;
+        packet.action = TeamAction.UNREGISTER;
         return packet;
     }
 
@@ -101,10 +133,10 @@ public class TeamPacket implements MinecraftPacket {
      *          {@code true} for adding, {@code false} for removing
      * @return  Packet with given parameters
      */
-    public static TeamPacket addOrRemovePlayer(int priority, @NonNull String name, @NonNull String entry, boolean add) {
+    public static TeamPacket addOrRemovePlayer(int priority, @NotNull String name, @NotNull String entry, boolean add) {
         TeamPacket packet = new TeamPacket(priority);
         packet.name = name;
-        packet.mode = (byte) (add ? 3 : 4);
+        packet.action = (add ? TeamAction.ADD_PLAYER : TeamAction.REMOVE_PLAYER);
         packet.entries = Collections.singletonList(entry);
         return packet;
     }
@@ -112,8 +144,8 @@ public class TeamPacket implements MinecraftPacket {
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         name = ProtocolUtils.readString(buf);
-        mode = buf.readByte();
-        if (mode == 0 || mode == 2) {
+        action = TeamAction.byId(buf.readByte());
+        if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
             if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 displayNameLegacy = ProtocolUtils.readString(buf);
                 prefixLegacy = ProtocolUtils.readString(buf);
@@ -136,7 +168,7 @@ public class TeamPacket implements MinecraftPacket {
                 color = buf.readByte();
             }
         }
-        if (mode == 0 || mode == 3 || mode == 4) {
+        if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
             int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
             entries = new HashSet<>();
             for (int i = 0; i < len; i++) {
@@ -148,8 +180,8 @@ public class TeamPacket implements MinecraftPacket {
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         ProtocolUtils.writeString(buf, name);
-        buf.writeByte(mode);
-        if (mode == 0 || mode == 2) {
+        buf.writeByte(action.ordinal());
+        if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
             if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 ProtocolUtils.writeString(buf, displayNameLegacy);
                 ProtocolUtils.writeString(buf, prefixLegacy);
@@ -172,7 +204,7 @@ public class TeamPacket implements MinecraftPacket {
                 buf.writeByte(color);
             }
         }
-        if (mode == 0 || mode == 3 || mode == 4) {
+        if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 ProtocolUtils.writeVarInt(buf, entries.size());
             } else {
@@ -187,5 +219,108 @@ public class TeamPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
+    }
+
+    public int getPacketPriority() {
+        return packetPriority;
+    }
+
+    @NotNull
+    public TeamAction getAction() {
+        return action;
+    }
+
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
+
+    @Nullable
+    public String getDisplayNameLegacy() {
+        return displayNameLegacy;
+    }
+
+    @Nullable
+    public ComponentHolder getDisplayNameModern() {
+        return displayNameModern;
+    }
+
+    @Nullable
+    public String getPrefixLegacy() {
+        return prefixLegacy;
+    }
+
+    @Nullable
+    public ComponentHolder getPrefixModern() {
+        return prefixModern;
+    }
+
+    @Nullable
+    public String getSuffixLegacy() {
+        return suffixLegacy;
+    }
+
+    @Nullable
+    public ComponentHolder getSuffixModern() {
+        return suffixModern;
+    }
+
+    @NotNull
+    public NameVisibility getNameTagVisibility() {
+        return nameTagVisibility;
+    }
+
+    @NotNull
+    public CollisionRule getCollisionRule() {
+        return collisionRule;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public byte getFlags() {
+        return flags;
+    }
+
+    @Nullable
+    public Collection<String> getEntries() {
+        return entries;
+    }
+
+    /**
+     * Enum for objective packet action.
+     */
+    public enum TeamAction {
+
+        /** Registers the objective */
+        REGISTER,
+
+        /** Unregisters the objective */
+        UNREGISTER,
+
+        /** Updates objective properties */
+        UPDATE,
+
+        /** Adds players */
+        ADD_PLAYER,
+
+        /** Removes players */
+        REMOVE_PLAYER;
+
+        private static final TeamAction[] values = values();
+
+        /**
+         * Returns action by ID
+         *
+         * @param   id
+         *          Action ID
+         * @return  Action by ID
+         */
+        @NotNull
+        public static TeamAction byId(int id) {
+            return values[id];
+        }
     }
 }
