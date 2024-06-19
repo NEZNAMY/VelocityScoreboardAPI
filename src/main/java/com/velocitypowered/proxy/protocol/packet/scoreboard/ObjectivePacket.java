@@ -10,25 +10,40 @@ import com.velocityscoreboardapi.api.HealthDisplay;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
+/**
+ * Scoreboard objective packet.
+ */
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ObjectivePacket implements MinecraftPacket {
 
-    private boolean decodedFromDownstream;
-    private String name;
+    /** Packet priority (higher value = higher priority) */
+    private final int packetPriority;
+
+    /** Name of this objective (up to 16 characters) */
+    private String objectiveName;
+
+    /** Up to 32 character long title for <1.13 players */
     private String titleLegacy;
+
+    /** Title for 1.13+ players */
     private ComponentHolder titleModern;
+
+    /** Health display for 1.8+ */
     private HealthDisplay type;
+
+    /** Packet action (0 = register, 1 = unregister, 2 = update) */
     private byte action;
+
+    /** Default number format for all scores in this objective */
     private NumberFormat numberFormat;
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        decodedFromDownstream = true;
-        name = ProtocolUtils.readString(buf);
+        objectiveName = ProtocolUtils.readString(buf);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
             titleLegacy = ProtocolUtils.readString(buf);
             action = buf.readByte();
@@ -53,7 +68,7 @@ public class ObjectivePacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        ProtocolUtils.writeString(buf, name);
+        ProtocolUtils.writeString(buf, objectiveName);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
             ProtocolUtils.writeString(buf, titleLegacy);
             buf.writeByte(action);

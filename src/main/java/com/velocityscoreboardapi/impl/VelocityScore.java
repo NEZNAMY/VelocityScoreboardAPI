@@ -48,7 +48,7 @@ public class VelocityScore implements Score {
     public void sendUpdate() {
         for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
             ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(player.getProtocolVersion(), displayName);
-            player.getConnection().write(new ScorePacket(false, holder, (byte) 0, objective.getName(), score, cHolder, numberFormat));
+            player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), holder, (byte) 0, objective.getName(), score, cHolder, numberFormat));
         }
     }
 
@@ -57,9 +57,9 @@ public class VelocityScore implements Score {
         registered = false;
         for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
             if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-                player.getConnection().write(new ScoreResetPacket(false, holder, objective.getName()));
+                player.getConnection().write(new ScoreResetPacket(objective.getScoreboard().getPriority(), holder, objective.getName()));
             } else {
-                player.getConnection().write(new ScorePacket(false, holder, (byte) 1, objective.getName(),
+                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), holder, (byte) 1, objective.getName(),
                         0, null, null));
             }
         }

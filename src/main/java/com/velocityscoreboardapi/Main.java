@@ -5,7 +5,6 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.Either;
 import com.velocityscoreboardapi.api.*;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
@@ -38,19 +37,22 @@ public class Main {
     @Subscribe
     @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
-        Scoreboard scoreboard = ScoreboardManager.getNewScoreboard();
+        Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(0);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
         Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sidebar.findOrCreateScore("Line1", 69, Component.text("Custom name for Line1"), NumberFormat.fixed(Component.text("NumberFormat")));
         sidebar.findOrCreateScore("Line2");
 
-        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new TeamPacket(false,
+        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new TeamPacket(0,
                 "Team2",
                 (byte) 0,
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("Display"))),
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("prefix "))),
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text(" suffix"))),
+                "Display",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("Display")),
+                "prefix ",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("prefix ")),
+                " suffix",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text(" suffix")),
                 "always",
                 "always",
                 0,
@@ -60,12 +62,15 @@ public class Main {
 
 
 
-        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new TeamPacket(false,
+        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new TeamPacket(0,
                 "PlayerTeam",
                 (byte) 0,
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("Display"))),
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("prefix "))),
-                Either.right(new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text(" suffix"))),
+                "Display",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("Display")),
+                "prefix ",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("prefix ")),
+                " suffix",
+                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text(" suffix")),
                 "always",
                 "always",
                 0,

@@ -7,8 +7,8 @@ import lombok.NonNull;
 
 public class ScoreboardManager {
 
-    public static Scoreboard getNewScoreboard() {
-        return new VelocityScoreboard();
+    public static Scoreboard getNewScoreboard(int priority) {
+        return new VelocityScoreboard(priority);
     }
 
     public static void setScoreboard(@NonNull Player player, @NonNull Scoreboard scoreboard) {

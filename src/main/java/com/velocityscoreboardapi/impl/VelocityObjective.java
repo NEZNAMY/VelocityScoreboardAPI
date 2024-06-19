@@ -21,18 +21,12 @@ public class VelocityObjective implements Objective {
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
     @NotNull private Component title;
-    @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
+    @NotNull private HealthDisplay healthDisplay;
     @Nullable private NumberFormat numberFormat;
     @Nullable private DisplaySlot displaySlot;
     private boolean registered = true;
 
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
-
-    public VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name) {
-        this.scoreboard = scoreboard;
-        this.name = name;
-        this.title = Component.text(name);
-    }
 
     public VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull Component title,
                              @NonNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
@@ -48,7 +42,7 @@ public class VelocityObjective implements Objective {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new DisplayObjectivePacket(false, displaySlot.ordinal(), name));
+            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot.ordinal(), name));
         }
     }
 
@@ -114,7 +108,7 @@ public class VelocityObjective implements Objective {
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
-                    false,
+                    scoreboard.getPriority(),
                     name,
                     legacyTitle,
                     new ComponentHolder(player.getProtocolVersion(), title),
@@ -130,7 +124,7 @@ public class VelocityObjective implements Objective {
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
-                    false,
+                    scoreboard.getPriority(),
                     name,
                     legacyTitle,
                     new ComponentHolder(player.getProtocolVersion(), title),
@@ -146,7 +140,7 @@ public class VelocityObjective implements Objective {
         registered = false;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
-                    false,
+                    scoreboard.getPriority(),
                     name,
                     "",
                     new ComponentHolder(player.getProtocolVersion(), title),

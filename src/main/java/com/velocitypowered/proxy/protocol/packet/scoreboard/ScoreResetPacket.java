@@ -7,20 +7,27 @@ import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
+/**
+ * Score reset packet for 1.20.3+ players.
+ */
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ScoreResetPacket implements MinecraftPacket {
 
-    private boolean decodedFromDownstream;
+    /** Packet priority (higher value = higher priority) */
+    private final int packetPriority;
+
+    /** Score holder who the score belongs to */
     private String scoreHolder;
+
+    /** Objective from which the holder should be removed (null for all objectives ?) */
     private String objectiveName;
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        decodedFromDownstream = true;
         scoreHolder = ProtocolUtils.readString(buf);
         if (buf.readBoolean()) objectiveName = ProtocolUtils.readString(buf);
     }

@@ -7,6 +7,7 @@ import com.velocityscoreboardapi.api.Objective;
 import com.velocityscoreboardapi.api.Scoreboard;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequiredArgsConstructor
+@Getter
 public class VelocityScoreboard implements Scoreboard {
+
+    /** Priority of this scoreboard */
+    private final int priority;
 
     @Getter
     private final Collection<ConnectedPlayer> players = new HashSet<>();
@@ -26,17 +32,14 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     @NotNull
     public Objective registerNewObjective(@NonNull String name) {
-        if (objectives.containsKey(name)) throw new IllegalArgumentException("Objective with this name already exists");
-        VelocityObjective objective = new VelocityObjective(this, name);
-        objectives.put(name, objective);
-        objective.sendRegister();
-        return objective;
+        return registerNewObjective(name, Component.text(name), HealthDisplay.INTEGER, null);
     }
 
     @Override
     @NotNull
     public Objective registerNewObjective(@NonNull String name, @NonNull Component title, @NonNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
         if (objectives.containsKey(name)) throw new IllegalArgumentException("Objective with this name already exists");
+        if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
         VelocityObjective objective = new VelocityObjective(this, name, title, healthDisplay, numberFormat);
         objectives.put(name, objective);
         objective.sendRegister();

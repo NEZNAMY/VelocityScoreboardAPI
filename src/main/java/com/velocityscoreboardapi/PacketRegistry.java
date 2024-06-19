@@ -18,7 +18,7 @@ public class PacketRegistry {
 
         register(clientbound,
                 DisplayObjectivePacket.class,
-                DisplayObjectivePacket::new,
+                () -> new DisplayObjectivePacket(0),
                 map(0x3D, ProtocolVersion.MINECRAFT_1_7_2),
                 map(0x38, ProtocolVersion.MINECRAFT_1_9),
                 map(0x3A, ProtocolVersion.MINECRAFT_1_12),
@@ -36,7 +36,7 @@ public class PacketRegistry {
         );
         register(clientbound,
                 ObjectivePacket.class,
-                ObjectivePacket::new,
+                () -> new ObjectivePacket(0),
                 map(0x3B, ProtocolVersion.MINECRAFT_1_7_2),
                 map(0x3F, ProtocolVersion.MINECRAFT_1_9),
                 map(0x41, ProtocolVersion.MINECRAFT_1_12),
@@ -54,7 +54,7 @@ public class PacketRegistry {
         );
         register(clientbound,
                 ScorePacket.class,
-                ScorePacket::new,
+                () -> new ScorePacket(0),
                 map(0x3C, ProtocolVersion.MINECRAFT_1_7_2),
                 map(0x42, ProtocolVersion.MINECRAFT_1_9),
                 map(0x44, ProtocolVersion.MINECRAFT_1_12),
@@ -72,13 +72,13 @@ public class PacketRegistry {
         );
         register(clientbound,
                 ScoreResetPacket.class,
-                ScoreResetPacket::new,
+                () -> new ScoreResetPacket(0),
                 map(0x42, ProtocolVersion.MINECRAFT_1_20_3),
                 map(0x44, ProtocolVersion.MINECRAFT_1_20_5)
         );
         register(clientbound,
                 TeamPacket.class,
-                TeamPacket::new,
+                () -> new TeamPacket(0),
                 map(0x3E, ProtocolVersion.MINECRAFT_1_7_2),
                 map(0x41, ProtocolVersion.MINECRAFT_1_9),
                 map(0x43, ProtocolVersion.MINECRAFT_1_12),

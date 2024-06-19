@@ -9,24 +9,36 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ScorePacket implements MinecraftPacket {
 
-    private boolean decodedFromDownstream;
+    /** Packet priority (higher value = higher priority) */
+    private final int packetPriority;
+
+    /** Score holder who the score belongs to */
     private String scoreHolder;
+
+    /** Packet action (0 = set, 1 = remove) */
     private byte action;
+
+    /** Objective from which the holder should be removed (null for all objectives ?) */
     private String objectiveName;
+
+    /** Score value */
     private int value;
+
+    /** Display name to use for score holder instead of name */
     private ComponentHolder displayName;
+
+    /** Number format of the score, null to use default number format from objective */
     private NumberFormat numberFormat;
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        decodedFromDownstream = true;
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
             scoreHolder = ProtocolUtils.readString(buf);
             action = buf.readByte();
