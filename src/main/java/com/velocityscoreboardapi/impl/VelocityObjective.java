@@ -18,14 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 public class VelocityObjective implements Objective {
 
-    @NotNull private final VelocityScoreboard scoreboard;
-    @NotNull private final String name;
-    @NotNull private Component title;
-    @NotNull private HealthDisplay healthDisplay;
+    @NonNull private final VelocityScoreboard scoreboard;
+    @NonNull private final String name;
+    @NonNull private Component title;
+    @NonNull private HealthDisplay healthDisplay;
     @Nullable private NumberFormat numberFormat;
     @Nullable private DisplaySlot displaySlot;
     private boolean registered = true;
-
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
 
     public VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull Component title,
@@ -39,7 +38,7 @@ public class VelocityObjective implements Objective {
 
     @Override
     public void setDisplaySlot(@NonNull DisplaySlot displaySlot) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot.ordinal(), name));
@@ -48,21 +47,21 @@ public class VelocityObjective implements Objective {
 
     @Override
     public void setTitle(@NonNull Component title) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         this.title = title;
         sendUpdate();
     }
 
     @Override
     public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         this.healthDisplay = healthDisplay;
         sendUpdate();
     }
 
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         this.numberFormat = numberFormat;
         sendUpdate();
     }
@@ -76,7 +75,7 @@ public class VelocityObjective implements Objective {
     @Override
     @NotNull
     public Score findOrCreateScore(@NonNull String name, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         VelocityScore score = scores.get(name);
         if (score == null) {
             score = new VelocityScore(this, name, value, displayName, numberFormat, true);
@@ -88,7 +87,7 @@ public class VelocityObjective implements Objective {
 
     @Override
     public void removeScore(@NonNull String name) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         VelocityScore score = scores.get(name);
         if (score == null) throw new IllegalArgumentException("Score \"" + name + "\" is not in this objective");
         score.remove();
@@ -97,7 +96,7 @@ public class VelocityObjective implements Objective {
 
     @Override
     public void removeScore(@NonNull Score score) {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         if (!((VelocityScore)score).isRegistered()) throw new IllegalStateException("This score has already been unregistered");
         ((VelocityScore) score).remove();
         scores.remove(score.getHolder());
@@ -136,7 +135,7 @@ public class VelocityObjective implements Objective {
     }
 
     public void unregister() {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        checkState();
         registered = false;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
@@ -149,5 +148,9 @@ public class VelocityObjective implements Objective {
                     null
             ));
         }
+    }
+
+    private void checkState() {
+        if (!registered) throw new IllegalStateException("This objective was unregistered");
     }
 }

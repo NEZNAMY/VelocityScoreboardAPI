@@ -9,16 +9,16 @@ import com.velocityscoreboardapi.api.NumberFormat;
 import com.velocityscoreboardapi.api.Score;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
 @AllArgsConstructor
 public class VelocityScore implements Score {
 
-    @NotNull private final VelocityObjective objective;
-    @NotNull private final String holder;
+    @NonNull private final VelocityObjective objective;
+    @NonNull private final String holder;
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;

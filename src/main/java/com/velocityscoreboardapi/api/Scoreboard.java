@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public interface Scoreboard {
 
     @NotNull
@@ -16,5 +18,18 @@ public interface Scoreboard {
     @Nullable
     Objective getObjective(@NonNull String name);
 
-    void unregisterObjective(@NonNull Objective objective);
+    void unregisterObjective(@NonNull String objectiveName);
+
+    @NotNull
+    Team registerNewTeam(@NonNull String teamName);
+
+    @NotNull
+    Team registerNewTeam(@NonNull String teamName, @NonNull Component displayName, @NonNull Component prefix, @NonNull Component suffix,
+                         @NonNull NameVisibility nameVisibility, @NonNull CollisionRule collisionRule, int color, boolean allowFriendlyFire,
+                         boolean canSeeFriendlyInvisibles, @Nullable Collection<String> entries);
+
+    @Nullable
+    Team getTeam(@NonNull String teamName);
+
+    void unregisterTeam(@NonNull String teamName);
 }
