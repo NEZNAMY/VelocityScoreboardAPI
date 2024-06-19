@@ -43,6 +43,12 @@
             <artifactId>velocity-proxy</artifactId>
             <version>3.3.0-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.velocitypowered</groupId>
+                    <artifactId>velocity-proxy-log4j2-plugin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
