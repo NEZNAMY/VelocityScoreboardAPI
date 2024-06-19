@@ -29,4 +29,14 @@ public interface Objective {
     NumberFormat getNumberFormat();
 
     void setNumberFormat(@NonNull NumberFormat numberFormat);
+
+    @NotNull
+    Score findOrCreateScore(@NonNull String name);
+
+    @NotNull
+    Score findOrCreateScore(@NonNull String name, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat);
+
+    void removeScore(@NonNull String name);
+
+    void removeScore(@NonNull Score score);
 }

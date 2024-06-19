@@ -8,7 +8,6 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.Either;
 import com.velocityscoreboardapi.api.*;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -37,29 +36,15 @@ public class Main {
     }
 
     @Subscribe
+    @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
         Scoreboard scoreboard = ScoreboardManager.getNewScoreboard();
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
-        Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER,
-                new NumberFormat(NumberFormat.Type.FIXED, new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("-"))));
+        Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sidebar.findOrCreateScore("Line1", 69, Component.text("Custom name for Line1"), NumberFormat.fixed(Component.text("NumberFormat")));
+        sidebar.findOrCreateScore("Line2");
 
-        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new ScorePacket(false,
-                "Line1",
-                (byte) 0,
-                "MyObjective",
-                69,
-                new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("Custom name for Line1")),
-                new NumberFormat(NumberFormat.Type.FIXED, new ComponentHolder(e.getPlayer().getProtocolVersion(), Component.text("NumberFormat")))
-        ));
-        ((ConnectedPlayer)e.getPlayer()).getConnection().write(new ScorePacket(false,
-                "Line2",
-                (byte) 0,
-                "MyObjective",
-                69,
-                null,
-                null
-        ));
         ((ConnectedPlayer)e.getPlayer()).getConnection().write(new TeamPacket(false,
                 "Team2",
                 (byte) 0,
