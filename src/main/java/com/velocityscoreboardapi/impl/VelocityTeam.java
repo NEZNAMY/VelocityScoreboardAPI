@@ -119,7 +119,7 @@ public class VelocityTeam implements Team {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), name, (byte) 0, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
                     new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
-                    new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), entries.toArray(new String[0])));
+                    new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), entries));
         }
     }
 

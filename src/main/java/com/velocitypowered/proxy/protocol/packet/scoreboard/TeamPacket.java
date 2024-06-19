@@ -14,6 +14,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+
 /**
  * Packet for setting scoreboard teams.
  */
@@ -66,7 +70,7 @@ public class TeamPacket implements MinecraftPacket {
     private byte flags;
 
     /** Players in this team */
-    private String[] entries;
+    private Collection<String> entries;
 
     /**
      * Creates a packet for unregistering team.
@@ -101,7 +105,7 @@ public class TeamPacket implements MinecraftPacket {
         TeamPacket packet = new TeamPacket(priority);
         packet.name = name;
         packet.mode = (byte) (add ? 3 : 4);
-        packet.entries = new String[]{entry};
+        packet.entries = Collections.singletonList(entry);
         return packet;
     }
 
@@ -134,9 +138,9 @@ public class TeamPacket implements MinecraftPacket {
         }
         if (mode == 0 || mode == 3 || mode == 4) {
             int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
-            entries = new String[len];
+            entries = new HashSet<>();
             for (int i = 0; i < len; i++) {
-                entries[i] = ProtocolUtils.readString(buf);
+                entries.add(ProtocolUtils.readString(buf));
             }
         }
     }
@@ -170,9 +174,9 @@ public class TeamPacket implements MinecraftPacket {
         }
         if (mode == 0 || mode == 3 || mode == 4) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                ProtocolUtils.writeVarInt(buf, entries.length);
+                ProtocolUtils.writeVarInt(buf, entries.size());
             } else {
-                buf.writeShort(entries.length);
+                buf.writeShort(entries.size());
             }
             for (String player : entries) {
                 ProtocolUtils.writeString(buf, player);
