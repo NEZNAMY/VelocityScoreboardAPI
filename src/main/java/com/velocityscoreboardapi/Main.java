@@ -1,10 +1,13 @@
 package com.velocityscoreboardapi;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocityscoreboardapi.api.*;
+import com.velocityscoreboardapi.internal.ChannelInjection;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 
@@ -35,8 +38,15 @@ public class Main {
     }
 
     @Subscribe
+    public void onJoin(PostLoginEvent e) {
+        ((ConnectedPlayer)e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
+    }
+
+    @Subscribe
     @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
+        System.out.println(e.getClass().getName());
+        System.out.println(e.getClass().getName());
         Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(0);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
         Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));

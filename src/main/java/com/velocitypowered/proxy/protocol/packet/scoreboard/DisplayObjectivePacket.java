@@ -4,6 +4,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
+import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,6 +49,6 @@ public class DisplayObjectivePacket implements MinecraftPacket {
 
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
-        return false;
+        return PacketHandler.handle(minecraftSessionHandler, this);
     }
 }

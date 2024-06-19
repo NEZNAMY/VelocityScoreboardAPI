@@ -7,6 +7,7 @@ import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
+import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -181,6 +182,6 @@ public class TeamPacket implements MinecraftPacket {
 
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
-        return false;
+        return PacketHandler.handle(minecraftSessionHandler, this);
     }
 }

@@ -3,9 +3,10 @@ package com.velocitypowered.proxy.protocol.packet.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
-import com.velocityscoreboardapi.api.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocityscoreboardapi.api.NumberFormat;
+import com.velocityscoreboardapi.internal.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -89,6 +90,6 @@ public class ScorePacket implements MinecraftPacket {
 
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
-        return false;
+        return PacketHandler.handle(minecraftSessionHandler, this);
     }
 }
