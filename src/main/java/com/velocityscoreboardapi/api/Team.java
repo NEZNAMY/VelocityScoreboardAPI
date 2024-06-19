@@ -63,6 +63,9 @@ public interface Team {
 
     interface Builder {
 
+        @NonNull
+        Builder name(@NonNull String name);
+
         @NotNull
         Builder displayName(@NonNull Component displayName);
 
