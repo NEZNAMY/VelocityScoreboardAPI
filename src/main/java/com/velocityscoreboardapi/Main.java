@@ -18,7 +18,7 @@ import net.kyori.adventure.text.Component;
 @Plugin(
         id = "velocityscoreboardapi",
         name = "VelocityScoreboardAPI",
-        version = "1.0.0",
+        version = "0.0.1",
         description = "Adds Scoreboard API to Velocity",
         url = "-",
         authors = "NEZNAMY"

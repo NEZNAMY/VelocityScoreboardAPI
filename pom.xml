@@ -9,10 +9,21 @@
     <version>0.0.1</version>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>will-I-am</id>
+            <url>https://repo.william278.net/velocity/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -21,13 +32,17 @@
             <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.velocitypowered</groupId>
-            <artifactId>velocity</artifactId>
+            <artifactId>velocity-api</artifactId>
             <version>3.3.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/velocity-3.3.0-SNAPSHOT-385.jar</systemPath>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-proxy</artifactId>
+            <version>3.3.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
