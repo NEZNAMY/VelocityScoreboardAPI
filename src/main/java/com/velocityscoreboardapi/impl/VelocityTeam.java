@@ -6,6 +6,7 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
+import com.velocityscoreboardapi.api.Scoreboard;
 import com.velocityscoreboardapi.api.Team;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -177,22 +178,27 @@ public class VelocityTeam implements Team {
 
     public static class Builder implements Team.Builder {
 
-        private @NonNull final VelocityScoreboard scoreboard;
-        private @NonNull final String name;
-        private @NonNull Component displayName;
-        private @NonNull Component prefix = Component.empty();
-        private @NonNull Component suffix = Component.empty();
-        private @NonNull NameVisibility nameVisibility = NameVisibility.ALWAYS;
-        private @NonNull CollisionRule collisionRule = CollisionRule.ALWAYS;
+        private String name;
+        private Component displayName;
+        @NonNull private Component prefix = Component.empty();
+        @NonNull private Component suffix = Component.empty();
+        @NonNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
+        @NonNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
         private int color = DEFAULT_COLOR;
         private boolean allowFriendlyFire = true;
         private boolean canSeeFriendlyInvisibles = false;
-        private @NonNull Collection<String> entries = Lists.newArrayList();
+        @NonNull private Collection<String> entries = Lists.newArrayList();
 
-        Builder(@NonNull String name, @NonNull VelocityScoreboard scoreboard) {
+        public Builder() {
+        }
+
+        @NonNull
+        public Builder name(@NonNull String name) {
             this.name = name;
-            this.scoreboard = scoreboard;
-            this.displayName = Component.text(name);
+            if (this.displayName == null) {
+                this.displayName = Component.text(name);
+            }
+            return this;
         }
 
         @NonNull
@@ -250,9 +256,9 @@ public class VelocityTeam implements Team {
         }
 
         @NonNull
-        public VelocityTeam build() {
+        public Team build(@NonNull Scoreboard scoreboard) {
             return new VelocityTeam(
-                    scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
+                    (VelocityScoreboard) scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
                     color, allowFriendlyFire, canSeeFriendlyInvisibles, entries, false
             );
         }

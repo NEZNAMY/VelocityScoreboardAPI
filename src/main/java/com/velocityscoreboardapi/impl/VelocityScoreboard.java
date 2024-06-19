@@ -1,7 +1,9 @@
 package com.velocityscoreboardapi.impl;
 
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocityscoreboardapi.api.*;
+import com.velocityscoreboardapi.api.Objective;
+import com.velocityscoreboardapi.api.Scoreboard;
+import com.velocityscoreboardapi.api.Team;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 @Getter
@@ -28,18 +29,12 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public Objective registerNewObjective(@NonNull String objectiveName, @NonNull Function<Objective.Builder, Objective> build) {
-        if (objectives.containsKey(objectiveName)) throw new IllegalArgumentException("Objective with this name already exists");
-        final VelocityObjective objective = (VelocityObjective) build.apply(new VelocityObjective.Builder(objectiveName, this));
-        objectives.put(objectiveName, objective);
+    public Objective registerObjective(@NonNull Objective.Builder builder) {
+        final VelocityObjective objective = (VelocityObjective) builder.build(this);
+        if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
+        objectives.put(objective.getName(), objective);
         objective.sendRegister();
         return objective;
-    }
-
-    @Override
-    @NotNull
-    public Objective registerNewObjective(@NonNull String name) {
-        return registerNewObjective(name, Objective.Builder::build);
     }
 
     @Override
@@ -56,18 +51,13 @@ public class VelocityScoreboard implements Scoreboard {
     }
 
     @NonNull
-    public Team registerNewTeam(@NonNull String teamName, @NonNull Function<Team.Builder, Team> build) {
-        if (teams.containsKey(teamName)) throw new IllegalArgumentException("Team with this name already exists");
-        final VelocityTeam team = (VelocityTeam) build.apply(new VelocityTeam.Builder(teamName, this));
-        teams.put(teamName, team);
+    @Override
+    public Team registerTeam(@NonNull Team.Builder builder) {
+        final VelocityTeam team = (VelocityTeam) builder.build(this);
+        if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
+        teams.put(team.getName(), team);
         team.sendRegister();
         return team;
-    }
-
-    @Override
-    @NotNull
-    public Team registerNewTeam(@NonNull String teamName) {
-        return registerNewTeam(teamName, Team.Builder::build);
     }
 
     @Override

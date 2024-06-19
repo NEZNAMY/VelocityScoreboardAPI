@@ -1,11 +1,17 @@
 package com.velocityscoreboardapi.api;
 
+import com.velocityscoreboardapi.impl.VelocityObjective;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Objective {
+
+    @NotNull
+    static Builder builder() {
+        return new VelocityObjective.Builder();
+    }
 
     @Nullable
     DisplaySlot getDisplaySlot();
@@ -43,6 +49,9 @@ public interface Objective {
     interface Builder {
 
         @NotNull
+        Builder name(@NonNull String name);
+
+        @NotNull
         Builder title(@NotNull Component title);
 
         @NotNull
@@ -52,7 +61,7 @@ public interface Objective {
         Builder numberFormat(@Nullable NumberFormat numberFormat);
 
         @NotNull
-        Objective build();
+        Objective build(@NonNull Scoreboard scoreboard);
 
     }
 }

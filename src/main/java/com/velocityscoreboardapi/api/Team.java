@@ -1,5 +1,6 @@
 package com.velocityscoreboardapi.api;
 
+import com.velocityscoreboardapi.impl.VelocityTeam;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public interface Team {
+
+    @NonNull
+    static Team.Builder builder() {
+        return new VelocityTeam.Builder();
+    }
 
     @NotNull
     String getName();
@@ -85,7 +91,7 @@ public interface Team {
         Builder entries(@NonNull Collection<String> entries);
 
         @NotNull
-        Team build();
+        Team build(@NonNull Scoreboard scoreboard);
 
     }
 

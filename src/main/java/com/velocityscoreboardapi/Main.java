@@ -6,12 +6,10 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocityscoreboardapi.api.*;
+import com.velocityscoreboardapi.api.Scoreboard;
+import com.velocityscoreboardapi.api.ScoreboardManager;
 import com.velocityscoreboardapi.internal.ChannelInjection;
 import lombok.SneakyThrows;
-import net.kyori.adventure.text.Component;
-
-import java.util.Collections;
 
 @Plugin(
         id = "velocityscoreboardapi",

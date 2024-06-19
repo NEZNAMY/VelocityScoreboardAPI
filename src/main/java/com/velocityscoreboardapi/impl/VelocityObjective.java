@@ -156,16 +156,19 @@ public class VelocityObjective implements Objective {
 
     public static class Builder implements Objective.Builder {
 
-        private @NonNull final VelocityScoreboard scoreboard;
-        private @NonNull final String name;
-        private @NonNull Component title;
-        private @NonNull HealthDisplay healthDisplay = HealthDisplay.INTEGER;
-        private @Nullable NumberFormat numberFormat = null;
+        private String name;
+        private Component title;
+        @NonNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
+        @Nullable private NumberFormat numberFormat = null;
 
-        Builder(@NonNull String name, @NonNull VelocityScoreboard scoreboard) {
-            this.scoreboard = scoreboard;
+        @Override
+        @NotNull
+        public Objective.Builder name(@NonNull String name) {
             this.name = name;
-            this.title = Component.text(name);
+            if (this.title == null) {
+                this.title = Component.text(name);
+            }
+            return this;
         }
 
         @Override
@@ -191,9 +194,9 @@ public class VelocityObjective implements Objective {
 
         @Override
         @NotNull
-        public VelocityObjective build() {
+        public VelocityObjective build(@NonNull Scoreboard scoreboard) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
-            return new VelocityObjective(scoreboard, name, title, healthDisplay, numberFormat);
+            return new VelocityObjective((VelocityScoreboard) scoreboard, name, title, healthDisplay, numberFormat);
         }
 
     }
