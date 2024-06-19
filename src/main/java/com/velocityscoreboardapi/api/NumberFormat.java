@@ -1,6 +1,7 @@
-package com.velocitypowered.proxy.protocol;
+package com.velocityscoreboardapi.api;
 
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
 import lombok.Data;
