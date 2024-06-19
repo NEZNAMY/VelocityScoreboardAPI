@@ -52,7 +52,9 @@ public class TeamPacket implements MinecraftPacket {
                 displayName = Either.right(ComponentHolder.read(buf, protocolVersion));
             }
             friendlyFire = buf.readByte();
-            nameTagVisibility = ProtocolUtils.readString(buf);
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
+                nameTagVisibility = ProtocolUtils.readString(buf);
+            }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
                 collisionRule = ProtocolUtils.readString(buf);
             }
@@ -60,12 +62,12 @@ public class TeamPacket implements MinecraftPacket {
                 color = ProtocolUtils.readVarInt(buf);
                 prefix = Either.right(ComponentHolder.read(buf, protocolVersion));
                 suffix = Either.right(ComponentHolder.read(buf, protocolVersion));
-            } else {
+            } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 color = buf.readByte();
             }
         }
         if (mode == 0 || mode == 3 || mode == 4) {
-            int len = ProtocolUtils.readVarInt(buf);
+            int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
             players = new String[len];
             for (int i = 0; i < len; i++) {
                 players[i] = ProtocolUtils.readString(buf);
@@ -86,7 +88,9 @@ public class TeamPacket implements MinecraftPacket {
                 displayName.getRight().write(buf);
             }
             buf.writeByte(friendlyFire);
-            ProtocolUtils.writeString(buf, nameTagVisibility);
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
+                ProtocolUtils.writeString(buf, nameTagVisibility);
+            }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
                 ProtocolUtils.writeString(buf, collisionRule);
             }
@@ -94,12 +98,16 @@ public class TeamPacket implements MinecraftPacket {
                 ProtocolUtils.writeVarInt(buf, color);
                 prefix.getRight().write(buf);
                 suffix.getRight().write(buf);
-            } else {
+            } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 buf.writeByte(color);
             }
         }
         if (mode == 0 || mode == 3 || mode == 4) {
-            ProtocolUtils.writeVarInt(buf, players.length);
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
+                ProtocolUtils.writeVarInt(buf, players.length);
+            } else {
+                buf.writeShort(players.length);
+            }
             for (String player : players) {
                 ProtocolUtils.writeString(buf, player);
             }

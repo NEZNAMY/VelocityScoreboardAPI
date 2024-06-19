@@ -27,6 +27,15 @@ public class ScorePacket implements MinecraftPacket {
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         decodedFromDownstream = true;
+        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
+            scoreHolder = ProtocolUtils.readString(buf);
+            action = buf.readByte();
+            if (action != 1) {
+                objectiveName = ProtocolUtils.readString(buf);
+                value = buf.readInt();
+            }
+            return;
+        }
         scoreHolder = ProtocolUtils.readString(buf);
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
             action = buf.readByte();
@@ -46,6 +55,13 @@ public class ScorePacket implements MinecraftPacket {
         ProtocolUtils.writeString(buf, scoreHolder);
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
             buf.writeByte(action);
+        }
+        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
+            if (action != 1) {
+                ProtocolUtils.writeString(buf, objectiveName);
+                buf.writeInt(value);
+            }
+            return;
         }
         ProtocolUtils.writeString(buf, objectiveName);
         if (action != 1 || protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {

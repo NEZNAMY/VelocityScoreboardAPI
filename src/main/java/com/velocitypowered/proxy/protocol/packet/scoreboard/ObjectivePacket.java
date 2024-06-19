@@ -26,18 +26,15 @@ public class ObjectivePacket implements MinecraftPacket {
     private byte action;
     private NumberFormat numberFormat;
 
-    public ObjectivePacket(String name, Either<String, ComponentHolder> value, HealthDisplay type, byte action, NumberFormat numberFormat) {
-        this.name = name;
-        this.value = value;
-        this.type = type;
-        this.action = action;
-        this.numberFormat = numberFormat;
-    }
-
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         decodedFromDownstream = true;
         name = ProtocolUtils.readString(buf);
+        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
+            value = Either.left(ProtocolUtils.readString(buf));
+            action = buf.readByte();
+            return;
+        }
         action = buf.readByte();
         if (action == 0 || action == 2) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
@@ -57,6 +54,12 @@ public class ObjectivePacket implements MinecraftPacket {
 
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
+        ProtocolUtils.writeString(buf, name);
+        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
+            ProtocolUtils.writeString(buf, value.getLeft());
+            buf.writeByte(action);
+            return;
+        }
         ProtocolUtils.writeString(buf, name);
         buf.writeByte(action);
         if (action == 0 || action == 2) {
