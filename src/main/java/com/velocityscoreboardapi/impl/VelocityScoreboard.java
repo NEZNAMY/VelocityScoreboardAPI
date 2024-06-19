@@ -5,7 +5,6 @@ import com.velocityscoreboardapi.api.Objective;
 import com.velocityscoreboardapi.api.Scoreboard;
 import com.velocityscoreboardapi.api.Team;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +28,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public Objective registerObjective(@NonNull Objective.Builder builder) {
+    public Objective registerObjective(@NotNull Objective.Builder builder) {
         final VelocityObjective objective = (VelocityObjective) builder.build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
@@ -39,20 +38,20 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public Objective getObjective(@NonNull String name) {
+    public Objective getObjective(@NotNull String name) {
         return objectives.get(name);
     }
 
     @Override
-    public void unregisterObjective(@NonNull String objectiveName) {
+    public void unregisterObjective(@NotNull String objectiveName) {
         VelocityObjective obj = objectives.remove(objectiveName);
         if (obj == null) throw new IllegalStateException("This scoreboard does not contain objective named " + objectiveName);
         obj.unregister();
     }
 
-    @NonNull
+    @NotNull
     @Override
-    public Team registerTeam(@NonNull Team.Builder builder) {
+    public Team registerTeam(@NotNull Team.Builder builder) {
         final VelocityTeam team = (VelocityTeam) builder.build(this);
         if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
         teams.put(team.getName(), team);
@@ -62,12 +61,12 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public Team getTeam(@NonNull String teamName) {
+    public Team getTeam(@NotNull String teamName) {
         return teams.get(teamName);
     }
 
     @Override
-    public void unregisterTeam(@NonNull String teamName) {
+    public void unregisterTeam(@NotNull String teamName) {
         VelocityTeam team = teams.remove(teamName);
         if (team == null) throw new IllegalStateException("This scoreboard does not contain team named " + teamName);
         team.unregister();

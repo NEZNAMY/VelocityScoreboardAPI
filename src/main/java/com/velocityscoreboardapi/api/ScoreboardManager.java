@@ -3,7 +3,7 @@ package com.velocityscoreboardapi.api;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocityscoreboardapi.impl.VelocityScoreboard;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class ScoreboardManager {
 
@@ -13,7 +13,7 @@ public class ScoreboardManager {
         return new VelocityScoreboard(priority);
     }
 
-    public static void setScoreboard(@NonNull Player player, @NonNull Scoreboard scoreboard) {
+    public static void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
         ((VelocityScoreboard)scoreboard).getPlayers().add((ConnectedPlayer) player); // TODO properly do this
     }
 }

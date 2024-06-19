@@ -7,7 +7,6 @@ import com.velocityscoreboardapi.api.DisplaySlot;
 import com.velocityscoreboardapi.api.HealthDisplay;
 import com.velocityscoreboardapi.api.NumberFormat;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @AllArgsConstructor
 public class DownstreamObjective {
 
-    @NonNull private final String objectiveName;
+    @NotNull private final String objectiveName;
     @Nullable private String titleLegacy;
     @Nullable private ComponentHolder titleModern;
     @Nullable private HealthDisplay healthDisplay;
@@ -26,14 +25,14 @@ public class DownstreamObjective {
     @Nullable @Setter private DisplaySlot displaySlot;
     @NotNull private final Map<String, DownstreamScore> scores = new ConcurrentHashMap<>();
 
-    public void update(@NonNull ObjectivePacket packet) {
+    public void update(@NotNull ObjectivePacket packet) {
         titleLegacy = packet.getTitleLegacy();
         titleModern = packet.getTitleModern();
         healthDisplay = packet.getHealthDisplay();
         numberFormat = packet.getNumberFormat();
     }
 
-    public void setScore(@NonNull ScorePacket packet) {
+    public void setScore(@NotNull ScorePacket packet) {
         if (scores.containsKey(packet.getScoreHolder())) {
             scores.get(packet.getScoreHolder()).update(packet);
         } else {
@@ -41,7 +40,7 @@ public class DownstreamObjective {
         }
     }
 
-    public void removeScore(@NonNull String holder) {
+    public void removeScore(@NotNull String holder) {
         scores.remove(holder);
     }
 }

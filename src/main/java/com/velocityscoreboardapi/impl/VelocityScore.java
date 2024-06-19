@@ -11,7 +11,6 @@ import com.velocityscoreboardapi.api.Score;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityScore implements Score {
 
-    @NonNull private final VelocityObjective objective;
-    @NonNull private final String holder;
+    @NotNull private final VelocityObjective objective;
+    @NotNull private final String holder;
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;
@@ -77,7 +76,7 @@ public class VelocityScore implements Score {
 
         @Override
         @NotNull
-        public Score.Builder holder(@NonNull String holder) {
+        public Score.Builder holder(@NotNull String holder) {
             this.holder = holder;
             return this;
         }
@@ -105,7 +104,7 @@ public class VelocityScore implements Score {
 
         @Override
         @NotNull
-        public Score build(@NonNull Objective objective) {
+        public Score build(@NotNull Objective objective) {
             return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat, true);
         }
 
