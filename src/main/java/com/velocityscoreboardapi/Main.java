@@ -6,10 +6,12 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocityscoreboardapi.api.Scoreboard;
-import com.velocityscoreboardapi.api.ScoreboardManager;
+import com.velocityscoreboardapi.api.*;
 import com.velocityscoreboardapi.internal.ChannelInjection;
 import lombok.SneakyThrows;
+import net.kyori.adventure.text.Component;
+
+import java.util.Collections;
 
 @Plugin(
         id = "velocityscoreboardapi",
@@ -46,17 +48,14 @@ public class Main {
         System.out.println(e.getClass().getName());
         Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(1);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
-//        Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
-//        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
-//        sidebar.findOrCreateScore("Line1", 69, Component.text("Custom name for Line1"), NumberFormat.fixed(Component.text("NumberFormat")));
-//        sidebar.findOrCreateScore("Line2");
+        Objective sidebar = scoreboard.registerObjective(Objective.builder().name("MyObjective").title(Component.text("§4§lTitle")).healthDisplay(HealthDisplay.INTEGER).numberFormat(NumberFormat.fixed(Component.text("-"))));
+        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sidebar.findOrCreateScore("Line1", Score.builder().holder("Line1").score(69).displayName(Component.text("Custom name for Line1")).numberFormat(NumberFormat.fixed(Component.text("NumberFormat"))));
+        sidebar.findOrCreateScore("Line2", Score.builder().holder("Line2"));
 
-//        scoreboard.registerNewTeam("Team2", Component.text("Team2"), Component.text("prefix "),
-//                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
-//                false, Collections.singletonList("Line2"));
-//
-//        scoreboard.registerNewTeam("PlayerTeam", Component.text("Display"), Component.text("prefix "),
-//                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
-//                false, Collections.singletonList(e.getPlayer().getUsername()));
+        scoreboard.registerTeam(Team.builder().name("Team2").prefix(Component.text("prefix ")).suffix(
+                Component.text(" suffix")).entries(Collections.singletonList("Line2")));
+        scoreboard.registerTeam(Team.builder().name("PlayerTeam").prefix(Component.text("prefix ")).suffix(
+                Component.text(" suffix")).entries(Collections.singletonList(e.getPlayer().getUsername())));
     }
 }
