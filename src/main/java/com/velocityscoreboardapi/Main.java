@@ -46,7 +46,6 @@ public class Main {
     @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
         System.out.println(e.getClass().getName());
-        System.out.println(e.getClass().getName());
         Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(1);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
         Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));

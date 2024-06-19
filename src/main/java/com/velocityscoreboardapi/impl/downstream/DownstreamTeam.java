@@ -4,26 +4,24 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
-import com.velocityscoreboardapi.impl.VelocityScoreboard;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 @AllArgsConstructor
 public class DownstreamTeam {
     
     @NonNull private final String name;
-    @NonNull private String displayNameLegacy;
-    @NonNull private ComponentHolder displayNameModern;
-    @NonNull private String prefixLegacy;
-    @NonNull private ComponentHolder prefixModern;
-    @NonNull private String suffixLegacy;
-    @NonNull private ComponentHolder suffixModern;
+    @Nullable private String displayNameLegacy;
+    @Nullable private ComponentHolder displayNameModern;
+    @Nullable private String prefixLegacy;
+    @Nullable private ComponentHolder prefixModern;
+    @Nullable private String suffixLegacy;
+    @Nullable private ComponentHolder suffixModern;
     @NonNull private NameVisibility nameVisibility;
     @NonNull private CollisionRule collisionRule;
     private int color;
