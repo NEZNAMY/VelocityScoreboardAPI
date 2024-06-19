@@ -47,7 +47,7 @@ public class Main {
     public void onSwitch(ServerPostConnectEvent e) {
         System.out.println(e.getClass().getName());
         System.out.println(e.getClass().getName());
-        Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(0);
+        Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(1);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
         Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);

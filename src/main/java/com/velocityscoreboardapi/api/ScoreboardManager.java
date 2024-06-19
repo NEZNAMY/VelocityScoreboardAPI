@@ -8,6 +8,8 @@ import lombok.NonNull;
 public class ScoreboardManager {
 
     public static Scoreboard getNewScoreboard(int priority) {
+        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
+        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
         return new VelocityScoreboard(priority);
     }
 
