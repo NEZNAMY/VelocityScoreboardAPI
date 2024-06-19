@@ -14,7 +14,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 @Getter
 @AllArgsConstructor
