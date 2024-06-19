@@ -24,11 +24,12 @@ public class Main {
     @SneakyThrows
     public Main() {
         try {
-            if (ProtocolVersion.MAXIMUM_VERSION != ProtocolVersion.MINECRAFT_1_20_5) {
-                throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.20.5.");
+            if (ProtocolVersion.MAXIMUM_VERSION != ProtocolVersion.MINECRAFT_1_21) {
+                throw new IllegalStateException("Your Velocity build is too new for this plugin version. This plugin version only supports up to 1.21" +
+                        " (Your velocity build supports " + ProtocolVersion.MAXIMUM_VERSION + ").");
             }
         } catch (NoSuchFieldError e) {
-            throw new IllegalStateException("Your Velocity build is too new for this plugin version. This plugin version only supports up to 1.20.5.");
+            throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets();
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
