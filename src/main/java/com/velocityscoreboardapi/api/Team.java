@@ -2,7 +2,6 @@ package com.velocityscoreboardapi.api;
 
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
