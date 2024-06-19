@@ -8,15 +8,10 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocityscoreboardapi.api.NumberFormat;
 import com.velocityscoreboardapi.api.Objective;
 import com.velocityscoreboardapi.api.Score;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityScore implements Score {
 
     @NotNull private final VelocityObjective objective;
@@ -24,7 +19,43 @@ public class VelocityScore implements Score {
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;
-    private boolean registered;
+    private boolean registered = true;
+
+    private VelocityScore(@NotNull VelocityObjective objective, @NotNull String holder, int score,
+                         @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+        this.objective = objective;
+        this.holder = holder;
+        this.score = score;
+        this.displayName = displayName;
+        this.numberFormat = numberFormat;
+    }
+
+    @NotNull
+    @Override
+    public String getHolder() {
+        return holder;
+    }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+    @Nullable
+    @Override
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    @Nullable
+    @Override
+    public NumberFormat getNumberFormat() {
+        return numberFormat;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
 
     @Override
     public void setScore(int score) {
@@ -105,7 +136,7 @@ public class VelocityScore implements Score {
         @Override
         @NotNull
         public Score build(@NotNull Objective objective) {
-            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat, true);
+            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat);
         }
 
     }

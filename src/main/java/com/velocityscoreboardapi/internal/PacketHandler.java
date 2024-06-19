@@ -4,7 +4,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -23,9 +22,12 @@ public class PacketHandler {
     }
 
     @NotNull
-    @SneakyThrows
     private Player getPlayer(@NotNull MinecraftSessionHandler handler) {
-        return (Player) playerField.get(handler);
+        try {
+            return (Player) playerField.get(handler);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {

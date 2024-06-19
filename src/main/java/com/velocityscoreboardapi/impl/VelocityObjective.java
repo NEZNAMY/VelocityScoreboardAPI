@@ -5,7 +5,6 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import com.velocityscoreboardapi.api.*;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Getter
 public class VelocityObjective implements Objective {
 
     @NotNull private final VelocityScoreboard scoreboard;
@@ -33,6 +31,41 @@ public class VelocityObjective implements Objective {
         this.title = title;
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
+    }
+
+    @NotNull
+    public VelocityScoreboard getScoreboard() {
+        return scoreboard;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @NotNull
+    @Override
+    public Component getTitle() {
+        return title;
+    }
+
+    @NotNull
+    @Override
+    public HealthDisplay getHealthDisplay() {
+        return healthDisplay;
+    }
+
+    @Nullable
+    @Override
+    public NumberFormat getNumberFormat() {
+        return numberFormat;
+    }
+
+    @Nullable
+    @Override
+    public DisplaySlot getDisplaySlot() {
+        return displaySlot;
     }
 
     @Override

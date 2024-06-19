@@ -4,14 +4,12 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-@AllArgsConstructor
 public class DownstreamTeam {
     
     @NotNull private final String name;
@@ -27,7 +25,26 @@ public class DownstreamTeam {
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
     @NotNull private final Collection<String> entries;
-    
+
+    public DownstreamTeam(@NotNull String name, @Nullable String displayNameLegacy, @Nullable ComponentHolder displayNameModern,
+                          @Nullable String prefixLegacy, @Nullable ComponentHolder prefixModern, @Nullable String suffixLegacy,
+                          @Nullable ComponentHolder suffixModern, @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule,
+                          int color, boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
+        this.name = name;
+        this.displayNameLegacy = displayNameLegacy;
+        this.displayNameModern = displayNameModern;
+        this.prefixLegacy = prefixLegacy;
+        this.prefixModern = prefixModern;
+        this.suffixLegacy = suffixLegacy;
+        this.suffixModern = suffixModern;
+        this.nameVisibility = nameVisibility;
+        this.collisionRule = collisionRule;
+        this.color = color;
+        this.allowFriendlyFire = allowFriendlyFire;
+        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+        this.entries = entries;
+    }
+
     @NotNull
     public static DownstreamTeam create(@NotNull TeamPacket packet) {
         return new DownstreamTeam(

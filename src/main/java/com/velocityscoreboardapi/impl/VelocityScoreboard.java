@@ -4,8 +4,6 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocityscoreboardapi.api.Objective;
 import com.velocityscoreboardapi.api.Scoreboard;
 import com.velocityscoreboardapi.api.Team;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,17 +12,26 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@RequiredArgsConstructor
-@Getter
 public class VelocityScoreboard implements Scoreboard {
 
     /** Priority of this scoreboard */
     private final int priority;
 
-    @Getter
     private final Collection<ConnectedPlayer> players = new HashSet<>();
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
+
+    public VelocityScoreboard(int priority) {
+        this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public Collection<ConnectedPlayer> getPlayers() {
+        return players;
+    }
 
     @Override
     @NotNull
