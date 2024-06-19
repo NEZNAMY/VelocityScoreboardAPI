@@ -201,7 +201,8 @@ public class TeamPacket implements MinecraftPacket {
                 prefixModern.write(buf);
                 suffixModern.write(buf);
             } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                buf.writeByte(color);
+                buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
+                // buf.writeByte(color);
             }
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
