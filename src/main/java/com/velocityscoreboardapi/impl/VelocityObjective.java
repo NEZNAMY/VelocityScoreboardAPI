@@ -68,17 +68,11 @@ public class VelocityObjective implements Objective {
 
     @Override
     @NotNull
-    public Score findOrCreateScore(@NonNull String name) {
-        return findOrCreateScore(name, 0, null, null);
-    }
-
-    @Override
-    @NotNull
-    public Score findOrCreateScore(@NonNull String name, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+    public Score findOrCreateScore(@NonNull String name, @NonNull Score.Builder builder) {
         checkState();
         VelocityScore score = scores.get(name);
         if (score == null) {
-            score = new VelocityScore(this, name, value, displayName, numberFormat, true);
+            score = (VelocityScore) builder.build(this);
             scores.put(name, score);
             score.sendUpdate();
         }

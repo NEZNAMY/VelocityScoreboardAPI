@@ -37,10 +37,7 @@ public interface Objective {
     void setNumberFormat(@NonNull NumberFormat numberFormat);
 
     @NotNull
-    Score findOrCreateScore(@NonNull String name);
-
-    @NotNull
-    Score findOrCreateScore(@NonNull String name, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat);
+    Score findOrCreateScore(@NonNull String name, @NonNull Score.Builder builder);
 
     void removeScore(@NonNull String name);
 
