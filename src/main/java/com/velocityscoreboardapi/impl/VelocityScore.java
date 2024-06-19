@@ -64,4 +64,5 @@ public class VelocityScore implements Score {
             }
         }
     }
+
 }

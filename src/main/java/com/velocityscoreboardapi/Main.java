@@ -49,17 +49,17 @@ public class Main {
         System.out.println(e.getClass().getName());
         Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(1);
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
-        Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
-        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sidebar.findOrCreateScore("Line1", 69, Component.text("Custom name for Line1"), NumberFormat.fixed(Component.text("NumberFormat")));
-        sidebar.findOrCreateScore("Line2");
+//        Objective sidebar = scoreboard.registerNewObjective("MyObjective", Component.text("§4§lTitle"), HealthDisplay.INTEGER, NumberFormat.fixed(Component.text("-")));
+//        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+//        sidebar.findOrCreateScore("Line1", 69, Component.text("Custom name for Line1"), NumberFormat.fixed(Component.text("NumberFormat")));
+//        sidebar.findOrCreateScore("Line2");
 
-        scoreboard.registerNewTeam("Team2", Component.text("Team2"), Component.text("prefix "),
-                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
-                false, Collections.singletonList("Line2"));
-
-        scoreboard.registerNewTeam("PlayerTeam", Component.text("Display"), Component.text("prefix "),
-                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
-                false, Collections.singletonList(e.getPlayer().getUsername()));
+//        scoreboard.registerNewTeam("Team2", Component.text("Team2"), Component.text("prefix "),
+//                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
+//                false, Collections.singletonList("Line2"));
+//
+//        scoreboard.registerNewTeam("PlayerTeam", Component.text("Display"), Component.text("prefix "),
+//                Component.text(" suffix"), NameVisibility.ALWAYS, CollisionRule.ALWAYS, 0, false,
+//                false, Collections.singletonList(e.getPlayer().getUsername()));
     }
 }

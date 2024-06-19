@@ -54,4 +54,39 @@ public interface Team {
     void addEntry(@NonNull String entry);
 
     void removeEntry(@NonNull String entry);
+
+    interface Builder {
+
+        @NotNull
+        Builder displayName(@NonNull Component displayName);
+
+        @NotNull
+        Builder prefix(@NonNull Component prefix);
+
+        @NotNull
+        Builder suffix(@NonNull Component suffix);
+
+        @NotNull
+        Builder nameVisibility(@NonNull NameVisibility visibility);
+
+        @NotNull
+        Builder collisionRule(@NonNull CollisionRule collisionRule);
+
+        @NotNull
+        Builder color(int color);
+
+        @NotNull
+        Builder allowFriendlyFire(boolean friendlyFire);
+
+        @NotNull
+        Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
+
+        @NotNull
+        Builder entries(@NonNull Collection<String> entries);
+
+        @NotNull
+        Team build();
+
+    }
+
 }

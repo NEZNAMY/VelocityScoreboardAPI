@@ -27,7 +27,7 @@ public class VelocityObjective implements Objective {
     private boolean registered = true;
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
 
-    public VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull Component title,
+    private VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull Component title,
                              @NonNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
         this.scoreboard = scoreboard;
         this.name = name;
@@ -153,4 +153,49 @@ public class VelocityObjective implements Objective {
     private void checkState() {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
     }
+
+    public static class Builder implements Objective.Builder {
+
+        private @NonNull final VelocityScoreboard scoreboard;
+        private @NonNull final String name;
+        private @NonNull Component title;
+        private @NonNull HealthDisplay healthDisplay = HealthDisplay.INTEGER;
+        private @Nullable NumberFormat numberFormat = null;
+
+        Builder(@NonNull String name, @NonNull VelocityScoreboard scoreboard) {
+            this.scoreboard = scoreboard;
+            this.name = name;
+            this.title = Component.text(name);
+        }
+
+        @Override
+        @NotNull
+        public Builder title(@NotNull Component title) {
+            this.title = title;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public Builder healthDisplay(@NotNull HealthDisplay healthDisplay) {
+            this.healthDisplay = healthDisplay;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public Builder numberFormat(@Nullable NumberFormat numberFormat) {
+            this.numberFormat = numberFormat;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public VelocityObjective build() {
+            if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
+            return new VelocityObjective(scoreboard, name, title, healthDisplay, numberFormat);
+        }
+
+    }
+
 }

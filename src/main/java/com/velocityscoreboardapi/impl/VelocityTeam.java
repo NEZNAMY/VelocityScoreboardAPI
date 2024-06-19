@@ -1,11 +1,13 @@
 package com.velocityscoreboardapi.impl;
 
+import com.google.common.collect.Lists;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
 import com.velocityscoreboardapi.api.Team;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -16,20 +18,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityTeam implements Team {
 
-    @NonNull private final VelocityScoreboard scoreboard;
-    @NonNull private final String name;
-    @NonNull private Component displayName;
-    @NonNull private Component prefix;
-    @NonNull private Component suffix;
-    @NonNull private NameVisibility nameVisibility;
-    @NonNull private CollisionRule collisionRule;
+    static final int DEFAULT_COLOR = 21;
+
+    @NonNull
+    private final VelocityScoreboard scoreboard;
+    @NonNull
+    private final String name;
+    @NonNull
+    private Component displayName;
+    @NonNull
+    private Component prefix;
+    @NonNull
+    private Component suffix;
+    @NonNull
+    private NameVisibility nameVisibility;
+    @NonNull
+    private CollisionRule collisionRule;
     private int color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
-    @NotNull private final Collection<String> entries;
+    @NotNull
+    private final Collection<String> entries;
     private boolean registered;
 
     @Override
@@ -162,4 +174,88 @@ public class VelocityTeam implements Team {
     private void checkState() {
         if (!registered) throw new IllegalStateException("This team was unregistered");
     }
+
+    public static class Builder implements Team.Builder {
+
+        private @NonNull final VelocityScoreboard scoreboard;
+        private @NonNull final String name;
+        private @NonNull Component displayName;
+        private @NonNull Component prefix = Component.empty();
+        private @NonNull Component suffix = Component.empty();
+        private @NonNull NameVisibility nameVisibility = NameVisibility.ALWAYS;
+        private @NonNull CollisionRule collisionRule = CollisionRule.ALWAYS;
+        private int color = DEFAULT_COLOR;
+        private boolean allowFriendlyFire = true;
+        private boolean canSeeFriendlyInvisibles = false;
+        private @NonNull Collection<String> entries = Lists.newArrayList();
+
+        Builder(@NonNull String name, @NonNull VelocityScoreboard scoreboard) {
+            this.name = name;
+            this.scoreboard = scoreboard;
+            this.displayName = Component.text(name);
+        }
+
+        @NonNull
+        public Builder displayName(@NonNull Component displayName) {
+            this.displayName = displayName;
+            return this;
+        }
+
+        @NonNull
+        public Builder prefix(@NonNull Component prefix) {
+            this.prefix = prefix;
+            return this;
+        }
+
+        @NonNull
+        public Builder suffix(@NonNull Component suffix) {
+            this.suffix = suffix;
+            return this;
+        }
+
+        @NonNull
+        public Builder nameVisibility(@NonNull NameVisibility nameVisibility) {
+            this.nameVisibility = nameVisibility;
+            return this;
+        }
+
+        @NonNull
+        public Builder collisionRule(@NonNull CollisionRule collisionRule) {
+            this.collisionRule = collisionRule;
+            return this;
+        }
+
+        @NonNull
+        public Builder color(int color) {
+            this.color = color;
+            return this;
+        }
+
+        @NonNull
+        public Builder allowFriendlyFire(boolean allowFriendlyFire) {
+            this.allowFriendlyFire = allowFriendlyFire;
+            return this;
+        }
+
+        @NonNull
+        public Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
+            this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+            return this;
+        }
+
+        @NonNull
+        public Builder entries(@NonNull Collection<String> entries) {
+            this.entries = entries;
+            return this;
+        }
+
+        @NonNull
+        public VelocityTeam build() {
+            return new VelocityTeam(
+                    scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries, false
+            );
+        }
+    }
+
 }

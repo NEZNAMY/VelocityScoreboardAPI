@@ -39,4 +39,20 @@ public interface Objective {
     void removeScore(@NonNull String name);
 
     void removeScore(@NonNull Score score);
+
+    interface Builder {
+
+        @NotNull
+        Builder title(@NotNull Component title);
+
+        @NotNull
+        Builder healthDisplay(@NotNull HealthDisplay healthDisplay);
+
+        @NotNull
+        Builder numberFormat(@Nullable NumberFormat numberFormat);
+
+        @NotNull
+        Objective build();
+
+    }
 }
