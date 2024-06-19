@@ -106,7 +106,7 @@ public class VelocityScore implements Score {
         @Override
         @NotNull
         public Score build(@NonNull Objective objective) {
-            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat, false);
+            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat, true);
         }
 
     }

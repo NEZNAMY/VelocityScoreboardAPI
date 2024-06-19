@@ -260,7 +260,7 @@ public class VelocityTeam implements Team {
         public Team build(@NonNull Scoreboard scoreboard) {
             return new VelocityTeam(
                     (VelocityScoreboard) scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries, false
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries, true
             );
         }
     }
