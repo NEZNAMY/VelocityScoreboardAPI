@@ -29,22 +29,27 @@ public class PacketHandler {
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;
     }
 }
