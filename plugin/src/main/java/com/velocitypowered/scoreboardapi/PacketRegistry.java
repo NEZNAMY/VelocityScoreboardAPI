@@ -23,7 +23,7 @@ package com.velocitypowered.scoreboardapi;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.StateRegistry;
-import com.velocitypowered.proxy.scoreboard.*;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

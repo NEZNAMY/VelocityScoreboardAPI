@@ -18,29 +18,21 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.protocol.packet.numbers;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import io.netty.buffer.ByteBuf;
-import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 
-public class StyledFormat implements NumberFormat {
+public class BlankFormat implements NumberFormat {
 
-    @NotNull
-    private final Style style;
+    public static final BlankFormat INSTANCE = new BlankFormat();
 
-    public StyledFormat(@NotNull Style style) {
-        this.style = style;
-    }
+    private BlankFormat() {}
 
-    @Override
     public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
-        ProtocolUtils.writeVarInt(buf, 0); // write BLANK before this gets implemented
-
-        //ProtocolUtils.writeVarInt(buf, 1);
-        //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
+        ProtocolUtils.writeVarInt(buf, 0);
     }
 }

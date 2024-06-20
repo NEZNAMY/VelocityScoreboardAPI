@@ -18,13 +18,14 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.protocol.packet.NumberFormatProvider;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.DisplayObjectivePacket;
-import com.velocitypowered.proxy.scoreboard.ObjectivePacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;

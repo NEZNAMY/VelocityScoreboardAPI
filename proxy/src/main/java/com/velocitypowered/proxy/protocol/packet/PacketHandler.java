@@ -23,7 +23,7 @@ package com.velocitypowered.proxy.protocol.packet;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler;
-import com.velocitypowered.proxy.scoreboard.*;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;

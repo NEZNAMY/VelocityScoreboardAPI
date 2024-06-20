@@ -22,7 +22,7 @@ package com.velocitypowered.proxy.protocol.packet.downstream;
 
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.*;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

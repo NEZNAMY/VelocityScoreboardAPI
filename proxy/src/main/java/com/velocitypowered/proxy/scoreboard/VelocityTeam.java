@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.Lists;
 import com.velocitypowered.api.scoreboard.CollisionRule;
@@ -27,7 +27,7 @@ import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.TeamPacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;

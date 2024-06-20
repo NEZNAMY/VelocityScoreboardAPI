@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Objective;

@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.scoreboard;
+package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;

@@ -18,33 +18,29 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.protocol.packet.numbers;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 
-public class FixedFormat implements NumberFormat {
+public class StyledFormat implements NumberFormat {
 
-    private ComponentHolder holder;
-    private Component component;
+    @NotNull
+    private final Style style;
 
-    public FixedFormat(ComponentHolder holder) {
-        this.holder = holder;
-    }
-
-    public FixedFormat(Component component) {
-        this.component = component;
+    public StyledFormat(@NotNull Style style) {
+        this.style = style;
     }
 
     @Override
     public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
-        ProtocolUtils.writeVarInt(buf, 2);
-        if (holder == null) holder = new ComponentHolder(protocolVersion, component);
-        holder.write(buf);
+        ProtocolUtils.writeVarInt(buf, 0); // write BLANK before this gets implemented
+
+        //ProtocolUtils.writeVarInt(buf, 1);
+        //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
     }
 }

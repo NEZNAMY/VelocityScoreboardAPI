@@ -18,35 +18,35 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.scoreboard;
+package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Display objective packet for assigning slot to objectives.
+ * Score reset packet for 1.20.3+ players.
  */
-public class DisplayObjectivePacket implements MinecraftPacket {
+public class ScoreResetPacket implements MinecraftPacket {
 
     /** Packet priority (higher value = higher priority) */
     private final int packetPriority;
 
-    /** Display slot */
-    private DisplaySlot position;
+    /** Score holder who the score belongs to */
+    private String scoreHolder;
 
-    /** Name of this objective (up to 16 characters) */
+    /** Objective from which the holder should be removed (null for all objectives ?) */
     private String objectiveName;
 
     /**
      * Constructs new instance for packet decoding.
      */
-    public DisplayObjectivePacket() {
+    public ScoreResetPacket() {
         this.packetPriority = 0;
     }
 
@@ -55,35 +55,28 @@ public class DisplayObjectivePacket implements MinecraftPacket {
      *
      * @param   packetPriority
      *          Priority of this packet
-     * @param   position
-     *          Display slot
+     * @param   scoreHolder
+     *          Score holder
      * @param   objectiveName
      *          Objective name
      */
-    public DisplayObjectivePacket(int packetPriority, @NotNull DisplaySlot position, @NotNull String objectiveName) {
+    public ScoreResetPacket(int packetPriority, @NotNull String scoreHolder, @Nullable String objectiveName) {
         this.packetPriority = packetPriority;
-        this.position = position;
+        this.scoreHolder = scoreHolder;
         this.objectiveName = objectiveName;
     }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
-            position = DisplaySlot.values()[ProtocolUtils.readVarInt(buf)]; //TODO something to prevent new array creation each time?
-        } else {
-            position = DisplaySlot.values()[buf.readByte()]; //TODO something to prevent new array creation each time?
-        }
-        objectiveName = ProtocolUtils.readString(buf);
+        scoreHolder = ProtocolUtils.readString(buf);
+        if (buf.readBoolean()) objectiveName = ProtocolUtils.readString(buf);
     }
 
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
-            ProtocolUtils.writeVarInt(buf, position.ordinal());
-        } else {
-            buf.writeByte(position.ordinal());
-        }
-        ProtocolUtils.writeString(buf, objectiveName);
+        ProtocolUtils.writeString(buf, scoreHolder);
+        buf.writeBoolean(objectiveName != null);
+        if (objectiveName != null) ProtocolUtils.writeString(buf, objectiveName);
     }
 
     @Override
@@ -96,11 +89,11 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     }
 
     @NotNull
-    public DisplaySlot getPosition() {
-        return position;
+    public String getScoreHolder() {
+        return scoreHolder;
     }
 
-    @NotNull
+    @Nullable
     public String getObjectiveName() {
         return objectiveName;
     }
