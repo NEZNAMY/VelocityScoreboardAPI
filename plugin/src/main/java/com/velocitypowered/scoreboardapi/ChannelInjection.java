@@ -22,7 +22,7 @@ package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.protocol.packet.JoinGamePacket;
-import com.velocitypowered.proxy.scoreboard.DataHolder;
+import com.velocitypowered.proxy.data.DataHolder;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;

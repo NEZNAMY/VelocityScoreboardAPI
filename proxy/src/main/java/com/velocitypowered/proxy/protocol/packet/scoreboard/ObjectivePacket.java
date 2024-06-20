@@ -28,7 +28,7 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.scoreboard.NumberFormatProvider;
-import com.velocitypowered.proxy.scoreboard.PacketHandler;
+import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

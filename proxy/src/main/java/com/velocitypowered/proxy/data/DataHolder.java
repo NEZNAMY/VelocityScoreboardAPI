@@ -18,10 +18,11 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.scoreboard;
+package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Score;
+import com.velocitypowered.proxy.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
