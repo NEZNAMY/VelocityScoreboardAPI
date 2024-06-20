@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
@@ -34,6 +35,11 @@ public class DownstreamScoreboard {
 
     private final Map<String, DownstreamObjective> objectives = new HashMap<>();
     private final Map<String, DownstreamTeam> teams = new HashMap<>();
+    @NotNull private final Player viewer;
+
+    public DownstreamScoreboard(@NotNull Player viewer) {
+        this.viewer = viewer;
+    }
 
     public void handle(@NotNull ObjectivePacket packet) {
         switch (packet.getAction()) {

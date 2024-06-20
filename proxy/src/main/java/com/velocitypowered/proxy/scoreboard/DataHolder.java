@@ -34,6 +34,6 @@ public class DataHolder {
 
     @NotNull
     public static DownstreamScoreboard getDownstreamScoreboard(@NotNull Player player) {
-        return DOWNSTREAM_SCOREBOARDS.computeIfAbsent(player, h -> new DownstreamScoreboard());
+        return DOWNSTREAM_SCOREBOARDS.computeIfAbsent(player, DownstreamScoreboard::new);
     }
 }
