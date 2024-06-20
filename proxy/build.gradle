@@ -1,0 +1,16 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation project(':api')
+
+    compileOnlyApi 'com.velocitypowered:velocity-proxy:3.3.0-SNAPSHOT'
+    compileOnlyApi 'net.kyori:adventure-nbt:4.17.0'
+}
+
+shadowJar {
+    dependencies {
+        exclude dependency(':slf4j-api')
+    }
+}

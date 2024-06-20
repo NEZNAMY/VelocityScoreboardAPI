@@ -1,0 +1,8 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    compileOnlyApi 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
+    compileOnlyApi 'io.netty:netty-codec-http:4.1.111.Final'
+}

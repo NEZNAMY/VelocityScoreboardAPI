@@ -1,0 +1,145 @@
+plugins {
+    id 'io.github.goooler.shadow' version '8.1.7'
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'org.ajoberstar.grgit' version '5.2.2'
+    id 'maven-publish'
+    id 'java'
+}
+
+group 'net.william278'
+version "$ext.project_version${versionMetadata()}"
+defaultTasks 'licenseFormat', 'build'
+
+publishing {
+    repositories {
+        if (System.getenv("RELEASES_MAVEN_USERNAME") != null) {
+            maven {
+                name = "william278-releases"
+                url = "https://repo.william278.net/releases"
+                credentials {
+                    username = System.getenv("RELEASES_MAVEN_USERNAME")
+                    password = System.getenv("RELEASES_MAVEN_PASSWORD")
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+        if (System.getenv("SNAPSHOTS_MAVEN_USERNAME") != null) {
+            maven {
+                name = "william278-snapshots"
+                url = "https://repo.william278.net/snapshots"
+                credentials {
+                    username = System.getenv("SNAPSHOTS_MAVEN_USERNAME")
+                    password = System.getenv("SNAPSHOTS_MAVEN_PASSWORD")
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
+        }
+    }
+}
+
+allprojects {
+    apply plugin: 'io.github.goooler.shadow'
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'java'
+
+    compileJava.options.encoding = 'UTF-8'
+    compileJava.options.release.set 17
+    javadoc.options.encoding = 'UTF-8'
+    javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://repo.papermc.io/repository/maven-public/' }
+        maven { url 'https://repo.william278.net/velocity/' }
+    }
+
+    license {
+        header = rootProject.file('HEADER')
+        include '**/*.java'
+        newLine = true
+    }
+}
+
+subprojects {
+    version rootProject.version
+    archivesBaseName = "${rootProject.name}-${project.name}"
+
+    jar {
+        from '../LICENSE'
+    }
+
+    shadowJar {
+        destinationDirectory.set(file("$rootDir/target"))
+        archiveClassifier.set('')
+    }
+
+    // API publishing
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+    sourcesJar {
+        destinationDirectory.set(file("$rootDir/target"))
+    }
+    javadocJar {
+        destinationDirectory.set(file("$rootDir/target"))
+    }
+    shadowJar.dependsOn(sourcesJar, javadocJar)
+
+    publishing {
+        if (['api'].contains(project.name)) {
+            publications {
+                mavenJavaCommon(MavenPublication) {
+                    groupId = 'com.velocitypowered'
+                    artifactId = 'scoreboard-api'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+        if (['proxy'].contains(project.name)) {
+            publications {
+                mavenJavaBukkit(MavenPublication) {
+                    groupId = 'com.velocitypowered'
+                    artifactId = 'scoreboard-proxy'
+                    version = "$rootProject.version"
+                    artifact shadowJar
+                    artifact sourcesJar
+                    artifact javadocJar
+                }
+            }
+        }
+    }
+
+    jar.dependsOn(shadowJar)
+    clean.delete "$rootDir/target"
+}
+
+logger.lifecycle("Building VelocityScoreboardAPI ${version}")
+
+@SuppressWarnings('GrMethodMayBeStatic')
+def versionMetadata() {
+    // Require grgit
+    if (grgit == null) {
+        return '-unknown'
+    }
+
+    // If unclean, return the last commit hash with -indev
+    if (!grgit.status().clean) {
+        return '-' + grgit.head().abbreviatedId  + '-indev'
+    }
+
+    // Otherwise if this matches a tag, return nothing
+    def tag = grgit.tag.list().find { it.commit.id == grgit.head().id }
+    if (tag != null) {
+        return ''
+    }
+    return '-' + grgit.head().abbreviatedId
+}
