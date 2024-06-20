@@ -1,14 +1,13 @@
 plugins {
-    id 'java-library'
+    id 'java'
 }
 
 dependencies {
-    implementation project(':api')
+    implementation project(':proxy')
 
     compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
     compileOnly 'com.velocitypowered:velocity-proxy:3.3.0-SNAPSHOT'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
-    compileOnlyApi 'net.kyori:adventure-nbt:4.17.0'
 }
 
 shadowJar {

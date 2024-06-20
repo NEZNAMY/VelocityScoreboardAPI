@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.plugin;
+package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.proxy.Player;
 import io.netty.channel.ChannelDuplexHandler;

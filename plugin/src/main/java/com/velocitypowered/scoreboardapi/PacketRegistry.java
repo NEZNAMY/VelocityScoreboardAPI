@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.plugin;
+package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;

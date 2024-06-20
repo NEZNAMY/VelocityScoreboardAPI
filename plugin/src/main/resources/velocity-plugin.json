@@ -1,0 +1,11 @@
+{
+  "id": "velocity-scoreboard-api",
+  "name": "VelocityScoreboardAPI",
+  "version": "${version}",
+  "description": "${description}",
+  "authors": [
+    "William278",
+    "NEZNAMY"
+  ],
+  "main": "com.velocitypowered.scoreboardapi.VelocityScoreboardAPI"
+}

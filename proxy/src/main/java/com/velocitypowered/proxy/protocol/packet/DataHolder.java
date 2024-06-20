@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.plugin;
+package com.velocitypowered.proxy.protocol.packet;
 
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.packet.downstream.DownstreamScoreboard;

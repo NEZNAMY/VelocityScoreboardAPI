@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'io.github.goooler.shadow' version '8.1.7'
     id 'org.cadixdev.licenser' version '0.6.1' apply false
@@ -8,7 +10,14 @@ plugins {
 
 group 'net.william278'
 version "$ext.project_version${versionMetadata()}"
+description "$ext.project_description"
 defaultTasks 'licenseFormat', 'build'
+
+
+ext {
+    set 'version', version.toString()
+    set 'description', description.toString()
+}
 
 publishing {
     repositories {
@@ -63,11 +72,18 @@ allprojects {
         include '**/*.java'
         newLine = true
     }
+
+    processResources {
+        filesMatching(['**/*.json']) {
+            filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
+                    tokens: rootProject.ext.properties
+        }
+    }
 }
 
 subprojects {
     version rootProject.version
-    archivesBaseName = "${rootProject.name}-${project.name}"
+    archivesBaseName = "${project_archive}-${project.name}"
 
     jar {
         from '../LICENSE'

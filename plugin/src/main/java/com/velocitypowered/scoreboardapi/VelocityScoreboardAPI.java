@@ -18,26 +18,17 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.plugin;
+package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 
-@Plugin(
-        id = "velocityscoreboardapi",
-        name = "VelocityScoreboardAPI",
-        version = "0.0.1",
-        description = "Adds Scoreboard API to Velocity",
-        url = "-",
-        authors = "NEZNAMY"
-)
-public class Main {
+public class VelocityScoreboardAPI {
 
-    public Main() throws Exception {
+    public VelocityScoreboardAPI() throws Exception {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != ProtocolVersion.MINECRAFT_1_21) {
                 throw new IllegalStateException("Your Velocity build is too new for this plugin version. This plugin version only supports up to 1.21" +

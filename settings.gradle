@@ -7,5 +7,6 @@ pluginManagement {
 rootProject.name = 'VelocityScoreboardAPI'
 include(
         'api',
-        'proxy'
+        'proxy',
+        'plugin'
 )
