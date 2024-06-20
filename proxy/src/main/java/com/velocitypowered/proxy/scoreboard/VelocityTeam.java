@@ -248,8 +248,8 @@ public class VelocityTeam implements Team {
 
     public static class Builder implements Team.Builder {
 
-        private String name;
-        private Component displayName;
+        @NotNull private final String name;
+        @NotNull private Component displayName;
         @NotNull private Component prefix = Component.empty();
         @NotNull private Component suffix = Component.empty();
         @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
@@ -265,66 +265,70 @@ public class VelocityTeam implements Team {
         }
 
         @NotNull
-        public Builder name(@NotNull String name) {
-            this.name = name;
-            return this;
-        }
-
-        @NotNull
+        @Override
         public Builder displayName(@NotNull Component displayName) {
             this.displayName = displayName;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder prefix(@NotNull Component prefix) {
             this.prefix = prefix;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder suffix(@NotNull Component suffix) {
             this.suffix = suffix;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder nameVisibility(@NotNull NameVisibility nameVisibility) {
             this.nameVisibility = nameVisibility;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder collisionRule(@NotNull CollisionRule collisionRule) {
             this.collisionRule = collisionRule;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder color(int color) {
             this.color = color;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder allowFriendlyFire(boolean allowFriendlyFire) {
             this.allowFriendlyFire = allowFriendlyFire;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
             this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
             return this;
         }
 
         @NotNull
+        @Override
         public Builder entries(@NotNull Collection<String> entries) {
             this.entries = entries;
             return this;
         }
 
         @NotNull
+        @Override
         public Team build(@NotNull Scoreboard scoreboard) {
             return new VelocityTeam(
                     (VelocityScoreboard) scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,

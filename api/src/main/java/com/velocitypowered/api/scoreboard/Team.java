@@ -85,9 +85,6 @@ public interface Team {
     interface Builder {
 
         @NotNull
-        Builder name(@NotNull String name);
-
-        @NotNull
         Builder displayName(@NotNull Component displayName);
 
         @NotNull

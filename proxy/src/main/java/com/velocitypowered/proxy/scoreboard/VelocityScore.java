@@ -25,7 +25,6 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Score;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.NumberFormatProvider;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;

@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet.downstream;
+package com.velocitypowered.proxy.scoreboard.downstream;
 /*
  * This file is part of VelocityScoreboardAPI, licensed under the Apache License 2.0.
  *

@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet.downstream;
+package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
@@ -44,5 +44,5 @@ public class DownstreamScore {
         this.displayName = displayName;
         this.numberFormat = numberFormat;
     }
-    
+
 }

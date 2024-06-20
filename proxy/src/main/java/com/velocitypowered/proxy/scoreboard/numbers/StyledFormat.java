@@ -18,21 +18,29 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.scoreboard.numbers;
 
-import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
-import com.velocitypowered.proxy.protocol.packet.downstream.DownstreamScoreboard;
+import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.scoreboard.NumberFormat;
+import com.velocitypowered.proxy.protocol.ProtocolUtils;
+import io.netty.buffer.ByteBuf;
+import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-public class DataHolder {
-
-    private static final Map<MinecraftSessionHandler, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
+public class StyledFormat implements NumberFormat {
 
     @NotNull
-    public static DownstreamScoreboard getDownstreamScoreboard(@NotNull MinecraftSessionHandler handler) {
-        return downstreamScoreboards.computeIfAbsent(handler, h -> new DownstreamScoreboard());
+    private final Style style;
+
+    public StyledFormat(@NotNull Style style) {
+        this.style = style;
+    }
+
+    @Override
+    public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
+        ProtocolUtils.writeVarInt(buf, 0); // write BLANK before this gets implemented
+
+        //ProtocolUtils.writeVarInt(buf, 1);
+        //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
     }
 }

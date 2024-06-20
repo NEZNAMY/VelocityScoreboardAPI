@@ -18,15 +18,15 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.protocol.packet;
+package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.protocol.packet.numbers.BlankFormat;
-import com.velocitypowered.proxy.protocol.packet.numbers.FixedFormat;
-import com.velocitypowered.proxy.protocol.packet.numbers.StyledFormat;
+import com.velocitypowered.proxy.scoreboard.numbers.BlankFormat;
+import com.velocitypowered.proxy.scoreboard.numbers.FixedFormat;
+import com.velocitypowered.proxy.scoreboard.numbers.StyledFormat;
 import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
