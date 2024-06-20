@@ -26,11 +26,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Score {
 
-//    @NotNull
-//    static Builder builder(@NotNull String holder) {
-//        return new VelocityScore.Builder(holder);
-//    }
-
     @NotNull
     String getHolder();
 
@@ -48,7 +43,7 @@ public interface Score {
 
     void setNumberFormat(@Nullable NumberFormat numberFormat);
 
-    interface Builder {
+    interface Builder extends NumberFormat.Builder {
 
         @NotNull
         Builder holder(@NotNull String holder);
@@ -60,7 +55,9 @@ public interface Score {
         Builder displayName(@Nullable Component displayName);
 
         @NotNull
-        Builder numberFormat(@Nullable NumberFormat numberFormat);
+        default Builder displayName(@Nullable String displayName) {
+            return displayName(displayName != null ? Component.text(displayName) : null);
+        }
 
         @NotNull
         Score build(@NotNull Objective objective);

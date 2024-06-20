@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.protocol.packet;
 
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
@@ -51,6 +52,23 @@ public class VelocityScoreboard implements Scoreboard {
 
     public Collection<ConnectedPlayer> getPlayers() {
         return players;
+    }
+
+    @Override
+    @NotNull
+    public Team.Builder teamBuilder(@NotNull String name) {
+        return new VelocityTeam.Builder(name);
+    }
+
+    @Override
+    @NotNull
+    public Objective.Builder objectiveBuilder(@NotNull String name) {
+        return new VelocityObjective.Builder(name);
+    }
+
+    @Override
+    public void addPlayer(@NotNull Player player) {
+        getPlayers().add((ConnectedPlayer) player);
     }
 
     @Override

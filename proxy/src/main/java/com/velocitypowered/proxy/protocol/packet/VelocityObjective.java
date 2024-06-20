@@ -120,7 +120,13 @@ public class VelocityObjective implements Objective {
 
     @Override
     @NotNull
-    public Score createScore(@NotNull Score.Builder builder) {
+    public Score.Builder scoreBuilder(@NotNull String holder) {
+        return new VelocityScore.Builder(holder);
+    }
+
+    @Override
+    @NotNull
+    public Score registerScore(@NotNull Score.Builder builder) {
         checkState();
         VelocityScore score = (VelocityScore) builder.build(this);
         scores.put(score.getHolder(), score);
@@ -129,7 +135,7 @@ public class VelocityObjective implements Objective {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public Score getScore(@NotNull String name) {
         checkState();
         return scores.get(name);
@@ -204,21 +210,16 @@ public class VelocityObjective implements Objective {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
     }
 
-    public static class Builder implements Objective.Builder {
+    public static class Builder extends NumberFormatProvider.Builder implements Objective.Builder {
 
-        private String name;
+        private final String name;
         private Component title;
         @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
-        @Nullable private NumberFormat numberFormat = null;
 
-        @Override
-        @NotNull
-        public Objective.Builder name(@NotNull String name) {
+        public Builder(@NotNull String name) {
+            if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
             this.name = name;
-            if (this.title == null) {
-                this.title = Component.text(name);
-            }
-            return this;
+            this.title = Component.text(name);
         }
 
         @Override
@@ -237,15 +238,7 @@ public class VelocityObjective implements Objective {
 
         @Override
         @NotNull
-        public Builder numberFormat(@Nullable NumberFormat numberFormat) {
-            this.numberFormat = numberFormat;
-            return this;
-        }
-
-        @Override
-        @NotNull
         public VelocityObjective build(@NotNull Scoreboard scoreboard) {
-            if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
             return new VelocityObjective((VelocityScoreboard) scoreboard, name, title, healthDisplay, numberFormat);
         }
 

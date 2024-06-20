@@ -24,7 +24,10 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.protocol.packet.VelocityScoreboard;
+import net.kyori.adventure.text.Component;
 
 public class VelocityScoreboardAPI {
 
@@ -38,6 +41,7 @@ public class VelocityScoreboardAPI {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets();
+        ScoreboardManager.registerApi(VelocityScoreboard::new);
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 
@@ -50,16 +54,30 @@ public class VelocityScoreboardAPI {
     @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
         System.out.println(e.getClass().getName());
-//        Scoreboard scoreboard = ScoreboardManager.getNewScoreboard(1);
-//        ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
-//        Objective sidebar = scoreboard.registerObjective(Objective.builder().name("MyObjective").title(Component.text("§4§lTitle")).healthDisplay(HealthDisplay.INTEGER).numberFormat(NumberFormat.fixed(Component.text("-"))));
-//        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
-//        sidebar.createScore(Score.builder("Line1").score(69).displayName(Component.text("Custom name for Line1")).numberFormat(NumberFormat.fixed(Component.text("NumberFormat"))));
-//        sidebar.createScore(Score.builder("Line2"));
-//
-//        scoreboard.registerTeam(Team.builder("Team2").prefix(Component.text("prefix ")).suffix(
-//                Component.text(" suffix")).entries(Collections.singletonList("Line2")));
-//        scoreboard.registerTeam(Team.builder("PlayerTeam").prefix(Component.text("prefix ")).suffix(
-//                Component.text(" suffix")).entries(Collections.singletonList(e.getPlayer().getUsername())));
+        final ScoreboardManager manager = ScoreboardManager.getInstance();
+        Scoreboard scoreboard = manager.getNewScoreboard(1);
+        scoreboard.addPlayer(e.getPlayer());
+        final Objective objective = scoreboard.createObjective("MyObjective", builder -> builder
+                .title(Component.text("§4§lTitle"))
+                .healthDisplay(HealthDisplay.INTEGER)
+                .fixedNumberFormat(Component.text("-")));
+        Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
+                .title(Component.text("§4§lTitle"))
+                .healthDisplay(HealthDisplay.INTEGER)
+                .fixedNumberFormat(Component.text("-")));
+        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
+        sidebar.createScore("Line1", builder -> builder.score(69)
+                .displayName(Component.text("Custom name for Line1"))
+                .fixedNumberFormat(Component.text("NumberFormat")));
+        sidebar.createScore("Line2", builder -> {});
+
+        scoreboard.createTeam("Team1", builder -> builder
+                .prefix(Component.text("prefix "))
+                .suffix(Component.text(" suffix"))
+                .entries("Line1"));
+        scoreboard.createTeam("Team2", builder -> builder
+                .prefix(Component.text("prefix "))
+                .suffix(Component.text(" suffix"))
+                .entries(e.getPlayer().getUsername()));
     }
 }

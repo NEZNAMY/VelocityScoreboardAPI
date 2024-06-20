@@ -28,9 +28,10 @@ import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
-public class FormatReader {
+public class NumberFormatProvider {
 
     @NotNull
     public static NumberFormat read(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver) {
@@ -44,19 +45,27 @@ public class FormatReader {
         };
     }
 
-    @NotNull
-    static NumberFormat blank() {
-        return BlankFormat.INSTANCE;
-    }
+    abstract static class Builder implements NumberFormat.Builder {
+        @Nullable protected NumberFormat numberFormat;
 
-    @NotNull
-    static NumberFormat style(@NotNull Style style) {
-        return new StyledFormat(style);
-    }
+        @Override
+        @NotNull
+        public NumberFormat.Builder fixedNumberFormat(@NotNull Component component) {
+            this.numberFormat = new FixedFormat(component);
+            return this;
+        }
 
-    @NotNull
-    static NumberFormat fixed(@NotNull Component component) {
-        return new FixedFormat(component);
+        @Override
+        public NumberFormat.@NotNull Builder styledNumberFormat(@NotNull Style style) {
+            this.numberFormat = new StyledFormat(style);
+            return this;
+        }
+
+        @Override
+        public NumberFormat.@NotNull Builder blankNumberFormat() {
+            this.numberFormat = BlankFormat.INSTANCE;
+            return this;
+        }
     }
 
 }

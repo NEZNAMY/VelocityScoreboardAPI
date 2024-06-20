@@ -24,12 +24,9 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Objective {
+import java.util.function.Consumer;
 
-//    @NotNull
-//    static Builder builder() {
-//        return new VelocityObjective.Builder();
-//    }
+public interface Objective {
 
     @Nullable
     DisplaySlot getDisplaySlot();
@@ -55,7 +52,16 @@ public interface Objective {
     void setNumberFormat(@NotNull NumberFormat numberFormat);
 
     @NotNull
-    Score createScore(@NotNull Score.Builder builder);
+    Score.Builder scoreBuilder(@NotNull String holder);
+
+    @NotNull
+    Score registerScore(@NotNull Score.Builder builder);
+
+    default void createScore(@NotNull String holder, @NotNull Consumer<Score.Builder> consumer) {
+        Score.Builder builder = scoreBuilder(holder);
+        consumer.accept(builder);
+        registerScore(builder);
+    }
 
     @NotNull
     Score getScore(@NotNull String name);
@@ -64,19 +70,13 @@ public interface Objective {
 
     void removeScore(@NotNull Score score);
 
-    interface Builder {
-
-        @NotNull
-        Builder name(@NotNull String name);
+    interface Builder extends NumberFormat.Builder {
 
         @NotNull
         Builder title(@NotNull Component title);
 
         @NotNull
         Builder healthDisplay(@NotNull HealthDisplay healthDisplay);
-
-        @NotNull
-        Builder numberFormat(@Nullable NumberFormat numberFormat);
 
         @NotNull
         Objective build(@NotNull Scoreboard scoreboard);

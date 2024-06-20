@@ -20,16 +20,66 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * Entrypoint for the Velocity Scoreboard API.
+ */
 public class ScoreboardManager {
 
-//    public static Scoreboard getNewScoreboard(int priority) {
-//        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
-//        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-//        return new VelocityScoreboard(priority);
-//    }
-//
-//    public static void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
-//        ((VelocityScoreboard)scoreboard).getPlayers().add((ConnectedPlayer) player); // TODO properly do this
-//    }
+    private static ScoreboardManager INSTANCE;
+
+    private final ScoreboardProvider provider;
+
+    private ScoreboardManager(@NotNull ScoreboardProvider provider) {
+        this.provider = provider;
+    }
+
+    /**
+     * Get an instance of the Velocity Scoreboard API.
+     * @return a ScoreboardManager instance
+     */
+    @NotNull
+    public static ScoreboardManager getInstance() {
+        if (INSTANCE == null) throw new NotRegisteredException();
+        return INSTANCE;
+    }
+
+    @ApiStatus.Internal
+    public static void registerApi(@NotNull ScoreboardProvider instance) {
+        INSTANCE = new ScoreboardManager(instance);
+    }
+
+    @NotNull
+    public Scoreboard getNewScoreboard(int priority) {
+        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
+        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
+        return provider.createScoreboard(priority);
+    }
+
+    public void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
+        scoreboard.addPlayer(player);
+    }
+
+    /**
+     * An exception indicating the plugin has been accessed before it has been registered.
+     */
+    static final class NotRegisteredException extends IllegalStateException {
+
+        private static final String REASONS = """
+                Could not access the VelocityScoreboardAPI as it has not yet been registered. This may be because:
+                1) The VelocityScoreboardAPI plugin failed to load (are you running the latest version of Velocity?)
+                2) Your plugin isn't set to depend on the "velocity-scoreboard-api" plugin (and so is loading before
+                   the API has been registered)
+                3) You have the API *shaded* instead of depending against it being provided (set to a "compileOnly"
+                   target on Gradle, or a "provided" scope on Maven)""";
+
+        private NotRegisteredException() {
+            super(REASONS);
+        }
+
+    }
 
 }

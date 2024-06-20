@@ -20,25 +20,12 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import com.velocitypowered.api.network.ProtocolVersion;
-import io.netty.buffer.ByteBuf;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 
-public interface NumberFormat {
+@FunctionalInterface
+public interface ScoreboardProvider {
 
-    void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion);
-
-    interface Builder {
-        @NotNull
-        Builder fixedNumberFormat(@NotNull Component component);
-
-        @NotNull
-        Builder styledNumberFormat(@NotNull Style style);
-
-        @NotNull
-        Builder blankNumberFormat();
-    }
+    @NotNull
+    Scoreboard createScoreboard(int priority);
 
 }

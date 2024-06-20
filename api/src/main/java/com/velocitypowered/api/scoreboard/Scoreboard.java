@@ -20,13 +20,27 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public interface Scoreboard {
+
+    void addPlayer(@NotNull Player player);
+
+    @NotNull
+    Objective.Builder objectiveBuilder(@NotNull String name);
 
     @NotNull
     Objective registerObjective(@NotNull Objective.Builder builder);
+
+    default Objective createObjective(@NotNull String name, @NotNull Consumer<Objective.Builder> consumer) {
+        Objective.Builder builder = objectiveBuilder(name);
+        consumer.accept(builder);
+        return registerObjective(builder);
+    }
 
     @Nullable
     Objective getObjective(@NotNull String name);
@@ -34,7 +48,16 @@ public interface Scoreboard {
     void unregisterObjective(@NotNull String objectiveName);
 
     @NotNull
+    Team.Builder teamBuilder(@NotNull String name);
+
+    @NotNull
     Team registerTeam(@NotNull Team.Builder builder);
+
+    default void createTeam(@NotNull String name, @NotNull Consumer<Team.Builder> consumer) {
+        Team.Builder builder = teamBuilder(name);
+        consumer.accept(builder);
+        registerTeam(builder);
+    }
 
     @Nullable
     Team getTeam(@NotNull String teamName);

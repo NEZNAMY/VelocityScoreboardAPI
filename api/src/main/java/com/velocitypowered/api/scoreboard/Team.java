@@ -20,10 +20,13 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Set;
 
 public interface Team {
 
@@ -88,10 +91,25 @@ public interface Team {
         Builder displayName(@NotNull Component displayName);
 
         @NotNull
+        default Builder displayName(@NotNull String displayName) {
+            return displayName(Component.text(displayName));
+        }
+
+        @NotNull
         Builder prefix(@NotNull Component prefix);
 
         @NotNull
+        default Builder prefix(@NotNull String prefix) {
+            return prefix(Component.text(prefix));
+        }
+
+        @NotNull
         Builder suffix(@NotNull Component suffix);
+
+        @NotNull
+        default Builder suffix(@NotNull String suffix) {
+            return suffix(Component.text(suffix));
+        }
 
         @NotNull
         Builder nameVisibility(@NotNull NameVisibility visibility);
@@ -110,6 +128,16 @@ public interface Team {
 
         @NotNull
         Builder entries(@NotNull Collection<String> entries);
+
+        @NotNull
+        default Builder entries(@NotNull String... entries) {
+            return entries(Set.of(entries));
+        }
+
+        @NotNull
+        default Builder entries(@NotNull Player... player) {
+            return entries(Arrays.stream(player).map(Player::getUsername).toList());
+        }
 
         @NotNull
         Team build(@NotNull Scoreboard scoreboard);
