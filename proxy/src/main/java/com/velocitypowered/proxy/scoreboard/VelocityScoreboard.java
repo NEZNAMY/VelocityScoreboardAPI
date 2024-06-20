@@ -91,7 +91,7 @@ public class VelocityScoreboard implements Scoreboard {
         for (VelocityObjective objective : objectives.values()) {
             objective.sendUnregister(list);
             for (VelocityScore score : objective.getScores()) {
-                score.sendRemove(list);
+                score.sendRemove(list); //TODO check if this is actually needed
             }
         }
     }
