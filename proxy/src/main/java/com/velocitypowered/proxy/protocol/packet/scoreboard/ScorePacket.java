@@ -83,16 +83,11 @@ public class ScorePacket implements MinecraftPacket {
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         scoreHolder = ProtocolUtils.readString(buf);
         action = ScoreAction.byId(buf.readByte());
-        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            if (action == ScoreAction.SET) {
-                objectiveName = ProtocolUtils.readString(buf);
-                value = buf.readInt();
-            }
-            return;
+        if (protocolVersion.greaterThan(ProtocolVersion.MINECRAFT_1_7_6) || action == ScoreAction.SET) {
+            objectiveName = ProtocolUtils.readString(buf);
         }
-        objectiveName = ProtocolUtils.readString(buf);
         if (action == ScoreAction.SET) {
-            value = ProtocolUtils.readVarInt(buf);
+            value = protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6) ? buf.readInt() : ProtocolUtils.readVarInt(buf);
         }
     }
 
@@ -100,16 +95,15 @@ public class ScorePacket implements MinecraftPacket {
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         ProtocolUtils.writeString(buf, scoreHolder);
         buf.writeByte(action.ordinal());
-        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            if (action == ScoreAction.SET) {
-                ProtocolUtils.writeString(buf, objectiveName);
-                buf.writeInt(value);
-            }
-            return;
+        if (protocolVersion.greaterThan(ProtocolVersion.MINECRAFT_1_7_6) || action == ScoreAction.SET) {
+            ProtocolUtils.writeString(buf, objectiveName);
         }
-        ProtocolUtils.writeString(buf, objectiveName);
         if (action == ScoreAction.SET) {
-            ProtocolUtils.writeVarInt(buf, value);
+            if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
+                buf.writeInt(value);
+            } else {
+                ProtocolUtils.writeVarInt(buf, value);
+            }
         }
     }
 
