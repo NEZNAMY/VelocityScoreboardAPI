@@ -43,11 +43,11 @@ public class DownstreamObjective {
         numberFormat = packet.getNumberFormat();
     }
 
-    public void setScore(@NotNull ScorePacket packet) {
-        if (scores.containsKey(packet.getScoreHolder())) {
-            scores.get(packet.getScoreHolder()).update(packet);
+    public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+        if (scores.containsKey(holder)) {
+            scores.get(holder).update(value, displayName, numberFormat);
         } else {
-            scores.put(packet.getScoreHolder(), new DownstreamScore(packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat()));
+            scores.put(holder, new DownstreamScore(holder, value, displayName, numberFormat));
         }
     }
 

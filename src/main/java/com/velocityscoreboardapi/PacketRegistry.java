@@ -66,7 +66,11 @@ public class PacketRegistry {
                 map(0x59, ProtocolVersion.MINECRAFT_1_19_1),
                 map(0x57, ProtocolVersion.MINECRAFT_1_19_3),
                 map(0x5B, ProtocolVersion.MINECRAFT_1_19_4),
-                map(0x5D, ProtocolVersion.MINECRAFT_1_20_2),
+                map(0x5D, ProtocolVersion.MINECRAFT_1_20_2, ProtocolVersion.MINECRAFT_1_20_2)
+        );
+        register(clientbound,
+                ScoreSetPacket.class,
+                ScoreSetPacket::new,
                 map(0x5F, ProtocolVersion.MINECRAFT_1_20_3),
                 map(0x61, ProtocolVersion.MINECRAFT_1_20_5)
         );
@@ -107,5 +111,11 @@ public class PacketRegistry {
         Method m = StateRegistry.class.getDeclaredMethod("map", int.class, ProtocolVersion.class, boolean.class);
         m.setAccessible(true);
         return (StateRegistry.PacketMapping) m.invoke(null, id, version, false); // encodeOnly false
+    }
+
+    private static StateRegistry.PacketMapping map(int id, ProtocolVersion version, ProtocolVersion lastValidProtocolVersion) throws Exception {
+        Method m = StateRegistry.class.getDeclaredMethod("map", int.class, ProtocolVersion.class, ProtocolVersion.class, boolean.class);
+        m.setAccessible(true);
+        return (StateRegistry.PacketMapping) m.invoke(null, id, version, lastValidProtocolVersion, false); // encodeOnly false
     }
 }

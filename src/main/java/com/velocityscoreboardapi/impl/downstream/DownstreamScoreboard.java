@@ -1,7 +1,9 @@
 package com.velocityscoreboardapi.impl.downstream;
 
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket.ScoreAction;
+import com.velocityscoreboardapi.api.NumberFormat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,19 +58,27 @@ public class DownstreamScoreboard {
     public void handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScoreAction.SET) {
             if (packet.getObjectiveName() == null) return; // Invalid packet
-            DownstreamObjective objective = objectives.get(packet.getObjectiveName());
-            if (objective == null) {
-                System.out.println("Cannot set score for unknown objective " + packet.getObjectiveName());
-            } else {
-                objective.setScore(packet);
-            }
+            handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
         } else {
             handleReset(packet.getObjectiveName(), packet.getScoreHolder());
         }
     }
 
+    public void handle(@NotNull ScoreSetPacket packet) {
+        handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat());
+    }
+
     public void handle(@NotNull ScoreResetPacket packet) {
         handleReset(packet.getObjectiveName(), packet.getScoreHolder());
+    }
+
+    private void handleSet(@NotNull String objectiveName, @NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+        DownstreamObjective objective = objectives.get(objectiveName);
+        if (objective == null) {
+            System.out.println("Cannot set score for unknown objective " + objectiveName);
+        } else {
+            objective.setScore(holder, value, displayName, numberFormat);
+        }
     }
 
     private void handleReset(@Nullable String objectiveName, @NotNull String holder) {

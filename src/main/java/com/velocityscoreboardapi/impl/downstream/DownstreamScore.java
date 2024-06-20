@@ -20,9 +20,9 @@ public class DownstreamScore {
         this.numberFormat = numberFormat;
     }
 
-    public void update(@NotNull ScorePacket packet) {
-        score = packet.getValue();
-        displayName = packet.getDisplayName();
-        numberFormat = packet.getNumberFormat();
+    public void update(int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+        score = value;
+        this.displayName = displayName;
+        this.numberFormat = numberFormat;
     }
 }
