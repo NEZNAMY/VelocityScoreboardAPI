@@ -21,11 +21,13 @@
 package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.scoreboard.DataHolder;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import net.kyori.adventure.text.Component;
 
@@ -48,6 +50,11 @@ public class VelocityScoreboardAPI {
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         ((ConnectedPlayer)e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
+    }
+
+    @Subscribe
+    public void onQuit(DisconnectEvent e) {
+        DataHolder.getScoreboardManager(e.getPlayer()).handleDisconnect();
     }
 
     @Subscribe
