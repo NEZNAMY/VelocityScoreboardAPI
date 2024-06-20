@@ -24,6 +24,7 @@ import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import com.velocitypowered.proxy.scoreboard.PacketLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,7 +102,7 @@ public class DownstreamTeam {
     public void addEntries(@NotNull Collection<String> entries) {
         for (String entry : new ArrayList<>(entries)) {
             if (this.entries.contains(entry)) {
-                System.out.println("This team already contains entry " + entry);
+                PacketLogger.invalidDownstreamPacket("Team " + name + " already contains entry " + entry);
                 entries.remove(entry);
             }
         }
@@ -111,7 +112,7 @@ public class DownstreamTeam {
     public void removeEntries(@NotNull Collection<String> entries) {
         for (String entry : new ArrayList<>(entries)) {
             if (!this.entries.contains(entry)) {
-                System.out.println("This team does not contain entry " + entry);
+                PacketLogger.invalidDownstreamPacket("Team " + name + " does not contain entry " + entry);
                 entries.remove(entry);
             }
         }
