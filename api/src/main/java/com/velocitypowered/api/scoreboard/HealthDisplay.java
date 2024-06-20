@@ -22,16 +22,20 @@ package com.velocitypowered.api.scoreboard;
 
 import java.util.Locale;
 
+/**
+ * Scoreboard objective score display type. HEARTS is only supported in
+ * playerlist slot.
+ */
 public enum HealthDisplay {
 
-    INTEGER, HEARTS;
+    /** Displays value as number (color is hardcoded based on slot in the client) */
+    INTEGER,
+
+    /** Displays score as hearts (only supported in PLAYER_LIST) */
+    HEARTS;
 
     @Override
     public String toString() {
         return super.toString().toLowerCase(Locale.ROOT);
-    }
-
-    public static HealthDisplay fromString(String s) {
-        return valueOf(s.toUpperCase(Locale.ROOT));
     }
 }

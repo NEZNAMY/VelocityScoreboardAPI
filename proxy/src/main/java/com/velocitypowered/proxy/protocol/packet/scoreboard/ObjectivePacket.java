@@ -33,6 +33,8 @@ import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 /**
  * Scoreboard objective packet.
  */
@@ -116,7 +118,7 @@ public class ObjectivePacket implements MinecraftPacket {
                 healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
             } else {
                 titleLegacy = ProtocolUtils.readString(buf);
-                healthDisplay = HealthDisplay.fromString(ProtocolUtils.readString(buf));
+                healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 if (buf.readBoolean()) {

@@ -46,18 +46,10 @@ public interface Score {
     interface Builder extends NumberFormat.Builder {
 
         @NotNull
-        Builder holder(@NotNull String holder);
-
-        @NotNull
         Builder score(int score);
 
         @NotNull
         Builder displayName(@Nullable Component displayName);
-
-        @NotNull
-        default Builder displayName(@Nullable String displayName) {
-            return displayName(displayName != null ? Component.text(displayName) : null);
-        }
 
         @NotNull
         Score build(@NotNull Objective objective);

@@ -200,7 +200,7 @@ public class VelocityObjective implements Objective {
                     name,
                     "",
                     new ComponentHolder(player.getProtocolVersion(), title),
-                    null,
+                    HealthDisplay.INTEGER,
                     null
             ));
         }
@@ -212,8 +212,8 @@ public class VelocityObjective implements Objective {
 
     public static class Builder extends NumberFormatProvider.Builder implements Objective.Builder {
 
-        private final String name;
-        private Component title;
+        @NotNull private final String name;
+        @NotNull private Component title;
         @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
 
         public Builder(@NotNull String name) {

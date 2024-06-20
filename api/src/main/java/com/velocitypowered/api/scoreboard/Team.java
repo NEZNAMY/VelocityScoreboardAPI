@@ -30,11 +30,6 @@ import java.util.Set;
 
 public interface Team {
 
-//    @NotNull
-//    static Team.Builder builder(@NotNull String name) {
-//        return new VelocityTeam.Builder(name);
-//    }
-
     @NotNull
     String getName();
 

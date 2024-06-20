@@ -49,6 +49,7 @@ public class NumberFormatProvider {
     }
 
     public abstract static class Builder implements NumberFormat.Builder {
+
         @Nullable protected NumberFormat numberFormat;
 
         @Override

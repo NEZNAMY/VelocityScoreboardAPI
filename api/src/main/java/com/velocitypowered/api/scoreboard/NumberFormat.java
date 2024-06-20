@@ -31,6 +31,7 @@ public interface NumberFormat {
     void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion);
 
     interface Builder {
+
         @NotNull
         Builder fixedNumberFormat(@NotNull Component component);
 

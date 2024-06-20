@@ -124,19 +124,12 @@ public class VelocityScore implements Score {
 
     public static class Builder extends NumberFormatProvider.Builder implements Score.Builder {
 
-        private String holder;
+        @NotNull private final String holder;
         private int score;
-        private Component displayName;
+        @Nullable private Component displayName;
 
         public Builder(@NotNull String holder) {
             this.holder = holder;
-        }
-
-        @Override
-        @NotNull
-        public Score.Builder holder(@NotNull String holder) {
-            this.holder = holder;
-            return this;
         }
 
         @Override
