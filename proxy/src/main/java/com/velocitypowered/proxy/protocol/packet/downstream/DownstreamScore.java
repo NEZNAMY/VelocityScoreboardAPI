@@ -22,7 +22,6 @@ package com.velocitypowered.proxy.protocol.packet.downstream;
 
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.ScorePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,9 +39,10 @@ public class DownstreamScore {
         this.numberFormat = numberFormat;
     }
 
-    public void update(@NotNull ScorePacket packet) {
-        score = packet.getValue();
-        displayName = packet.getDisplayName();
-        numberFormat = packet.getNumberFormat();
+    public void update(int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+        score = value;
+        this.displayName = displayName;
+        this.numberFormat = numberFormat;
     }
+    
 }

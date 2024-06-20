@@ -20,10 +20,9 @@
 
 package com.velocitypowered.proxy.protocol.packet.downstream;
 
-import com.velocitypowered.proxy.scoreboard.*;
+import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket.ScoreAction;
+import com.velocitypowered.proxy.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,7 +91,8 @@ public class DownstreamScoreboard {
         handleReset(packet.getObjectiveName(), packet.getScoreHolder());
     }
 
-    private void handleSet(@NotNull String objectiveName, @NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+    private void handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
+                           @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
             System.out.println("Cannot set score for unknown objective " + objectiveName);
