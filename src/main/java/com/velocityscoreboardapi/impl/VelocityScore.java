@@ -105,7 +105,7 @@ public class VelocityScore implements Score {
         private Component displayName;
         private NumberFormat numberFormat;
 
-        public Builder(@NonNull String holder) {
+        public Builder(@NotNull String holder) {
             this.holder = holder;
         }
 

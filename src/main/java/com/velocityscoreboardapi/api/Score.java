@@ -1,7 +1,6 @@
 package com.velocityscoreboardapi.api;
 
 import com.velocityscoreboardapi.impl.VelocityScore;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public interface Score {
 
     @NotNull
-    static Builder builder(@NonNull String holder) {
+    static Builder builder(@NotNull String holder) {
         return new VelocityScore.Builder(holder);
     }
 

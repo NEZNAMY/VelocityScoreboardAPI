@@ -35,6 +35,12 @@ public interface Objective {
 
     void setNumberFormat(@NotNull NumberFormat numberFormat);
 
+    @NotNull
+    Score createScore(@NotNull Score.Builder builder);
+
+    @NotNull
+    Score getScore(@NotNull String name);
+
     void removeScore(@NotNull String name);
 
     void removeScore(@NotNull Score score);

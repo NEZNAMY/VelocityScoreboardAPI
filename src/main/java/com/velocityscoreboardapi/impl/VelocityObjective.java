@@ -5,7 +5,6 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import com.velocityscoreboardapi.api.*;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +100,7 @@ public class VelocityObjective implements Objective {
 
     @Override
     @NotNull
-    public Score createScore(@NonNull Score.Builder builder) {
+    public Score createScore(@NotNull Score.Builder builder) {
         checkState();
         VelocityScore score = (VelocityScore) builder.build(this);
         scores.put(score.getHolder(), score);
@@ -111,7 +110,7 @@ public class VelocityObjective implements Objective {
 
     @Override
     @Nullable
-    public Score getScore(@NonNull String name) {
+    public Score getScore(@NotNull String name) {
         checkState();
         return scores.get(name);
     }

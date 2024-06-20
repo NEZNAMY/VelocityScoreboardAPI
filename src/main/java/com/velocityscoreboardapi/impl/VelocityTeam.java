@@ -240,7 +240,7 @@ public class VelocityTeam implements Team {
         private boolean canSeeFriendlyInvisibles = false;
         @NotNull private Collection<String> entries = Lists.newArrayList();
 
-        public Builder(@NonNull String name) {
+        public Builder(@NotNull String name) {
             this.name = name;
             this.displayName = Component.text(name);
         }
