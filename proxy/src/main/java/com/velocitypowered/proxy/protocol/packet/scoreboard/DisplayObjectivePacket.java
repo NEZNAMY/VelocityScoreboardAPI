@@ -69,9 +69,9 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
-            position = DisplaySlot.values()[ProtocolUtils.readVarInt(buf)]; //TODO something to prevent new array creation each time?
+            position = DisplaySlot.values()[ProtocolUtils.readVarInt(buf)];
         } else {
-            position = DisplaySlot.values()[buf.readByte()]; //TODO something to prevent new array creation each time?
+            position = DisplaySlot.values()[buf.readByte()];
         }
         objectiveName = ProtocolUtils.readString(buf);
     }
