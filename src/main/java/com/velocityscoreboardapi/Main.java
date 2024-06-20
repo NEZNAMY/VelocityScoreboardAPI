@@ -50,12 +50,12 @@ public class Main {
         ScoreboardManager.setScoreboard(e.getPlayer(), scoreboard);
         Objective sidebar = scoreboard.registerObjective(Objective.builder().name("MyObjective").title(Component.text("§4§lTitle")).healthDisplay(HealthDisplay.INTEGER).numberFormat(NumberFormat.fixed(Component.text("-"))));
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
-        sidebar.findOrCreateScore("Line1", Score.builder().holder("Line1").score(69).displayName(Component.text("Custom name for Line1")).numberFormat(NumberFormat.fixed(Component.text("NumberFormat"))));
-        sidebar.findOrCreateScore("Line2", Score.builder().holder("Line2"));
+        sidebar.createScore(Score.builder("Line1").score(69).displayName(Component.text("Custom name for Line1")).numberFormat(NumberFormat.fixed(Component.text("NumberFormat"))));
+        sidebar.createScore(Score.builder("Line2"));
 
-        scoreboard.registerTeam(Team.builder().name("Team2").prefix(Component.text("prefix ")).suffix(
+        scoreboard.registerTeam(Team.builder("Team2").prefix(Component.text("prefix ")).suffix(
                 Component.text(" suffix")).entries(Collections.singletonList("Line2")));
-        scoreboard.registerTeam(Team.builder().name("PlayerTeam").prefix(Component.text("prefix ")).suffix(
+        scoreboard.registerTeam(Team.builder("PlayerTeam").prefix(Component.text("prefix ")).suffix(
                 Component.text(" suffix")).entries(Collections.singletonList(e.getPlayer().getUsername())));
     }
 }

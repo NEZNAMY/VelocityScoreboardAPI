@@ -10,8 +10,8 @@ import java.util.Collection;
 public interface Team {
 
     @NonNull
-    static Team.Builder builder() {
-        return new VelocityTeam.Builder();
+    static Team.Builder builder(@NonNull String name) {
+        return new VelocityTeam.Builder(name);
     }
 
     @NotNull

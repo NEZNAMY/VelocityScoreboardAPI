@@ -190,15 +190,14 @@ public class VelocityTeam implements Team {
         private boolean canSeeFriendlyInvisibles = false;
         @NonNull private Collection<String> entries = Lists.newArrayList();
 
-        public Builder() {
+        public Builder(@NonNull String name) {
+            this.name = name;
+            this.displayName = Component.text(name);
         }
 
         @NonNull
         public Builder name(@NonNull String name) {
             this.name = name;
-            if (this.displayName == null) {
-                this.displayName = Component.text(name);
-            }
             return this;
         }
 
