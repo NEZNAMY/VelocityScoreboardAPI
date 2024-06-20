@@ -57,10 +57,6 @@ public class VelocityScoreboardAPI {
         final ScoreboardManager manager = ScoreboardManager.getInstance();
         Scoreboard scoreboard = manager.getNewScoreboard(1);
         scoreboard.addPlayer(e.getPlayer());
-        final Objective objective = scoreboard.createObjective("MyObjective", builder -> builder
-                .title(Component.text("§4§lTitle"))
-                .healthDisplay(HealthDisplay.INTEGER)
-                .fixedNumberFormat(Component.text("-")));
         Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
                 .title(Component.text("§4§lTitle"))
                 .healthDisplay(HealthDisplay.INTEGER)
@@ -74,7 +70,7 @@ public class VelocityScoreboardAPI {
         scoreboard.createTeam("Team1", builder -> builder
                 .prefix(Component.text("prefix "))
                 .suffix(Component.text(" suffix"))
-                .entries("Line1"));
+                .entries("Line2"));
         scoreboard.createTeam("Team2", builder -> builder
                 .prefix(Component.text("prefix "))
                 .suffix(Component.text(" suffix"))
