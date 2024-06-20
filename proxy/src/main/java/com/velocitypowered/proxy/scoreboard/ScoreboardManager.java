@@ -21,20 +21,33 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scoreboard.Score;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-public class DataHolder {
+public class ScoreboardManager {
 
-    private static final Map<Player, ScoreboardManager> SCOREBOARD_MANAGERS = Collections.synchronizedMap(new WeakHashMap<>());
+    @NotNull private final Player player;
+    @NotNull private final DownstreamScoreboard downstreamScoreboard;
+    @NotNull private final Set<VelocityScoreboard> pluginScoreboards = new HashSet<>();
+
+    public ScoreboardManager(@NotNull Player player) {
+        this.player = player;
+        downstreamScoreboard = new DownstreamScoreboard(player);
+    }
 
     @NotNull
-    public static ScoreboardManager getScoreboardManager(@NotNull Player player) {
-        return SCOREBOARD_MANAGERS.computeIfAbsent(player, ScoreboardManager::new);
+    public DownstreamScoreboard getDownstreamScoreboard() {
+        return downstreamScoreboard;
+    }
+
+    public void registerScoreboard(@NotNull VelocityScoreboard scoreboard) {
+        if (!pluginScoreboards.add(scoreboard)) throw new IllegalStateException("The player is already in this scoreboard");
+    }
+
+    public void unregisterScoreboard(@NotNull VelocityScoreboard scoreboard) {
+        if (!pluginScoreboards.remove(scoreboard)) throw new IllegalStateException("The player is not in this scoreboard");
     }
 }

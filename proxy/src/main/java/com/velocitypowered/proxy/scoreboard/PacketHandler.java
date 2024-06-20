@@ -53,32 +53,32 @@ public class PacketHandler {
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
-        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 }

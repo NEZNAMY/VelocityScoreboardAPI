@@ -191,14 +191,14 @@ public class VelocityTeam implements Team {
         }
     }
 
-    public void sendRegister() {
+    public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
         String legacyDisplayName = LegacyComponentSerializer.legacySection().serialize(displayName);
         if (legacyDisplayName.length() > 16) legacyDisplayName = legacyDisplayName.substring(0, 16);
         String legacyPrefix = LegacyComponentSerializer.legacySection().serialize(prefix);
         if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
+        for (ConnectedPlayer player : players) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
                     new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
@@ -221,6 +221,12 @@ public class VelocityTeam implements Team {
         }
     }
 
+    public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
+        for (ConnectedPlayer player : players) {
+            player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
+        }
+    }
+
     private void sendModifyEntry(@NotNull String entry, boolean add) {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
@@ -237,9 +243,7 @@ public class VelocityTeam implements Team {
     public void unregister() {
         checkState();
         registered = false;
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
-        }
+        sendUnregister(scoreboard.getPlayers());
     }
 
     private void checkState() {

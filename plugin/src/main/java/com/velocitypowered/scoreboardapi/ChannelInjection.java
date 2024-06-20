@@ -40,7 +40,7 @@ public class ChannelInjection extends ChannelDuplexHandler {
     @Override
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         if (packet instanceof JoinGamePacket) {
-            DataHolder.getDownstreamScoreboard(player).clear();
+            DataHolder.getScoreboardManager(player).getDownstreamScoreboard().clear();
         }
         super.write(context, packet, channelPromise);
     }

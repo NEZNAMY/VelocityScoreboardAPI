@@ -30,6 +30,8 @@ public interface Scoreboard {
 
     void addPlayer(@NotNull Player player);
 
+    void removePlayer(@NotNull Player player);
+
     @NotNull
     Objective.Builder objectiveBuilder(@NotNull String name);
 

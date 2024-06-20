@@ -28,9 +28,7 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements Scoreboard {
@@ -68,7 +66,34 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     public void addPlayer(@NotNull Player player) {
-        getPlayers().add((ConnectedPlayer) player);
+        DataHolder.getScoreboardManager(player).registerScoreboard(this);
+        players.add((ConnectedPlayer) player);
+        List<ConnectedPlayer> list = Collections.singletonList((ConnectedPlayer) player);
+        for (VelocityTeam team : teams.values()) {
+            team.sendRegister(list);
+        }
+        for (VelocityObjective objective : objectives.values()) {
+            objective.sendRegister(list);
+            for (VelocityScore score : objective.getScores()) {
+                score.sendUpdate(list);
+            }
+        }
+    }
+
+    @Override
+    public void removePlayer(@NotNull Player player) {
+        DataHolder.getScoreboardManager(player).unregisterScoreboard(this);
+        players.remove((ConnectedPlayer) player);
+        List<ConnectedPlayer> list = Collections.singletonList((ConnectedPlayer) player);
+        for (VelocityTeam team : teams.values()) {
+            team.sendUnregister(list);
+        }
+        for (VelocityObjective objective : objectives.values()) {
+            objective.sendUnregister(list);
+            for (VelocityScore score : objective.getScores()) {
+                score.sendRemove(list);
+            }
+        }
     }
 
     @Override
@@ -77,7 +102,7 @@ public class VelocityScoreboard implements Scoreboard {
         final VelocityObjective objective = (VelocityObjective) builder.build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
-        objective.sendRegister();
+        objective.sendRegister(players);
         return objective;
     }
 
@@ -100,7 +125,7 @@ public class VelocityScoreboard implements Scoreboard {
         final VelocityTeam team = (VelocityTeam) builder.build(this);
         if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
         teams.put(team.getName(), team);
-        team.sendRegister();
+        team.sendRegister(players);
         return team;
     }
 

@@ -56,7 +56,7 @@ public class VelocityScoreboardAPI {
         System.out.println(e.getClass().getName());
         final ScoreboardManager manager = ScoreboardManager.getInstance();
         Scoreboard scoreboard = manager.getNewScoreboard(1);
-        scoreboard.addPlayer(e.getPlayer());
+        //scoreboard.addPlayer(e.getPlayer());
         Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
                 .title(Component.text("§4§lTitle"))
                 .healthDisplay(HealthDisplay.INTEGER)
@@ -75,5 +75,6 @@ public class VelocityScoreboardAPI {
                 .prefix(Component.text("prefix "))
                 .suffix(Component.text(" suffix"))
                 .entries(e.getPlayer().getUsername()));
+        scoreboard.addPlayer(e.getPlayer());
     }
 }

@@ -33,6 +33,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public class VelocityScore implements Score {
 
     @NotNull private final VelocityObjective objective;
@@ -82,25 +84,25 @@ public class VelocityScore implements Score {
     public void setScore(int score) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         this.score = score;
-        sendUpdate();
+        sendUpdate(objective.getScoreboard().getPlayers());
     }
 
     @Override
     public void setDisplayName(@Nullable Component displayName) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         this.displayName = displayName;
-        sendUpdate();
+        sendUpdate(objective.getScoreboard().getPlayers());
     }
 
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         this.numberFormat = numberFormat;
-        sendUpdate();
+        sendUpdate(objective.getScoreboard().getPlayers());
     }
 
-    public void sendUpdate() {
-        for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
+    public void sendUpdate(@NotNull Collection<ConnectedPlayer> players) {
+        for (ConnectedPlayer player : players) {
             if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(player.getProtocolVersion(), displayName);
                 player.getConnection().write(new ScoreSetPacket(objective.getScoreboard().getPriority(), holder, objective.getName(), score, cHolder, numberFormat));
@@ -110,16 +112,20 @@ public class VelocityScore implements Score {
         }
     }
 
-    public void remove() {
-        if (!registered) throw new IllegalStateException("This score was unregistered");
-        registered = false;
-        for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
+    public void sendRemove(@NotNull Collection<ConnectedPlayer> players) {
+        for (ConnectedPlayer player : players) {
             if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 player.getConnection().write(new ScoreResetPacket(objective.getScoreboard().getPriority(), holder, objective.getName()));
             } else {
                 player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScorePacket.ScoreAction.RESET, holder, objective.getName(), 0));
             }
         }
+    }
+
+    public void remove() {
+        if (!registered) throw new IllegalStateException("This score was unregistered");
+        registered = false;
+        sendRemove(objective.getScoreboard().getPlayers());
     }
 
     public static class Builder extends NumberFormatProvider.Builder implements Score.Builder {

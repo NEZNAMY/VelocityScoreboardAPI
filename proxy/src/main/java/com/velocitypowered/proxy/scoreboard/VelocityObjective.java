@@ -30,6 +30,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -130,7 +131,7 @@ public class VelocityObjective implements Objective {
         checkState();
         VelocityScore score = (VelocityScore) builder.build(this);
         scores.put(score.getHolder(), score);
-        score.sendUpdate();
+        score.sendUpdate(scoreboard.getPlayers());
         return score;
     }
 
@@ -158,10 +159,10 @@ public class VelocityObjective implements Objective {
         scores.remove(score.getHolder());
     }
 
-    public void sendRegister() {
+    public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
         String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
+        for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
                     ObjectivePacket.ObjectiveAction.REGISTER,
@@ -171,6 +172,9 @@ public class VelocityObjective implements Objective {
                     healthDisplay,
                     numberFormat
             ));
+            if (displaySlot != null) {
+                player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
+            }
         }
     }
 
@@ -190,10 +194,8 @@ public class VelocityObjective implements Objective {
         }
     }
 
-    public void unregister() {
-        checkState();
-        registered = false;
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
+    public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
+        for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
                     ObjectivePacket.ObjectiveAction.UNREGISTER,
@@ -204,6 +206,17 @@ public class VelocityObjective implements Objective {
                     null
             ));
         }
+    }
+
+    public void unregister() {
+        checkState();
+        registered = false;
+        sendUnregister(scoreboard.getPlayers());
+    }
+
+    @NotNull
+    public Collection<VelocityScore> getScores() {
+        return scores.values();
     }
 
     private void checkState() {
