@@ -22,7 +22,8 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
-import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler;
+import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler;
+import com.velocitypowered.proxy.connection.backend.VelocityServerConnection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,53 +31,54 @@ import java.lang.reflect.Field;
 
 public class PacketHandler {
 
-    private static final Field playerField;
+    private static final Field serverConn;
 
     static {
         try {
-            playerField = ClientPlaySessionHandler.class.getDeclaredField("player");
-            playerField.setAccessible(true);
+            serverConn = BackendPlaySessionHandler.class.getDeclaredField("serverConn");
+            serverConn.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
 
     @NotNull
-    private Player getPlayer(@NotNull MinecraftSessionHandler handler) {
+    private static Player getPlayer(@NotNull MinecraftSessionHandler handler) {
         try {
-            return (Player) playerField.get(handler);
+            VelocityServerConnection connection = (VelocityServerConnection) serverConn.get(handler);
+            return connection.getPlayer();
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
-        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 }

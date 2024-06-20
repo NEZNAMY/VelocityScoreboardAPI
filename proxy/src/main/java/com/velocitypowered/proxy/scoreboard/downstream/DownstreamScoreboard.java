@@ -155,4 +155,12 @@ public class DownstreamScoreboard {
                 }
         }
     }
+
+    /**
+     * Clears this scoreboard on server switch when JoinGame packet is received.
+     */
+    public void clear() {
+        objectives.clear();
+        teams.clear();
+    }
 }

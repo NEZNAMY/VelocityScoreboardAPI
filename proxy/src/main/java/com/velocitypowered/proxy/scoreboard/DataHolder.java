@@ -20,19 +20,20 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 public class DataHolder {
 
-    private static final Map<MinecraftSessionHandler, DownstreamScoreboard> DOWNSTREAM_SCOREBOARDS = new ConcurrentHashMap<>();
+    private static final Map<Player, DownstreamScoreboard> DOWNSTREAM_SCOREBOARDS = Collections.synchronizedMap(new WeakHashMap<>());
 
     @NotNull
-    public static DownstreamScoreboard getDownstreamScoreboard(@NotNull MinecraftSessionHandler handler) {
-        return DOWNSTREAM_SCOREBOARDS.computeIfAbsent(handler, h -> new DownstreamScoreboard());
+    public static DownstreamScoreboard getDownstreamScoreboard(@NotNull Player player) {
+        return DOWNSTREAM_SCOREBOARDS.computeIfAbsent(player, h -> new DownstreamScoreboard());
     }
 }
