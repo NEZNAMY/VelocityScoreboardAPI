@@ -53,32 +53,32 @@ public class PacketHandler {
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
-        DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        if (packet.getPacketPriority() == 0) DataHolder.getDownstreamScoreboard(getPlayer(handler)).handle(packet);
         return false;
     }
 }
