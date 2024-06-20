@@ -103,9 +103,6 @@ public class VelocityScoreboard implements Scoreboard {
         if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
         objective.sendRegister(players);
-        if (objective.getDisplaySlot() != null) {
-            objective.setDisplaySlot(objective.getDisplaySlot()); // This sends the displaySlot to all clients
-        }
         return objective;
     }
 
