@@ -83,7 +83,7 @@ allprojects {
 
 subprojects {
     version rootProject.version
-    archivesBaseName = "${project_archive}-${project.name}"
+    archivesBaseName = "${rootProject.name}" + (project.name == 'plugin' ? '' : "-${project.name}")
 
     jar {
         from '../LICENSE'
