@@ -79,6 +79,9 @@ public interface Objective {
         Builder healthDisplay(@NotNull HealthDisplay healthDisplay);
 
         @NotNull
+        Builder displaySlot(@NotNull DisplaySlot displaySlot);
+
+        @NotNull
         Objective build(@NotNull Scoreboard scoreboard);
 
     }

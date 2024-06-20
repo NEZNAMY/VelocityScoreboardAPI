@@ -46,12 +46,13 @@ public class VelocityObjective implements Objective {
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
 
     private VelocityObjective(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull Component title,
-                             @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
+                             @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
         this.scoreboard = scoreboard;
         this.name = name;
         this.title = title;
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
+        this.displaySlot = displaySlot;
     }
 
     @NotNull
@@ -228,6 +229,7 @@ public class VelocityObjective implements Objective {
         @NotNull private final String name;
         @NotNull private Component title;
         @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
+        @Nullable private DisplaySlot displaySlot = null;
 
         public Builder(@NotNull String name) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
@@ -251,8 +253,15 @@ public class VelocityObjective implements Objective {
 
         @Override
         @NotNull
+        public Objective.Builder displaySlot(@NotNull DisplaySlot displaySlot) {
+            this.displaySlot = displaySlot;
+            return this;
+        }
+
+        @Override
+        @NotNull
         public VelocityObjective build(@NotNull Scoreboard scoreboard) {
-            return new VelocityObjective((VelocityScoreboard) scoreboard, name, title, healthDisplay, numberFormat);
+            return new VelocityObjective((VelocityScoreboard) scoreboard, name, title, healthDisplay, numberFormat, displaySlot);
         }
 
     }
