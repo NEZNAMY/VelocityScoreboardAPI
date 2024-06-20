@@ -59,9 +59,9 @@ public class VelocityScoreboardAPI {
         //scoreboard.addPlayer(e.getPlayer());
         Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
                 .title(Component.text("§4§lTitle"))
+                .displaySlot(DisplaySlot.SIDEBAR)
                 .healthDisplay(HealthDisplay.INTEGER)
                 .fixedNumberFormat(Component.text("-")));
-        sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
         sidebar.createScore("Line1", builder -> builder.score(69)
                 .displayName(Component.text("Custom name for Line1"))
                 .fixedNumberFormat(Component.text("NumberFormat")));

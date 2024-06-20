@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'xyz.jpenilla.run-velocity' version '2.3.0'
 }
 
 dependencies {
@@ -14,5 +15,11 @@ dependencies {
 shadowJar {
     dependencies {
         exclude dependency(':slf4j-api')
+    }
+}
+
+tasks {
+    runVelocity {
+        velocityVersion("3.3.0-SNAPSHOT")
     }
 }
