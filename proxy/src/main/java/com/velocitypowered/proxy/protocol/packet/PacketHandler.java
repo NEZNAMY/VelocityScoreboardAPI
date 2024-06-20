@@ -70,6 +70,11 @@ public class PacketHandler {
         return false;
     }
 
+    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
+        DataHolder.getDownstreamScoreboard(handler).handle(packet);
+        return false;
+    }
+
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
         DataHolder.getDownstreamScoreboard(handler).handle(packet);
         return false;

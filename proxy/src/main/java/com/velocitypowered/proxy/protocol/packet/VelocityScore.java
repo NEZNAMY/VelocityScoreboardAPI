@@ -26,6 +26,9 @@ import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Score;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreSetPacket;
 import com.velocitypowered.proxy.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.scoreboard.ScoreResetPacket;
 import net.kyori.adventure.text.Component;
@@ -100,8 +103,12 @@ public class VelocityScore implements Score {
 
     public void sendUpdate() {
         for (ConnectedPlayer player : objective.getScoreboard().getPlayers()) {
-            ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(player.getProtocolVersion(), displayName);
-            player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScorePacket.ScoreAction.SET, holder, objective.getName(), score, cHolder, numberFormat));
+            if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+                ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(player.getProtocolVersion(), displayName);
+                player.getConnection().write(new ScoreSetPacket(objective.getScoreboard().getPriority(), holder, objective.getName(), score, cHolder, numberFormat));
+            } else {
+                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScorePacket.ScoreAction.SET, holder, objective.getName(), score));
+            }
         }
     }
 
@@ -112,8 +119,7 @@ public class VelocityScore implements Score {
             if (player.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 player.getConnection().write(new ScoreResetPacket(objective.getScoreboard().getPriority(), holder, objective.getName()));
             } else {
-                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScorePacket.ScoreAction.RESET, holder, objective.getName(),
-                        0, null, null));
+                player.getConnection().write(new ScorePacket(objective.getScoreboard().getPriority(), ScorePacket.ScoreAction.RESET, holder, objective.getName(), 0));
             }
         }
     }

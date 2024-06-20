@@ -1,3 +1,4 @@
+package com.velocitypowered.proxy.protocol.packet.downstream;
 /*
  * This file is part of VelocityScoreboardAPI, licensed under the Apache License 2.0.
  *
@@ -17,8 +18,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package com.velocitypowered.proxy.protocol.packet.downstream;
 
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.HealthDisplay;
@@ -64,12 +63,11 @@ public class DownstreamObjective {
         numberFormat = packet.readNumberFormat();
     }
 
-    public void setScore(@NotNull ScorePacket packet) {
-        if (scores.containsKey(packet.getScoreHolder())) {
-            scores.get(packet.getScoreHolder()).update(packet);
+    public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+        if (scores.containsKey(holder)) {
+            scores.get(holder).update(value, displayName, numberFormat);
         } else {
-            scores.put(packet.getScoreHolder(), new DownstreamScore(packet.getScoreHolder(), packet.getValue(),
-                    packet.getDisplayName(), packet.getNumberFormat()));
+            scores.put(holder, new DownstreamScore(holder, value, displayName, numberFormat));
         }
     }
 

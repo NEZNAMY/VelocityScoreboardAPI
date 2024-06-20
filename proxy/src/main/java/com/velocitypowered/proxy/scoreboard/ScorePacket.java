@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Packet for setting scores in objectives.
+ * Packet for setting scores in objectives for players 1.20.2 and below.
  */
 public class ScorePacket implements MinecraftPacket {
 
@@ -51,14 +51,6 @@ public class ScorePacket implements MinecraftPacket {
 
     /** Score value */
     private int value;
-
-    /** Display name to use for score holder instead of name (1.20.3+) */
-    @Nullable
-    private ComponentHolder displayName;
-
-    /** Number format of the score, null to use default number format from objective (1.20.3+) */
-    @Nullable
-    private NumberFormat numberFormat;
 
     /**
      * Constructs new instance for packet decoding.
@@ -80,69 +72,47 @@ public class ScorePacket implements MinecraftPacket {
      *          Objective name
      * @param   value
      *          Score value
-     * @param   displayName
-     *          Holder's display name (1.20.3+)
-     * @param   numberFormat
-     *          Number format of the score (1.20.3+)
      */
-    public ScorePacket(int packetPriority, @NotNull ScoreAction action, @NotNull String scoreHolder, @Nullable String objectiveName,
-                       int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+    public ScorePacket(int packetPriority, @NotNull ScoreAction action, @NotNull String scoreHolder,
+                       @Nullable String objectiveName, int value) {
         this.packetPriority = packetPriority;
         this.action = action;
         this.scoreHolder = scoreHolder;
         this.objectiveName = objectiveName;
         this.value = value;
-        this.displayName = displayName;
-        this.numberFormat = numberFormat;
     }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
+        scoreHolder = ProtocolUtils.readString(buf);
+        action = ScoreAction.byId(buf.readByte());
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            scoreHolder = ProtocolUtils.readString(buf);
-            action = ScoreAction.byId(buf.readByte());
-            if (action != ScoreAction.RESET) {
+            if (action == ScoreAction.SET) {
                 objectiveName = ProtocolUtils.readString(buf);
                 value = buf.readInt();
             }
             return;
         }
-        scoreHolder = ProtocolUtils.readString(buf);
-        if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            action = ScoreAction.byId(buf.readByte());
-        }
         objectiveName = ProtocolUtils.readString(buf);
-        if (action != ScoreAction.RESET) {
+        if (action == ScoreAction.SET) {
             value = ProtocolUtils.readVarInt(buf);
-        }
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            if (buf.readBoolean()) displayName = ComponentHolder.read(buf, protocolVersion);
-            if (buf.readBoolean()) numberFormat = NumberFormatProvider.read(buf, protocolVersion);
         }
     }
 
     @Override
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         ProtocolUtils.writeString(buf, scoreHolder);
-        if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            buf.writeByte(action.ordinal());
-        }
+        buf.writeByte(action.ordinal());
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            if (action != ScoreAction.RESET) {
+            if (action == ScoreAction.SET) {
                 ProtocolUtils.writeString(buf, objectiveName);
                 buf.writeInt(value);
             }
             return;
         }
         ProtocolUtils.writeString(buf, objectiveName);
-        if (action != ScoreAction.RESET || protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+        if (action == ScoreAction.SET) {
             ProtocolUtils.writeVarInt(buf, value);
-        }
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            buf.writeBoolean(displayName != null);
-            if (displayName != null) displayName.write(buf);
-            buf.writeBoolean(numberFormat != null);
-            if (numberFormat != null) numberFormat.write(buf, protocolVersion);
         }
     }
 
@@ -172,16 +142,6 @@ public class ScorePacket implements MinecraftPacket {
 
     public int getValue() {
         return value;
-    }
-
-    @Nullable
-    public ComponentHolder getDisplayName() {
-        return displayName;
-    }
-
-    @Nullable
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
     }
 
     /**
