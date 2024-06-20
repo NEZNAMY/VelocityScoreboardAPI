@@ -113,3 +113,6 @@ gradle-app.setting
 
 # Common working directory
 run/
+
+# Allow gradle wrapper
+!gradle-wrapper.jar
