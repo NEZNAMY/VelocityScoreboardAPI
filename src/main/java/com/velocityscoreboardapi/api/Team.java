@@ -1,7 +1,6 @@
 package com.velocityscoreboardapi.api;
 
 import com.velocityscoreboardapi.impl.VelocityTeam;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,8 +8,8 @@ import java.util.Collection;
 
 public interface Team {
 
-    @NonNull
-    static Team.Builder builder(@NonNull String name) {
+    @NotNull
+    static Team.Builder builder(@NotNull String name) {
         return new VelocityTeam.Builder(name);
     }
 
@@ -20,27 +19,27 @@ public interface Team {
     @NotNull
     Component getDisplayName();
 
-    void setDisplayName(@NonNull Component displayName);
+    void setDisplayName(@NotNull Component displayName);
 
     @NotNull
     Component getPrefix();
 
-    void setPrefix(@NonNull Component prefix);
+    void setPrefix(@NotNull Component prefix);
 
     @NotNull
     Component getSuffix();
 
-    void setSuffix(@NonNull Component suffix);
+    void setSuffix(@NotNull Component suffix);
 
     @NotNull
     NameVisibility getNameVisibility();
 
-    void setNameVisibility(@NonNull NameVisibility visibility);
+    void setNameVisibility(@NotNull NameVisibility visibility);
 
     @NotNull
     CollisionRule getCollisionRule();
 
-    void setCollisionRule(@NonNull CollisionRule collisionRule);
+    void setCollisionRule(@NotNull CollisionRule collisionRule);
 
     int getColor();
 
@@ -57,29 +56,29 @@ public interface Team {
     @NotNull
     Collection<String> getEntries();
 
-    void addEntry(@NonNull String entry);
+    void addEntry(@NotNull String entry);
 
-    void removeEntry(@NonNull String entry);
+    void removeEntry(@NotNull String entry);
 
     interface Builder {
 
-        @NonNull
-        Builder name(@NonNull String name);
+        @NotNull
+        Builder name(@NotNull String name);
 
         @NotNull
-        Builder displayName(@NonNull Component displayName);
+        Builder displayName(@NotNull Component displayName);
 
         @NotNull
-        Builder prefix(@NonNull Component prefix);
+        Builder prefix(@NotNull Component prefix);
 
         @NotNull
-        Builder suffix(@NonNull Component suffix);
+        Builder suffix(@NotNull Component suffix);
 
         @NotNull
-        Builder nameVisibility(@NonNull NameVisibility visibility);
+        Builder nameVisibility(@NotNull NameVisibility visibility);
 
         @NotNull
-        Builder collisionRule(@NonNull CollisionRule collisionRule);
+        Builder collisionRule(@NotNull CollisionRule collisionRule);
 
         @NotNull
         Builder color(int color);
@@ -91,10 +90,10 @@ public interface Team {
         Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
 
         @NotNull
-        Builder entries(@NonNull Collection<String> entries);
+        Builder entries(@NotNull Collection<String> entries);
 
         @NotNull
-        Team build(@NonNull Scoreboard scoreboard);
+        Team build(@NotNull Scoreboard scoreboard);
 
     }
 

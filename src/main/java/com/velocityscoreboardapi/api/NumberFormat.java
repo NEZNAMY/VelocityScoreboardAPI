@@ -7,7 +7,6 @@ import com.velocityscoreboardapi.impl.BlankFormat;
 import com.velocityscoreboardapi.impl.FixedFormat;
 import com.velocityscoreboardapi.impl.StyledFormat;
 import io.netty.buffer.ByteBuf;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
@@ -20,19 +19,19 @@ public interface NumberFormat {
     }
 
     @NotNull
-    static NumberFormat style(@NonNull Style style) {
+    static NumberFormat style(@NotNull Style style) {
         return new StyledFormat(style);
     }
 
     @NotNull
-    static NumberFormat fixed(@NonNull Component component) {
+    static NumberFormat fixed(@NotNull Component component) {
         return new FixedFormat(component);
     }
 
-    void write(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion);
+    void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion);
 
     @NotNull
-    static NumberFormat read(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
+    static NumberFormat read(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
         int format = ProtocolUtils.readVarInt(buf);
         switch (format) {
             case 0:

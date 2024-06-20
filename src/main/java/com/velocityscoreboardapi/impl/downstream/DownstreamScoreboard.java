@@ -2,7 +2,7 @@ package com.velocityscoreboardapi.impl.downstream;
 
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket.ScoreAction;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class DownstreamScoreboard {
     private final Map<String, DownstreamObjective> objectives = new HashMap<>();
     private final Map<String, DownstreamTeam> teams = new HashMap<>();
 
-    public void handle(@NonNull ObjectivePacket packet) {
+    public void handle(@NotNull ObjectivePacket packet) {
         switch (packet.getAction()) {
             case REGISTER:
                 if (objectives.containsKey(packet.getObjectiveName())) {
@@ -44,7 +44,7 @@ public class DownstreamScoreboard {
         }
     }
 
-    public void handle(@NonNull DisplayObjectivePacket packet) {
+    public void handle(@NotNull DisplayObjectivePacket packet) {
         DownstreamObjective objective = objectives.get(packet.getObjectiveName());
         if (objective == null) {
             System.out.println("Cannot set display slot of unknown objective " + packet.getObjectiveName());
@@ -53,7 +53,7 @@ public class DownstreamScoreboard {
         }
     }
 
-    public void handle(@NonNull ScorePacket packet) {
+    public void handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScoreAction.SET) {
             if (packet.getObjectiveName() == null) return; // Invalid packet
             DownstreamObjective objective = objectives.get(packet.getObjectiveName());
@@ -67,11 +67,11 @@ public class DownstreamScoreboard {
         }
     }
 
-    public void handle(@NonNull ScoreResetPacket packet) {
+    public void handle(@NotNull ScoreResetPacket packet) {
         handleReset(packet.getObjectiveName(), packet.getScoreHolder());
     }
 
-    private void handleReset(@Nullable String objectiveName, @NonNull String holder) {
+    private void handleReset(@Nullable String objectiveName, @NotNull String holder) {
         if (objectiveName == null) {
             for (DownstreamObjective objective : objectives.values()) {
                 objective.removeScore(holder);
@@ -86,7 +86,7 @@ public class DownstreamScoreboard {
         }
     }
 
-    public void handle(@NonNull TeamPacket packet) {
+    public void handle(@NotNull TeamPacket packet) {
         switch (packet.getAction()) {
             case REGISTER:
                 if (teams.containsKey(packet.getName())) {

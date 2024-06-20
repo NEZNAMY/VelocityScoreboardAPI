@@ -9,73 +9,123 @@ import com.velocityscoreboardapi.api.CollisionRule;
 import com.velocityscoreboardapi.api.NameVisibility;
 import com.velocityscoreboardapi.api.Scoreboard;
 import com.velocityscoreboardapi.api.Team;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityTeam implements Team {
 
     static final int DEFAULT_COLOR = 21;
 
-    @NonNull
-    private final VelocityScoreboard scoreboard;
-    @NonNull
-    private final String name;
-    @NonNull
-    private Component displayName;
-    @NonNull
-    private Component prefix;
-    @NonNull
-    private Component suffix;
-    @NonNull
-    private NameVisibility nameVisibility;
-    @NonNull
-    private CollisionRule collisionRule;
+    @NotNull private final VelocityScoreboard scoreboard;
+    @NotNull private final String name;
+    @NotNull private Component displayName;
+    @NotNull private Component prefix;
+    @NotNull private Component suffix;
+    @NotNull private NameVisibility nameVisibility;
+    @NotNull private CollisionRule collisionRule;
     private int color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
+    @NotNull private final Collection<String> entries;
+    private boolean registered = true;
+
+    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull Component displayName,
+                         @NotNull Component prefix, @NotNull Component suffix, @NotNull NameVisibility nameVisibility,
+                         @NotNull CollisionRule collisionRule, int color, boolean allowFriendlyFire,
+                         boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
+        this.scoreboard = scoreboard;
+        this.name = name;
+        this.displayName = displayName;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.nameVisibility = nameVisibility;
+        this.collisionRule = collisionRule;
+        this.color = color;
+        this.allowFriendlyFire = allowFriendlyFire;
+        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+        this.entries = entries;
+    }
+
     @NotNull
-    private final Collection<String> entries;
-    private boolean registered;
+    public String getName() {
+        return name;
+    }
+
+    @NotNull
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    @NotNull
+    public Component getPrefix() {
+        return prefix;
+    }
+
+    @NotNull
+    public Component getSuffix() {
+        return suffix;
+    }
+
+    @NotNull
+    public NameVisibility getNameVisibility() {
+        return nameVisibility;
+    }
+
+    @NotNull
+    public CollisionRule getCollisionRule() {
+        return collisionRule;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public boolean isAllowFriendlyFire() {
+        return allowFriendlyFire;
+    }
+
+    public boolean isCanSeeFriendlyInvisibles() {
+        return canSeeFriendlyInvisibles;
+    }
+
+    @NotNull
+    public Collection<String> getEntries() {
+        return entries;
+    }
 
     @Override
-    public void setDisplayName(@NonNull Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
         checkState();
         this.displayName = displayName;
         sendUpdate();
     }
 
     @Override
-    public void setPrefix(@NonNull Component prefix) {
+    public void setPrefix(@NotNull Component prefix) {
         checkState();
         this.prefix = prefix;
         sendUpdate();
     }
 
     @Override
-    public void setSuffix(@NonNull Component suffix) {
+    public void setSuffix(@NotNull Component suffix) {
         checkState();
         this.suffix = suffix;
         sendUpdate();
     }
 
     @Override
-    public void setNameVisibility(@NonNull NameVisibility visibility) {
+    public void setNameVisibility(@NotNull NameVisibility visibility) {
         checkState();
         this.nameVisibility = visibility;
         sendUpdate();
     }
 
     @Override
-    public void setCollisionRule(@NonNull CollisionRule collisionRule) {
+    public void setCollisionRule(@NotNull CollisionRule collisionRule) {
         checkState();
         this.collisionRule = collisionRule;
         sendUpdate();
@@ -103,7 +153,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void addEntry(@NonNull String entry) {
+    public void addEntry(@NotNull String entry) {
         checkState();
         if (entries.add(entry)) {
             sendModifyEntry(entry, true);
@@ -113,7 +163,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void removeEntry(@NonNull String entry) {
+    public void removeEntry(@NotNull String entry) {
         checkState();
         if (entries.remove(entry)) {
             sendModifyEntry(entry, false);
@@ -152,7 +202,7 @@ public class VelocityTeam implements Team {
         }
     }
 
-    private void sendModifyEntry(@NonNull String entry, boolean add) {
+    private void sendModifyEntry(@NotNull String entry, boolean add) {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
         }
@@ -181,85 +231,85 @@ public class VelocityTeam implements Team {
 
         private String name;
         private Component displayName;
-        @NonNull private Component prefix = Component.empty();
-        @NonNull private Component suffix = Component.empty();
-        @NonNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
-        @NonNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
+        @NotNull private Component prefix = Component.empty();
+        @NotNull private Component suffix = Component.empty();
+        @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
+        @NotNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
         private int color = DEFAULT_COLOR;
         private boolean allowFriendlyFire = true;
         private boolean canSeeFriendlyInvisibles = false;
-        @NonNull private Collection<String> entries = Lists.newArrayList();
+        @NotNull private Collection<String> entries = Lists.newArrayList();
 
         public Builder(@NonNull String name) {
             this.name = name;
             this.displayName = Component.text(name);
         }
 
-        @NonNull
-        public Builder name(@NonNull String name) {
+        @NotNull
+        public Builder name(@NotNull String name) {
             this.name = name;
             return this;
         }
 
-        @NonNull
-        public Builder displayName(@NonNull Component displayName) {
+        @NotNull
+        public Builder displayName(@NotNull Component displayName) {
             this.displayName = displayName;
             return this;
         }
 
-        @NonNull
-        public Builder prefix(@NonNull Component prefix) {
+        @NotNull
+        public Builder prefix(@NotNull Component prefix) {
             this.prefix = prefix;
             return this;
         }
 
-        @NonNull
-        public Builder suffix(@NonNull Component suffix) {
+        @NotNull
+        public Builder suffix(@NotNull Component suffix) {
             this.suffix = suffix;
             return this;
         }
 
-        @NonNull
-        public Builder nameVisibility(@NonNull NameVisibility nameVisibility) {
+        @NotNull
+        public Builder nameVisibility(@NotNull NameVisibility nameVisibility) {
             this.nameVisibility = nameVisibility;
             return this;
         }
 
-        @NonNull
-        public Builder collisionRule(@NonNull CollisionRule collisionRule) {
+        @NotNull
+        public Builder collisionRule(@NotNull CollisionRule collisionRule) {
             this.collisionRule = collisionRule;
             return this;
         }
 
-        @NonNull
+        @NotNull
         public Builder color(int color) {
             this.color = color;
             return this;
         }
 
-        @NonNull
+        @NotNull
         public Builder allowFriendlyFire(boolean allowFriendlyFire) {
             this.allowFriendlyFire = allowFriendlyFire;
             return this;
         }
 
-        @NonNull
+        @NotNull
         public Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
             this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
             return this;
         }
 
-        @NonNull
-        public Builder entries(@NonNull Collection<String> entries) {
+        @NotNull
+        public Builder entries(@NotNull Collection<String> entries) {
             this.entries = entries;
             return this;
         }
 
-        @NonNull
-        public Team build(@NonNull Scoreboard scoreboard) {
+        @NotNull
+        public Team build(@NotNull Scoreboard scoreboard) {
             return new VelocityTeam(
                     (VelocityScoreboard) scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries, true
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries
             );
         }
     }

@@ -8,24 +8,54 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocityscoreboardapi.api.NumberFormat;
 import com.velocityscoreboardapi.api.Objective;
 import com.velocityscoreboardapi.api.Score;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityScore implements Score {
 
-    @NonNull private final VelocityObjective objective;
-    @NonNull private final String holder;
+    @NotNull private final VelocityObjective objective;
+    @NotNull private final String holder;
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;
-    private boolean registered;
+    private boolean registered = true;
+
+    private VelocityScore(@NotNull VelocityObjective objective, @NotNull String holder, int score,
+                         @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+        this.objective = objective;
+        this.holder = holder;
+        this.score = score;
+        this.displayName = displayName;
+        this.numberFormat = numberFormat;
+    }
+
+    @NotNull
+    @Override
+    public String getHolder() {
+        return holder;
+    }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+
+    @Nullable
+    @Override
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    @Nullable
+    @Override
+    public NumberFormat getNumberFormat() {
+        return numberFormat;
+    }
+
+    public boolean isRegistered() {
+        return registered;
+    }
 
     @Override
     public void setScore(int score) {
@@ -81,7 +111,7 @@ public class VelocityScore implements Score {
 
         @Override
         @NotNull
-        public Score.Builder holder(@NonNull String holder) {
+        public Score.Builder holder(@NotNull String holder) {
             this.holder = holder;
             return this;
         }
@@ -109,8 +139,8 @@ public class VelocityScore implements Score {
 
         @Override
         @NotNull
-        public Score build(@NonNull Objective objective) {
-            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat, true);
+        public Score build(@NotNull Objective objective) {
+            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat);
         }
 
     }

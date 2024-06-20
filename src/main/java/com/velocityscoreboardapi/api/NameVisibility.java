@@ -1,7 +1,5 @@
 package com.velocityscoreboardapi.api;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -11,7 +9,6 @@ import java.util.stream.Collectors;
 /**
  * Nametag visibility enum.
  */
-@AllArgsConstructor
 public enum NameVisibility {
 
     /** Name can be seen by everyone */
@@ -33,6 +30,16 @@ public enum NameVisibility {
     @NotNull
     private final String string;
 
+    /**
+     * Constructs new instance with given code name.
+     *
+     * @param   string
+     *          Code name used in protocol
+     */
+    NameVisibility(@NotNull String string) {
+        this.string = string;
+    }
+
     @Override
     public String toString() {
         return string;
@@ -47,7 +54,7 @@ public enum NameVisibility {
      * @return  Enum constant from given code name
      */
     @NotNull
-    public static NameVisibility getByName(@NonNull String name) {
+    public static NameVisibility getByName(@NotNull String name) {
         return BY_NAME.getOrDefault(name, ALWAYS);
     }
 }

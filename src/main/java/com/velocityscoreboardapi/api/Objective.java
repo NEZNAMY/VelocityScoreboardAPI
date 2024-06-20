@@ -1,7 +1,6 @@
 package com.velocityscoreboardapi.api;
 
 import com.velocityscoreboardapi.impl.VelocityObjective;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ public interface Objective {
     @Nullable
     DisplaySlot getDisplaySlot();
 
-    void setDisplaySlot(@NonNull DisplaySlot displaySlot);
+    void setDisplaySlot(@NotNull DisplaySlot displaySlot);
 
     @NotNull
     String getName();
@@ -24,32 +23,26 @@ public interface Objective {
     @NotNull
     Component getTitle();
 
-    void setTitle(@NonNull Component title);
+    void setTitle(@NotNull Component title);
 
     @NotNull
     HealthDisplay getHealthDisplay();
 
-    void setHealthDisplay(@NonNull HealthDisplay healthDisplay);
+    void setHealthDisplay(@NotNull HealthDisplay healthDisplay);
 
     @Nullable
     NumberFormat getNumberFormat();
 
-    void setNumberFormat(@NonNull NumberFormat numberFormat);
+    void setNumberFormat(@NotNull NumberFormat numberFormat);
 
-    @NotNull
-    Score createScore(@NonNull Score.Builder builder);
+    void removeScore(@NotNull String name);
 
-    @Nullable
-    Score getScore(@NonNull String name);
-
-    void removeScore(@NonNull String name);
-
-    void removeScore(@NonNull Score score);
+    void removeScore(@NotNull Score score);
 
     interface Builder {
 
         @NotNull
-        Builder name(@NonNull String name);
+        Builder name(@NotNull String name);
 
         @NotNull
         Builder title(@NotNull Component title);
@@ -61,7 +54,7 @@ public interface Objective {
         Builder numberFormat(@Nullable NumberFormat numberFormat);
 
         @NotNull
-        Objective build(@NonNull Scoreboard scoreboard);
+        Objective build(@NotNull Scoreboard scoreboard);
 
     }
 }

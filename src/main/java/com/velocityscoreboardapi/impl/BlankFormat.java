@@ -4,16 +4,15 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocityscoreboardapi.api.NumberFormat;
 import io.netty.buffer.ByteBuf;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BlankFormat implements NumberFormat {
 
     public static final BlankFormat INSTANCE = new BlankFormat();
 
-    public void write(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
+    private BlankFormat() {}
+
+    public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
         ProtocolUtils.writeVarInt(buf, 0);
     }
 }
