@@ -39,14 +39,17 @@ public class VelocityScoreboardAPI {
     @Inject
     public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
         try {
-            if (ProtocolVersion.MAXIMUM_VERSION != ProtocolVersion.MINECRAFT_1_21) {
-                throw new IllegalStateException("Your Velocity build is too new for this plugin version. This plugin version only supports up to 1.21" +
-                        " (Your velocity build supports " + ProtocolVersion.MAXIMUM_VERSION + ").");
+            if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
+                System.out.println("[VelocityScoreboardAPI] ---------------------------------------------------------------------------------------------------");
+                System.out.println("[VelocityScoreboardAPI] Your Velocity build supports MC version " + ProtocolVersion.MAXIMUM_VERSION +
+                        ", but this plugin only supports up to " + VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION + ".");
+                System.out.println("[VelocityScoreboardAPI] Plugin will be disabled for players with unsupported versions to avoid risk.");
+                System.out.println("[VelocityScoreboardAPI] ---------------------------------------------------------------------------------------------------");
             }
         } catch (NoSuchFieldError e) {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
-        PacketRegistry.registerPackets();
+        PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
         ScoreboardManager.registerApi(VelocityScoreboard::new, server);
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }

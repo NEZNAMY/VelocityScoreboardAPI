@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.Objective;
@@ -34,6 +35,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements Scoreboard {
+
+    public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21;
 
     /** Priority of this scoreboard */
     private final int priority;
@@ -75,6 +78,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     public void addPlayer(@NotNull Player player) {
+        if (player.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         DataHolder.getScoreboardManager(player).registerScoreboard(this);
         players.add((ConnectedPlayer) player);
         List<ConnectedPlayer> list = Collections.singletonList((ConnectedPlayer) player);
@@ -91,6 +95,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     public void removePlayer(@NotNull Player player) {
+        if (player.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         DataHolder.getScoreboardManager(player).unregisterScoreboard(this);
         players.remove((ConnectedPlayer) player);
         List<ConnectedPlayer> list = Collections.singletonList((ConnectedPlayer) player);
