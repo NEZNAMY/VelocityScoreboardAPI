@@ -20,13 +20,15 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TeamEvent {
+public abstract class TeamEvent extends ScoreboardEvent{
 
     private final String team;
 
-    public TeamEvent(@NotNull String team) {
+    public TeamEvent(@NotNull Player player, @NotNull String team) {
+        super(player);
         this.team = team;
     }
 
@@ -37,16 +39,16 @@ public abstract class TeamEvent {
 
     public static class Register extends TeamEvent {
 
-        public Register(@NotNull String team) {
-            super(team);
+        public Register(@NotNull Player player, @NotNull String team) {
+            super(player, team);
         }
 
     }
 
     public static class Unregister extends TeamEvent {
 
-        public Unregister(@NotNull String team) {
-            super(team);
+        public Unregister(@NotNull Player player, @NotNull String team) {
+            super(player, team);
         }
 
     }

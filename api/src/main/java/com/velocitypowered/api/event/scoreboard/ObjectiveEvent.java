@@ -20,16 +20,19 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ObjectiveEvent {
+public abstract class ObjectiveEvent extends ScoreboardEvent {
 
+    @NotNull
     private final String objective;
 
-    public ObjectiveEvent(@NotNull String objective) {
+    public ObjectiveEvent(@NotNull Player player, @NotNull String objective) {
+        super(player);
         this.objective = objective;
     }
 
@@ -42,8 +45,8 @@ public abstract class ObjectiveEvent {
 
         @NotNull private final DisplaySlot newSlot;
 
-        public Display(@NotNull String objective, @NotNull DisplaySlot newSlot) {
-            super(objective);
+        public Display(@NotNull Player player, @NotNull String objective, @NotNull DisplaySlot newSlot) {
+            super(player, objective);
             this.newSlot = newSlot;
         }
 
@@ -56,16 +59,16 @@ public abstract class ObjectiveEvent {
 
     public static class Register extends ObjectiveEvent {
 
-        public Register(@NotNull String objective) {
-            super(objective);
+        public Register(@NotNull Player player, @NotNull String objective) {
+            super(player, objective);
         }
 
     }
 
     public static class Unregister extends ObjectiveEvent {
 
-        public Unregister(@NotNull String objective) {
-            super(objective);
+        public Unregister(@NotNull Player player, @NotNull String objective) {
+            super(player, objective);
         }
 
     }
