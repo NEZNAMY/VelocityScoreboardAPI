@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
@@ -199,12 +200,13 @@ public class VelocityObjective implements Objective {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
     }
 
-    public static class Builder extends NumberFormatProvider.Builder implements Objective.Builder {
+    public static class Builder implements Objective.Builder {
 
         @NotNull private final String name;
         @NotNull private TextHolder title;
         @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
         @Nullable private DisplaySlot displaySlot = null;
+        @Nullable private NumberFormat numberFormat = null;
 
         public Builder(@NotNull String name) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
@@ -230,6 +232,13 @@ public class VelocityObjective implements Objective {
         @NotNull
         public Objective.Builder displaySlot(@NotNull DisplaySlot displaySlot) {
             this.displaySlot = displaySlot;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public Objective.Builder numberFormat(@Nullable NumberFormat numberFormat) {
+            this.numberFormat = numberFormat;
             return this;
         }
 

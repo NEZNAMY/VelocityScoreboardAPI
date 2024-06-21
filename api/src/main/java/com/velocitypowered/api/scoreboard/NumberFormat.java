@@ -20,26 +20,61 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import com.velocitypowered.api.network.ProtocolVersion;
-import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Interface for formatting scoreboard scores.
+ */
 public interface NumberFormat {
 
-    void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion);
-
-    interface Builder {
-
-        @NotNull
-        Builder fixedNumberFormat(@NotNull Component component);
-
-        @NotNull
-        Builder styledNumberFormat(@NotNull Style style);
-
-        @NotNull
-        Builder blankNumberFormat();
+    @NotNull
+    default NumberFormat blank() {
+        return BlankFormat.INSTANCE;
     }
 
+    @NotNull
+    default NumberFormat styled(@NotNull Style style) {
+        return new StyledFormat(style);
+    }
+
+    @NotNull
+    default NumberFormat fixed(@NotNull Component text) {
+        return new FixedFormat(text);
+    }
+
+    /**
+     * Format that hides numbers completely.
+     */
+    class BlankFormat implements NumberFormat {
+
+        /** Singleton instance of this class */
+        public static final BlankFormat INSTANCE = new BlankFormat();
+
+        private BlankFormat() {}
+    }
+
+    /**
+     * Formatter that applies style to all scores.
+     *
+     * @param   style
+     *          Style to apply to all scores
+     */
+    record StyledFormat(@NotNull Style style) implements NumberFormat {
+    }
+
+    class FixedFormat implements NumberFormat {
+
+        private final Component component;
+
+
+        public FixedFormat(Component component) {
+            this.component = component;
+        }
+
+        public Component component() {
+            return component;
+        }
+    }
 }

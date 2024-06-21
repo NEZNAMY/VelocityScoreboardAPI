@@ -43,13 +43,16 @@ public interface Score {
 
     void setNumberFormat(@Nullable NumberFormat numberFormat);
 
-    interface Builder extends NumberFormat.Builder {
+    interface Builder {
 
         @NotNull
         Builder score(int score);
 
         @NotNull
         Builder displayName(@Nullable Component displayName);
+
+        @NotNull
+        Builder numberFormat(@Nullable NumberFormat format);
 
         @NotNull
         Score build(@NotNull Objective objective);

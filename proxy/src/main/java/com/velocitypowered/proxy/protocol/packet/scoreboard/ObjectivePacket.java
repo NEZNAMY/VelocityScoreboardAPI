@@ -28,7 +28,7 @@ import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.NumberFormatProvider;
+import com.velocitypowered.proxy.scoreboard.NumberFormatEncoder;
 import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +104,7 @@ public class ObjectivePacket implements MinecraftPacket {
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 if (buf.readBoolean()) {
-                    numberFormat = NumberFormatProvider.read(buf, protocolVersion);
+                    numberFormat = NumberFormatEncoder.read(buf, protocolVersion);
                 }
             }
         }
@@ -130,7 +130,7 @@ public class ObjectivePacket implements MinecraftPacket {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 buf.writeBoolean(numberFormat != null);
                 if (numberFormat != null) {
-                    numberFormat.write(buf, protocolVersion);
+                    NumberFormatEncoder.write(buf, protocolVersion, numberFormat);
                 }
             }
         }

@@ -26,7 +26,7 @@ import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.NumberFormatProvider;
+import com.velocitypowered.proxy.scoreboard.NumberFormatEncoder;
 import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +96,7 @@ public class ScoreSetPacket implements MinecraftPacket {
         objectiveName = ProtocolUtils.readString(buf);
         value = ProtocolUtils.readVarInt(buf);
         if (buf.readBoolean()) displayName = ComponentHolder.read(buf, protocolVersion);
-        if (buf.readBoolean()) numberFormat = NumberFormatProvider.read(buf, protocolVersion);
+        if (buf.readBoolean()) numberFormat = NumberFormatEncoder.read(buf, protocolVersion);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ScoreSetPacket implements MinecraftPacket {
         buf.writeBoolean(displayName != null);
         if (displayName != null) displayName.write(buf);
         buf.writeBoolean(numberFormat != null);
-        if (numberFormat != null) numberFormat.write(buf, protocolVersion);
+        if (numberFormat != null) NumberFormatEncoder.write(buf, protocolVersion, numberFormat);
     }
 
     @Override

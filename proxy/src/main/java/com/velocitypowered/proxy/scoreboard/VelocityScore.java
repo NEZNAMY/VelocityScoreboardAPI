@@ -131,11 +131,12 @@ public class VelocityScore implements Score {
         sendRemove(objective.getScoreboard().getPlayers());
     }
 
-    public static class Builder extends NumberFormatProvider.Builder implements Score.Builder {
+    public static class Builder implements Score.Builder {
 
         @NotNull private final String holder;
         private int score;
         @Nullable private Component displayName;
+        @Nullable private NumberFormat numberFormat = null;
 
         public Builder(@NotNull String holder) {
             this.holder = holder;
@@ -152,6 +153,13 @@ public class VelocityScore implements Score {
         @NotNull
         public Score.Builder displayName(@Nullable Component displayName) {
             this.displayName = displayName;
+            return this;
+        }
+
+        @Override
+        @NotNull
+        public Score.Builder numberFormat(@Nullable NumberFormat numberFormat) {
+            this.numberFormat = numberFormat;
             return this;
         }
 

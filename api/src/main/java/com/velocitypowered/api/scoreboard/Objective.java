@@ -21,7 +21,6 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +70,7 @@ public interface Objective {
 
     void removeScore(@NotNull Score score);
 
-    interface Builder extends NumberFormat.Builder {
+    interface Builder {
 
         @NotNull
         Builder title(@NotNull TextHolder title);
@@ -83,7 +82,9 @@ public interface Objective {
         Builder displaySlot(@NotNull DisplaySlot displaySlot);
 
         @NotNull
-        Objective build(@NotNull Scoreboard scoreboard);
+        Builder numberFormat(@Nullable NumberFormat numberFormat);
 
+        @NotNull
+        Objective build(@NotNull Scoreboard scoreboard);
     }
 }

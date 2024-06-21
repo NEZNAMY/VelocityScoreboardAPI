@@ -24,52 +24,51 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.scoreboard.numbers.BlankFormat;
-import com.velocitypowered.proxy.scoreboard.numbers.FixedFormat;
-import com.velocitypowered.proxy.scoreboard.numbers.StyledFormat;
 import io.netty.buffer.ByteBuf;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
-public class NumberFormatProvider {
+public class NumberFormatEncoder {
 
     @NotNull
     public static NumberFormat read(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver) {
         int format = ProtocolUtils.readVarInt(buf);
         return switch (format) {
-            case 0 -> BlankFormat.INSTANCE;
-            case 1 -> BlankFormat.INSTANCE;
+            case 0 -> NumberFormat.BlankFormat.INSTANCE;
+            case 1 -> NumberFormat.BlankFormat.INSTANCE;
             //return new NumberFormat(Type.STYLED, readComponentStyle(buf, protocolVersion)); //TODO
-            case 2 -> new FixedFormat(ComponentHolder.read(buf, ver));
+            case 2 -> new DeserializedFixedFormat(ComponentHolder.read(buf, ver));
             default -> throw new IllegalArgumentException("Unknown number format " + format);
         };
     }
 
-    public abstract static class Builder implements NumberFormat.Builder {
+    public static void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver, @NotNull NumberFormat format) {
+        if (format instanceof NumberFormat.BlankFormat) {
+            ProtocolUtils.writeVarInt(buf, 0);
+        } else if (format instanceof NumberFormat.StyledFormat styled) {
+            ProtocolUtils.writeVarInt(buf, 0); // write BLANK before this gets implemented
 
-        @Nullable protected NumberFormat numberFormat;
-
-        @Override
-        @NotNull
-        public NumberFormat.Builder fixedNumberFormat(@NotNull Component component) {
-            this.numberFormat = new FixedFormat(component);
-            return this;
-        }
-
-        @Override
-        public NumberFormat.@NotNull Builder styledNumberFormat(@NotNull Style style) {
-            this.numberFormat = new StyledFormat(style);
-            return this;
-        }
-
-        @Override
-        public NumberFormat.@NotNull Builder blankNumberFormat() {
-            this.numberFormat = BlankFormat.INSTANCE;
-            return this;
-        }
+            //ProtocolUtils.writeVarInt(buf, 1);
+            //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
+        } else if (format instanceof NumberFormat.FixedFormat fixed) {
+            ProtocolUtils.writeVarInt(buf, 2);
+            if (fixed instanceof DeserializedFixedFormat deserialized) {
+                deserialized.holder.write(buf);
+            } else {
+                new ComponentHolder(ver, fixed.component()).write(buf);
+            }
+        } else throw new IllegalArgumentException("Unknown number format type " + format.getClass().getName());
     }
 
+    private static class DeserializedFixedFormat extends NumberFormat.FixedFormat {
+
+        @NotNull
+        private final ComponentHolder holder;
+
+        public DeserializedFixedFormat(@NotNull ComponentHolder holder) {
+            super(null);
+            this.holder = holder;
+        }
+    }
 }
