@@ -21,6 +21,8 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.Lists;
+import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
+import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.Scoreboard;
@@ -198,6 +200,7 @@ public class VelocityTeam implements Team {
         if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Register(this));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
@@ -213,6 +216,7 @@ public class VelocityTeam implements Team {
         if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Update(this));
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
@@ -222,12 +226,16 @@ public class VelocityTeam implements Team {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Unregister(this));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
         }
     }
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
+        scoreboard.getProxyServer().getEventManager().fireAndForget(
+                add ? new TeamEntryEvent.Add(entry, this) : new TeamEntryEvent.Remove(entry, this)
+        );
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
         }

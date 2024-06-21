@@ -20,13 +20,33 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
-import com.velocitypowered.api.scoreboard.Objective;
+import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectiveRegisterEvent extends ObjectiveEvent {
+public abstract class TeamEntryEvent extends TeamEvent {
 
-    public ObjectiveRegisterEvent(@NotNull Objective objective) {
-        super(objective);
+    private final String entry;
+
+    public TeamEntryEvent(@NotNull String entry, @NotNull Team team) {
+        super(team);
+        this.entry = entry;
+    }
+
+    @NotNull
+    public String getEntry() {
+        return entry;
+    }
+
+    public static class Add extends TeamEntryEvent {
+        public Add(@NotNull String entry, @NotNull Team team) {
+            super(entry, team);
+        }
+    }
+
+    public static class Remove extends TeamEntryEvent {
+        public Remove(@NotNull String entry, @NotNull Team team) {
+            super(entry, team);
+        }
     }
 
 }

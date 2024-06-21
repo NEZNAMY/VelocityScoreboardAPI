@@ -20,15 +20,12 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
-import com.velocitypowered.api.event.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import org.jetbrains.annotations.ApiStatus;
 import com.velocitypowered.proxy.data.DataHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,7 +110,6 @@ public class VelocityScoreboard implements Scoreboard {
     public Objective registerObjective(@NotNull Objective.Builder builder) {
         final VelocityObjective objective = (VelocityObjective) builder.build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
-        server.getEventManager().fireAndForget(new ObjectiveRegisterEvent(objective));
         objectives.put(objective.getName(), objective);
         objective.sendRegister(players);
         return objective;
@@ -128,10 +124,7 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     public void unregisterObjective(@NotNull String objectiveName) {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
-        server.getEventManager().fire(new ObjectiveUnregisterEvent(objectives.get(objectiveName))).thenAccept((event) -> {
-            if (!event.getResult().isAllowed()) return;
-            objectives.remove(objectiveName).sendUnregister(players);
-        });
+        objectives.remove(objectiveName).sendUnregister(players);
     }
 
     @NotNull
@@ -139,7 +132,6 @@ public class VelocityScoreboard implements Scoreboard {
     public Team registerTeam(@NotNull Team.Builder builder) {
         final VelocityTeam team = (VelocityTeam) builder.build(this);
         if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
-        server.getEventManager().fireAndForget(new TeamRegisterEvent(team));
         teams.put(team.getName(), team);
         team.sendRegister(players);
         return team;
@@ -154,10 +146,7 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     public void unregisterTeam(@NotNull String teamName) {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
-        server.getEventManager().fire(new TeamUnregisterEvent(teams.get(teamName))).thenAccept((event) -> {
-            if (!event.getResult().isAllowed()) return;
-            teams.remove(teamName).sendUnregister(players);
-        });
+        teams.remove(teamName).sendUnregister(players);
     }
 
 }

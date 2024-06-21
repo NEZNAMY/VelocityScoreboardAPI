@@ -20,13 +20,14 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
-import com.google.common.base.Preconditions;
+import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ObjectiveEvent {
 
-    private Objective objective;
+    private final Objective objective;
 
     public ObjectiveEvent(@NotNull Objective objective) {
         this.objective = objective;
@@ -37,9 +38,48 @@ public abstract class ObjectiveEvent {
         return objective;
     }
 
-    public void setObjective(@NotNull Objective objective) {
-        Preconditions.checkNotNull(objective, "objective");
-        this.objective = objective;
+    public static class Display extends ObjectiveEvent {
+
+        @NotNull private final DisplaySlot newSlot;
+
+        public Display(@NotNull Objective objective, @NotNull DisplaySlot newSlot) {
+            super(objective);
+            this.newSlot = newSlot;
+        }
+
+        @Nullable
+        public DisplaySlot getOldSlot() {
+            return getObjective().getDisplaySlot();
+        }
+
+        @NotNull
+        public DisplaySlot getNewSlot() {
+            return newSlot;
+        }
+
     }
 
+    public static class Register extends ObjectiveEvent {
+
+        public Register(@NotNull Objective objective) {
+            super(objective);
+        }
+
+    }
+
+    public static class Unregister extends ObjectiveEvent {
+
+        public Unregister(@NotNull Objective objective) {
+            super(objective);
+        }
+
+    }
+
+    public static class Update extends ObjectiveEvent {
+
+        public Update(@NotNull Objective objective) {
+            super(objective);
+        }
+
+    }
 }

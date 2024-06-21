@@ -20,7 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.api.event.scoreboard.ObjectiveDisplayEvent;
+import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
@@ -94,13 +94,11 @@ public class VelocityObjective implements Objective {
     @Override
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(this, displaySlot));
         this.displaySlot = displaySlot;
-        scoreboard.getProxyServer().getEventManager().fire(new ObjectiveDisplayEvent(this, displaySlot)).thenAccept((event) -> {
-            if (!event.getResult().isAllowed()) return;
-            for (ConnectedPlayer player : scoreboard.getPlayers()) {
-                player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
-            }
-        });
+        for (ConnectedPlayer player : scoreboard.getPlayers()) {
+            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
+        }
     }
 
     @Override
@@ -167,6 +165,7 @@ public class VelocityObjective implements Objective {
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
         String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Register(this));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
@@ -186,6 +185,7 @@ public class VelocityObjective implements Objective {
     private void sendUpdate() {
         String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Update(this));
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
@@ -200,6 +200,7 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(this));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),

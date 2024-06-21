@@ -20,14 +20,12 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
-import com.google.common.base.Preconditions;
-import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class TeamEvent {
 
-    private Team objective;
+    private final Team objective;
 
     public TeamEvent(@NotNull Team objective) {
         this.objective = objective;
@@ -38,9 +36,27 @@ public abstract class TeamEvent {
         return objective;
     }
 
-    public void setObjective(@NotNull Team team) {
-        Preconditions.checkNotNull(team, "team");
-        this.objective = team;
+    public static class Register extends TeamEvent {
+
+        public Register(@NotNull Team team) {
+            super(team);
+        }
+
     }
 
+    public static class Unregister extends TeamEvent {
+
+        public Unregister(@NotNull Team team) {
+            super(team);
+        }
+
+    }
+
+    public static class Update extends TeamEvent {
+
+        public Update(@NotNull Team team) {
+            super(team);
+        }
+
+    }
 }
