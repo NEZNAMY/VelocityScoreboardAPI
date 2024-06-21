@@ -53,22 +53,13 @@ public class NumberFormatEncoder {
             //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
         } else if (format instanceof NumberFormat.FixedFormat fixed) {
             ProtocolUtils.writeVarInt(buf, 2);
-            if (fixed instanceof DeserializedFixedFormat deserialized) {
-                deserialized.holder.write(buf);
-            } else {
-                new ComponentHolder(ver, fixed.component()).write(buf);
-            }
+            new ComponentHolder(ver, fixed.component()).write(buf);
+        } else if (format instanceof DeserializedFixedFormat deserialized) {
+            ProtocolUtils.writeVarInt(buf, 2);
+            deserialized.holder.write(buf);
         } else throw new IllegalArgumentException("Unknown number format type " + format.getClass().getName());
     }
 
-    private static class DeserializedFixedFormat extends NumberFormat.FixedFormat {
-
-        @NotNull
-        private final ComponentHolder holder;
-
-        public DeserializedFixedFormat(@NotNull ComponentHolder holder) {
-            super(null);
-            this.holder = holder;
-        }
+    private record DeserializedFixedFormat(@NotNull ComponentHolder holder) implements NumberFormat {
     }
 }
