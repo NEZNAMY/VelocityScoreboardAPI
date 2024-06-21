@@ -29,6 +29,7 @@ import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.api.event.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import org.jetbrains.annotations.ApiStatus;
+import com.velocitypowered.proxy.data.DataHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

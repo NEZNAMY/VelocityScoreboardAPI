@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,5 +50,11 @@ public class ScoreboardManager {
 
     public void unregisterScoreboard(@NotNull VelocityScoreboard scoreboard) {
         if (!pluginScoreboards.remove(scoreboard)) throw new IllegalStateException("The player is not in this scoreboard");
+    }
+
+    public void handleDisconnect() {
+        for (VelocityScoreboard scoreboard : pluginScoreboards) {
+            scoreboard.getPlayers().remove((ConnectedPlayer) player);
+        }
     }
 }
