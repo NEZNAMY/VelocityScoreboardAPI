@@ -27,7 +27,7 @@ public abstract class TeamEntryEvent extends TeamEvent {
 
     private final String entry;
 
-    public TeamEntryEvent(@NotNull String entry, @NotNull Team team) {
+    public TeamEntryEvent(@NotNull String entry, @NotNull String team) {
         super(team);
         this.entry = entry;
     }
@@ -38,13 +38,13 @@ public abstract class TeamEntryEvent extends TeamEvent {
     }
 
     public static class Add extends TeamEntryEvent {
-        public Add(@NotNull String entry, @NotNull Team team) {
+        public Add(@NotNull String entry, @NotNull String team) {
             super(entry, team);
         }
     }
 
     public static class Remove extends TeamEntryEvent {
-        public Remove(@NotNull String entry, @NotNull Team team) {
+        public Remove(@NotNull String entry, @NotNull String team) {
             super(entry, team);
         }
     }

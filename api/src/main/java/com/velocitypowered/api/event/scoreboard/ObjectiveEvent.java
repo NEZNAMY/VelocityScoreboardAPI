@@ -27,14 +27,14 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class ObjectiveEvent {
 
-    private final Objective objective;
+    private final String objective;
 
-    public ObjectiveEvent(@NotNull Objective objective) {
+    public ObjectiveEvent(@NotNull String objective) {
         this.objective = objective;
     }
 
     @NotNull
-    public Objective getObjective() {
+    public String getObjective() {
         return objective;
     }
 
@@ -42,14 +42,9 @@ public abstract class ObjectiveEvent {
 
         @NotNull private final DisplaySlot newSlot;
 
-        public Display(@NotNull Objective objective, @NotNull DisplaySlot newSlot) {
+        public Display(@NotNull String objective, @NotNull DisplaySlot newSlot) {
             super(objective);
             this.newSlot = newSlot;
-        }
-
-        @Nullable
-        public DisplaySlot getOldSlot() {
-            return getObjective().getDisplaySlot();
         }
 
         @NotNull
@@ -61,7 +56,7 @@ public abstract class ObjectiveEvent {
 
     public static class Register extends ObjectiveEvent {
 
-        public Register(@NotNull Objective objective) {
+        public Register(@NotNull String objective) {
             super(objective);
         }
 
@@ -69,17 +64,10 @@ public abstract class ObjectiveEvent {
 
     public static class Unregister extends ObjectiveEvent {
 
-        public Unregister(@NotNull Objective objective) {
+        public Unregister(@NotNull String objective) {
             super(objective);
         }
 
     }
 
-    public static class Update extends ObjectiveEvent {
-
-        public Update(@NotNull Objective objective) {
-            super(objective);
-        }
-
-    }
 }

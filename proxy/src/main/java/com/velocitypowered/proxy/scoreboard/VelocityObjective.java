@@ -94,7 +94,7 @@ public class VelocityObjective implements Objective {
     @Override
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(this, displaySlot));
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(name, displaySlot));
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
@@ -165,7 +165,7 @@ public class VelocityObjective implements Objective {
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
         String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Register(this));
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Register(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
@@ -185,7 +185,6 @@ public class VelocityObjective implements Objective {
     private void sendUpdate() {
         String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
         if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Update(this));
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),
@@ -200,7 +199,7 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(this));
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(
                     scoreboard.getPriority(),

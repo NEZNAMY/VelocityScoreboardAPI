@@ -25,20 +25,20 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class TeamEvent {
 
-    private final Team objective;
+    private final String team;
 
-    public TeamEvent(@NotNull Team objective) {
-        this.objective = objective;
+    public TeamEvent(@NotNull String team) {
+        this.team = team;
     }
 
     @NotNull
-    public Team getObjective() {
-        return objective;
+    public String getTeam() {
+        return team;
     }
 
     public static class Register extends TeamEvent {
 
-        public Register(@NotNull Team team) {
+        public Register(@NotNull String team) {
             super(team);
         }
 
@@ -46,17 +46,10 @@ public abstract class TeamEvent {
 
     public static class Unregister extends TeamEvent {
 
-        public Unregister(@NotNull Team team) {
+        public Unregister(@NotNull String team) {
             super(team);
         }
 
     }
 
-    public static class Update extends TeamEvent {
-
-        public Update(@NotNull Team team) {
-            super(team);
-        }
-
-    }
 }

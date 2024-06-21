@@ -112,7 +112,7 @@ subprojects {
             publications {
                 mavenJavaCommon(MavenPublication) {
                     groupId = 'net.william278'
-                    artifactId = 'velocity-scoreboard-api'
+                    artifactId = 'velocityscoreboardapi'
                     version = "$rootProject.version"
                     artifact shadowJar
                     artifact sourcesJar

@@ -200,7 +200,7 @@ public class VelocityTeam implements Team {
         if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Register(this));
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Register(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
@@ -216,7 +216,6 @@ public class VelocityTeam implements Team {
         if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
         String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
         if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Update(this));
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name, legacyDisplayName,
                     new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
@@ -226,7 +225,7 @@ public class VelocityTeam implements Team {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Unregister(this));
+        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Unregister(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
         }
@@ -234,7 +233,7 @@ public class VelocityTeam implements Team {
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
         scoreboard.getProxyServer().getEventManager().fireAndForget(
-                add ? new TeamEntryEvent.Add(entry, this) : new TeamEntryEvent.Remove(entry, this)
+                add ? new TeamEntryEvent.Add(entry, name) : new TeamEntryEvent.Remove(entry, name)
         );
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
