@@ -94,6 +94,7 @@ public class VelocityObjective implements Objective {
     @Override
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
+        if (this.displaySlot == displaySlot) return;
         scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(name, displaySlot));
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
@@ -104,6 +105,7 @@ public class VelocityObjective implements Objective {
     @Override
     public void setTitle(@NotNull Component title) {
         checkState();
+        if (this.title == title) return;
         this.title = title;
         sendUpdate();
     }
@@ -111,6 +113,7 @@ public class VelocityObjective implements Objective {
     @Override
     public void setHealthDisplay(@NotNull HealthDisplay healthDisplay) {
         checkState();
+        if (this.healthDisplay == healthDisplay) return;
         this.healthDisplay = healthDisplay;
         sendUpdate();
     }
@@ -118,6 +121,7 @@ public class VelocityObjective implements Objective {
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
         checkState();
+        if (this.numberFormat == numberFormat) return;
         this.numberFormat = numberFormat;
         sendUpdate();
     }

@@ -120,6 +120,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setDisplayName(@NotNull Component displayName) {
         checkState();
+        if (this.displayName == displayName) return;
         this.displayName = displayName;
         sendUpdate();
     }
@@ -127,6 +128,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setPrefix(@NotNull Component prefix) {
         checkState();
+        if (this.prefix == prefix) return;
         this.prefix = prefix;
         sendUpdate();
     }
@@ -134,6 +136,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setSuffix(@NotNull Component suffix) {
         checkState();
+        if (this.suffix == suffix) return;
         this.suffix = suffix;
         sendUpdate();
     }
@@ -141,6 +144,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setNameVisibility(@NotNull NameVisibility visibility) {
         checkState();
+        if (this.nameVisibility == visibility) return;
         this.nameVisibility = visibility;
         sendUpdate();
     }
@@ -148,6 +152,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setCollisionRule(@NotNull CollisionRule collisionRule) {
         checkState();
+        if (this.collisionRule == collisionRule) return;
         this.collisionRule = collisionRule;
         sendUpdate();
     }
@@ -155,6 +160,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setColor(int color) {
         checkState();
+        if (this.color == color) return;
         this.color = color;
         sendUpdate();
     }
@@ -162,6 +168,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setAllowFriendlyFire(boolean friendlyFire) {
         checkState();
+        if (this.allowFriendlyFire == friendlyFire) return;
         this.allowFriendlyFire = friendlyFire;
         sendUpdate();
     }
@@ -169,6 +176,7 @@ public class VelocityTeam implements Team {
     @Override
     public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
         checkState();
+        if (this.canSeeFriendlyInvisibles == canSeeFriendlyInvisibles) return;
         this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         sendUpdate();
     }

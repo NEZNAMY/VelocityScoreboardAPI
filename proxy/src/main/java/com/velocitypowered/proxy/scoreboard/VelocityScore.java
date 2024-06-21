@@ -83,6 +83,7 @@ public class VelocityScore implements Score {
     @Override
     public void setScore(int score) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
+        if (this.score == score) return;
         this.score = score;
         sendUpdate(objective.getScoreboard().getPlayers());
     }
@@ -90,6 +91,7 @@ public class VelocityScore implements Score {
     @Override
     public void setDisplayName(@Nullable Component displayName) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
+        if (this.displayName == displayName) return;
         this.displayName = displayName;
         sendUpdate(objective.getScoreboard().getPlayers());
     }
@@ -97,6 +99,7 @@ public class VelocityScore implements Score {
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
+        if (this.numberFormat == numberFormat) return;
         this.numberFormat = numberFormat;
         sendUpdate(objective.getScoreboard().getPlayers());
     }
