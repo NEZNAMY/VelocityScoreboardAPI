@@ -22,8 +22,6 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.Lists;
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
-import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.Scoreboard;
@@ -200,7 +198,6 @@ public class VelocityTeam implements Team {
     }
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Register(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name,
                     displayName, prefix, suffix, nameVisibility, collisionRule, color, getFlags(), entries));
@@ -215,16 +212,12 @@ public class VelocityTeam implements Team {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Unregister(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
         }
     }
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(
-                add ? new TeamEntryEvent.Add(name, entry) : new TeamEntryEvent.Remove(name, entry)
-        );
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
         }

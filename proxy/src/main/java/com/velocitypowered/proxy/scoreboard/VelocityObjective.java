@@ -21,7 +21,6 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
@@ -94,7 +93,6 @@ public class VelocityObjective implements Objective {
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
         if (this.displaySlot == displaySlot) return;
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(name, displaySlot));
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
@@ -166,7 +164,6 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Register(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
             if (displaySlot != null) {
@@ -182,7 +179,6 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(name));
         for (ConnectedPlayer player : players) {
             player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
         }
