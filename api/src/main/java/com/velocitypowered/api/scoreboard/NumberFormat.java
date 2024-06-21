@@ -23,6 +23,7 @@ package com.velocitypowered.api.scoreboard;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for formatting scoreboard scores.
@@ -66,13 +67,14 @@ public interface NumberFormat {
 
     class FixedFormat implements NumberFormat {
 
+        @Nullable
         private final Component component;
 
-
-        public FixedFormat(Component component) {
+        protected FixedFormat(@Nullable Component component) {
             this.component = component;
         }
 
+        @Nullable
         public Component component() {
             return component;
         }
