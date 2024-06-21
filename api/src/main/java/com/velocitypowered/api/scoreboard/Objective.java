@@ -49,7 +49,7 @@ public interface Objective {
     @Nullable
     NumberFormat getNumberFormat();
 
-    void setNumberFormat(@NotNull NumberFormat numberFormat);
+    void setNumberFormat(@Nullable NumberFormat numberFormat);
 
     @NotNull
     Score.Builder scoreBuilder(@NotNull String holder);
