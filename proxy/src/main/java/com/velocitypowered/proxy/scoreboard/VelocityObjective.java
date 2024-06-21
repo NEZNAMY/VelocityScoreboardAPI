@@ -20,14 +20,13 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,14 +38,14 @@ public class VelocityObjective implements Objective {
 
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
-    @NotNull private Component title;
+    @NotNull private TextHolder title;
     @NotNull private HealthDisplay healthDisplay;
     @Nullable private NumberFormat numberFormat;
     @Nullable private DisplaySlot displaySlot;
     private boolean registered = true;
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
 
-    private VelocityObjective(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull Component title,
+    private VelocityObjective(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TextHolder title,
                              @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
         this.scoreboard = scoreboard;
         this.name = name;
@@ -69,7 +68,7 @@ public class VelocityObjective implements Objective {
 
     @NotNull
     @Override
-    public Component getTitle() {
+    public TextHolder getTitle() {
         return title;
     }
 
@@ -103,7 +102,7 @@ public class VelocityObjective implements Objective {
     }
 
     @Override
-    public void setTitle(@NotNull Component title) {
+    public void setTitle(@NotNull TextHolder title) {
         checkState();
         if (this.title == title) return;
         this.title = title;
@@ -167,19 +166,9 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
-        if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
         scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Register(name));
         for (ConnectedPlayer player : players) {
-            player.getConnection().write(new ObjectivePacket(
-                    scoreboard.getPriority(),
-                    ObjectivePacket.ObjectiveAction.REGISTER,
-                    name,
-                    legacyTitle,
-                    new ComponentHolder(player.getProtocolVersion(), title),
-                    healthDisplay,
-                    numberFormat
-            ));
+            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
             if (displaySlot != null) {
                 player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
             }
@@ -187,33 +176,15 @@ public class VelocityObjective implements Objective {
     }
 
     private void sendUpdate() {
-        String legacyTitle = LegacyComponentSerializer.legacySection().serialize(title);
-        if (legacyTitle.length() > 32) legacyTitle = legacyTitle.substring(0, 32);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new ObjectivePacket(
-                    scoreboard.getPriority(),
-                    ObjectivePacket.ObjectiveAction.UPDATE,
-                    name,
-                    legacyTitle,
-                    new ComponentHolder(player.getProtocolVersion(), title),
-                    healthDisplay,
-                    numberFormat
-            ));
+            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
         }
     }
 
     public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
         scoreboard.getProxyServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(name));
         for (ConnectedPlayer player : players) {
-            player.getConnection().write(new ObjectivePacket(
-                    scoreboard.getPriority(),
-                    ObjectivePacket.ObjectiveAction.UNREGISTER,
-                    name,
-                    "",
-                    new ComponentHolder(player.getProtocolVersion(), title),
-                    HealthDisplay.INTEGER,
-                    null
-            ));
+            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
         }
     }
 
@@ -235,19 +206,19 @@ public class VelocityObjective implements Objective {
     public static class Builder extends NumberFormatProvider.Builder implements Objective.Builder {
 
         @NotNull private final String name;
-        @NotNull private Component title;
+        @NotNull private TextHolder title;
         @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
         @Nullable private DisplaySlot displaySlot = null;
 
         public Builder(@NotNull String name) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
             this.name = name;
-            this.title = Component.text(name);
+            this.title = new TextHolder(name);
         }
 
         @Override
         @NotNull
-        public Builder title(@NotNull Component title) {
+        public Builder title(@NotNull TextHolder title) {
             this.title = title;
             return this;
         }

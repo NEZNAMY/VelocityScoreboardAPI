@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -34,19 +35,19 @@ public interface Team {
     String getName();
 
     @NotNull
-    Component getDisplayName();
+    TextHolder getDisplayName();
 
-    void setDisplayName(@NotNull Component displayName);
-
-    @NotNull
-    Component getPrefix();
-
-    void setPrefix(@NotNull Component prefix);
+    void setDisplayName(@NotNull TextHolder displayName);
 
     @NotNull
-    Component getSuffix();
+    TextHolder getPrefix();
 
-    void setSuffix(@NotNull Component suffix);
+    void setPrefix(@NotNull TextHolder prefix);
+
+    @NotNull
+    TextHolder getSuffix();
+
+    void setSuffix(@NotNull TextHolder suffix);
 
     @NotNull
     NameVisibility getNameVisibility();
@@ -80,28 +81,13 @@ public interface Team {
     interface Builder {
 
         @NotNull
-        Builder displayName(@NotNull Component displayName);
+        Builder displayName(@NotNull TextHolder displayName);
 
         @NotNull
-        default Builder displayName(@NotNull String displayName) {
-            return displayName(Component.text(displayName));
-        }
+        Builder prefix(@NotNull TextHolder prefix);
 
         @NotNull
-        Builder prefix(@NotNull Component prefix);
-
-        @NotNull
-        default Builder prefix(@NotNull String prefix) {
-            return prefix(Component.text(prefix));
-        }
-
-        @NotNull
-        Builder suffix(@NotNull Component suffix);
-
-        @NotNull
-        default Builder suffix(@NotNull String suffix) {
-            return suffix(Component.text(suffix));
-        }
+        Builder suffix(@NotNull TextHolder suffix);
 
         @NotNull
         Builder nameVisibility(@NotNull NameVisibility visibility);

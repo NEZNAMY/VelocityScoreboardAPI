@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.HealthDisplay;
 import com.velocitypowered.api.scoreboard.NumberFormat;
@@ -40,39 +41,22 @@ import java.util.Locale;
  */
 public class ObjectivePacket implements MinecraftPacket {
 
-    /**
-     * Packet priority (higher value = higher priority)
-     */
+    /** Packet priority (higher value = higher priority) */
     private final int packetPriority;
 
-    /**
-     * Packet action
-     */
+    /** Packet action */
     private ObjectiveAction action;
 
-    /**
-     * Name of this objective (up to 16 characters)
-     */
+    /**Name of this objective (up to 16 characters) */
     private String objectiveName;
 
-    /**
-     * Up to 32 character long title for <1.13 players
-     */
-    private String titleLegacy;
+    /** Objective title */
+    private TextHolder title;
 
-    /**
-     * Title for 1.13+ players
-     */
-    private ComponentHolder titleModern;
-
-    /**
-     * Health display for 1.8+
-     */
+    /** Health display for 1.8+ */
     private HealthDisplay healthDisplay;
 
-    /**
-     * Default number format for all scores in this objective (1.20.3+)
-     */
+    /** Default number format for all scores in this objective (1.20.3+) */
     private NumberFormat numberFormat;
 
     /**
@@ -88,18 +72,16 @@ public class ObjectivePacket implements MinecraftPacket {
      * @param packetPriority Packet priority
      * @param action         Packet action
      * @param objectiveName  Objective name
-     * @param titleLegacy    Objective title for 1.13 and under players
-     * @param titleModern    Objective title for 1.13+ players
+     * @param title          Objective title
      * @param healthDisplay  Health display for 1.8+ players
      * @param numberFormat   Default number format for all scores in this objective (1.20.3+)
      */
-    public ObjectivePacket(int packetPriority, @NotNull ObjectiveAction action, @NotNull String objectiveName, @Nullable String titleLegacy,
-                           @Nullable ComponentHolder titleModern, @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
+    public ObjectivePacket(int packetPriority, @NotNull ObjectiveAction action, @NotNull String objectiveName, @Nullable TextHolder title,
+                           @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
         this.packetPriority = packetPriority;
         this.action = action;
         this.objectiveName = objectiveName;
-        this.titleLegacy = titleLegacy;
-        this.titleModern = titleModern;
+        this.title = title;
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
     }
@@ -108,16 +90,16 @@ public class ObjectivePacket implements MinecraftPacket {
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         objectiveName = ProtocolUtils.readString(buf);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            titleLegacy = ProtocolUtils.readString(buf);
+            title = new TextHolder(ProtocolUtils.readString(buf));
         }
         action = ObjectiveAction.byId(buf.readByte());
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) return;
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                titleModern = ComponentHolder.read(buf, protocolVersion);
+                title = new TextHolder(ComponentHolder.read(buf, protocolVersion));
                 healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
             } else {
-                titleLegacy = ProtocolUtils.readString(buf);
+                title = new TextHolder(ProtocolUtils.readString(buf));
                 healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
@@ -132,17 +114,17 @@ public class ObjectivePacket implements MinecraftPacket {
     public void encode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         ProtocolUtils.writeString(buf, objectiveName);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            ProtocolUtils.writeString(buf, titleLegacy);
+            ProtocolUtils.writeString(buf, title.getLegacyText(32));
             buf.writeByte(action.ordinal());
             return;
         }
         buf.writeByte(action.ordinal());
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                titleModern.write(buf);
+                getComponentHolder(title, protocolVersion).write(buf);
                 ProtocolUtils.writeVarInt(buf, healthDisplay.ordinal());
             } else {
-                ProtocolUtils.writeString(buf, titleLegacy);
+                ProtocolUtils.writeString(buf, title.getLegacyText(32));
                 ProtocolUtils.writeString(buf, healthDisplay.toString());
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
@@ -152,6 +134,13 @@ public class ObjectivePacket implements MinecraftPacket {
                 }
             }
         }
+    }
+
+    @NotNull
+    private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
+        ComponentHolder holder = (ComponentHolder) textHolder.getComponentHolder();
+        if (holder == null) holder = new ComponentHolder(version, textHolder.getModernText());
+        return holder;
     }
 
     @Override
@@ -174,13 +163,8 @@ public class ObjectivePacket implements MinecraftPacket {
     }
 
     @Nullable
-    public String getTitleLegacy() {
-        return titleLegacy;
-    }
-
-    @Nullable
-    public ComponentHolder getTitleModern() {
-        return titleModern;
+    public TextHolder getTitle() {
+        return title;
     }
 
     @Nullable

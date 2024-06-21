@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.Lists;
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
 import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.CollisionRule;
@@ -28,10 +29,7 @@ import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -42,9 +40,9 @@ public class VelocityTeam implements Team {
 
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
-    @NotNull private Component displayName;
-    @NotNull private Component prefix;
-    @NotNull private Component suffix;
+    @NotNull private TextHolder displayName;
+    @NotNull private TextHolder prefix;
+    @NotNull private TextHolder suffix;
     @NotNull private NameVisibility nameVisibility;
     @NotNull private CollisionRule collisionRule;
     private int color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
@@ -53,8 +51,8 @@ public class VelocityTeam implements Team {
     @NotNull private final Collection<String> entries;
     private boolean registered = true;
 
-    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull Component displayName,
-                         @NotNull Component prefix, @NotNull Component suffix, @NotNull NameVisibility nameVisibility,
+    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TextHolder displayName,
+                         @NotNull TextHolder prefix, @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility,
                          @NotNull CollisionRule collisionRule, int color, boolean allowFriendlyFire,
                          boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
         this.scoreboard = scoreboard;
@@ -76,17 +74,17 @@ public class VelocityTeam implements Team {
     }
 
     @NotNull
-    public Component getDisplayName() {
+    public TextHolder getDisplayName() {
         return displayName;
     }
 
     @NotNull
-    public Component getPrefix() {
+    public TextHolder getPrefix() {
         return prefix;
     }
 
     @NotNull
-    public Component getSuffix() {
+    public TextHolder getSuffix() {
         return suffix;
     }
 
@@ -118,7 +116,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void setDisplayName(@NotNull Component displayName) {
+    public void setDisplayName(@NotNull TextHolder displayName) {
         checkState();
         if (this.displayName == displayName) return;
         this.displayName = displayName;
@@ -126,7 +124,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void setPrefix(@NotNull Component prefix) {
+    public void setPrefix(@NotNull TextHolder prefix) {
         checkState();
         if (this.prefix == prefix) return;
         this.prefix = prefix;
@@ -134,7 +132,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void setSuffix(@NotNull Component suffix) {
+    public void setSuffix(@NotNull TextHolder suffix) {
         checkState();
         if (this.suffix == suffix) return;
         this.suffix = suffix;
@@ -202,33 +200,17 @@ public class VelocityTeam implements Team {
     }
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        String legacyDisplayName = LegacyComponentSerializer.legacySection().serialize(displayName);
-        if (legacyDisplayName.length() > 16) legacyDisplayName = legacyDisplayName.substring(0, 16);
-        String legacyPrefix = LegacyComponentSerializer.legacySection().serialize(prefix);
-        if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
-        String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
-        if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
         scoreboard.getProxyServer().getEventManager().fireAndForget(new TeamEvent.Register(name));
         for (ConnectedPlayer player : players) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, legacyDisplayName,
-                    new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
-                    new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
-                    new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), entries));
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name,
+                    displayName, prefix, suffix, nameVisibility, collisionRule, color, getFlags(), entries));
         }
     }
 
     private void sendUpdate() {
-        String legacyDisplayName = LegacyComponentSerializer.legacySection().serialize(displayName);
-        if (legacyDisplayName.length() > 16) legacyDisplayName = legacyDisplayName.substring(0, 16);
-        String legacyPrefix = LegacyComponentSerializer.legacySection().serialize(prefix);
-        if (legacyPrefix.length() > 16) legacyPrefix = legacyPrefix.substring(0, 16);
-        String legacySuffix = LegacyComponentSerializer.legacySection().serialize(suffix);
-        if (legacySuffix.length() > 16) legacySuffix = legacySuffix.substring(0, 16);
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name, legacyDisplayName,
-                    new ComponentHolder(player.getProtocolVersion(), displayName), legacyPrefix,
-                    new ComponentHolder(player.getProtocolVersion(), prefix), legacySuffix,
-                    new ComponentHolder(player.getProtocolVersion(), suffix), nameVisibility, collisionRule, color, getFlags(), null));
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name,
+                    displayName, prefix, suffix, nameVisibility, collisionRule, color, getFlags(), null));
         }
     }
 
@@ -268,9 +250,9 @@ public class VelocityTeam implements Team {
     public static class Builder implements Team.Builder {
 
         @NotNull private final String name;
-        @NotNull private Component displayName;
-        @NotNull private Component prefix = Component.empty();
-        @NotNull private Component suffix = Component.empty();
+        @NotNull private TextHolder displayName;
+        @NotNull private TextHolder prefix = TextHolder.EMPTY;
+        @NotNull private TextHolder suffix = TextHolder.EMPTY;
         @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
         @NotNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
         private int color = DEFAULT_COLOR;
@@ -280,26 +262,26 @@ public class VelocityTeam implements Team {
 
         public Builder(@NotNull String name) {
             this.name = name;
-            this.displayName = Component.text(name);
+            this.displayName = new TextHolder(name);
         }
 
         @NotNull
         @Override
-        public Builder displayName(@NotNull Component displayName) {
+        public Builder displayName(@NotNull TextHolder displayName) {
             this.displayName = displayName;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder prefix(@NotNull Component prefix) {
+        public Builder prefix(@NotNull TextHolder prefix) {
             this.prefix = prefix;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder suffix(@NotNull Component suffix) {
+        public Builder suffix(@NotNull TextHolder suffix) {
             this.suffix = suffix;
             return this;
         }

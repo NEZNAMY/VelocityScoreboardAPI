@@ -39,6 +39,7 @@ package com.velocitypowered.proxy.scoreboard.downstream;
  *  limitations under the License.
  */
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.HealthDisplay;
 import com.velocitypowered.api.scoreboard.NumberFormat;
@@ -53,19 +54,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DownstreamObjective {
 
     @NotNull private final String objectiveName;
-    @Nullable private String titleLegacy;
-    @Nullable private ComponentHolder titleModern;
+    @Nullable private TextHolder title;
     @Nullable private HealthDisplay healthDisplay;
     @Nullable private NumberFormat numberFormat;
     @Nullable private DisplaySlot displaySlot;
     @NotNull private final Map<String, DownstreamScore> scores = new ConcurrentHashMap<>();
 
-    public DownstreamObjective(@NotNull String objectiveName, @Nullable String titleLegacy,
-                               @Nullable ComponentHolder titleModern, @Nullable HealthDisplay healthDisplay,
+    public DownstreamObjective(@NotNull String objectiveName, @NotNull TextHolder title, @Nullable HealthDisplay healthDisplay,
                                @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
         this.objectiveName = objectiveName;
-        this.titleLegacy = titleLegacy;
-        this.titleModern = titleModern;
+        this.title = title;
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
         this.displaySlot = displaySlot;
@@ -76,8 +74,7 @@ public class DownstreamObjective {
     }
 
     public void update(@NotNull ObjectivePacket packet) {
-        titleLegacy = packet.getTitleLegacy();
-        titleModern = packet.getTitleModern();
+        title = packet.getTitle();
         healthDisplay = packet.getHealthDisplay();
         numberFormat = packet.readNumberFormat();
     }

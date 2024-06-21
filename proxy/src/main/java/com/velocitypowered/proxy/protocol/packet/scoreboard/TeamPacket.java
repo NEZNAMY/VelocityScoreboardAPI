@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
@@ -50,23 +51,14 @@ public class TeamPacket implements MinecraftPacket {
     /** Team name, limited to 16 characters on <1.18 */
     private String name;
 
-    /** Display name of the team (used somewhere in spectator gamemode?) for <1.13 */
-    private String displayNameLegacy;
+    /** Display name of the team (used somewhere in spectator gamemode?) */
+    private TextHolder displayName;
 
-    /** Display name of the team (used somewhere in spectator gamemode?) for 1.13+ */
-    private ComponentHolder displayNameModern;
+    /** Team prefix */
+    private TextHolder prefix;
 
-    /** Team prefix for <1.13 (limited to 16 characters) */
-    private String prefixLegacy;
-
-    /** Team prefix for 1.13+ */
-    private ComponentHolder prefixModern;
-
-    /** Team suffix for <1.13 (limited to 16 characters) */
-    private String suffixLegacy;
-
-    /** Team suffix for 1.13+ */
-    private ComponentHolder suffixModern;
+    /** Team suffix */
+    private TextHolder suffix;
 
     /** Nametag visibility for 1.8+ */
     private NameVisibility nameTagVisibility;
@@ -104,19 +96,15 @@ public class TeamPacket implements MinecraftPacket {
         this.packetPriority = packetPriority;
     }
 
-    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name, @Nullable String displayNameLegacy,
-                      @Nullable ComponentHolder displayNameModern, @Nullable String prefixLegacy, @Nullable ComponentHolder prefixModern,
-                      @Nullable String suffixLegacy, @Nullable ComponentHolder suffixModern, @NotNull NameVisibility nameTagVisibility,
+    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name, @Nullable TextHolder displayName,
+                      @Nullable TextHolder prefix, @Nullable TextHolder suffix, @NotNull NameVisibility nameTagVisibility,
                       @NotNull CollisionRule collisionRule, int color, byte flags, @Nullable Collection<String> entries) {
         this.packetPriority = packetPriority;
         this.action = action;
         this.name = name;
-        this.displayNameLegacy = displayNameLegacy;
-        this.displayNameModern = displayNameModern;
-        this.prefixLegacy = prefixLegacy;
-        this.prefixModern = prefixModern;
-        this.suffixLegacy = suffixLegacy;
-        this.suffixModern = suffixModern;
+        this.displayName = displayName;
+        this.prefix = prefix;
+        this.suffix = suffix;
         this.nameTagVisibility = nameTagVisibility;
         this.collisionRule = collisionRule;
         this.color = color;
@@ -167,11 +155,11 @@ public class TeamPacket implements MinecraftPacket {
         action = TeamAction.byId(buf.readByte());
         if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
             if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                displayNameLegacy = ProtocolUtils.readString(buf);
-                prefixLegacy = ProtocolUtils.readString(buf);
-                suffixLegacy = ProtocolUtils.readString(buf);
+                displayName = new TextHolder(ProtocolUtils.readString(buf));
+                prefix = new TextHolder(ProtocolUtils.readString(buf));
+                suffix = new TextHolder(ProtocolUtils.readString(buf));
             } else {
-                displayNameModern = ComponentHolder.read(buf, protocolVersion);
+                displayName = new TextHolder(ComponentHolder.read(buf, protocolVersion));
             }
             flags = buf.readByte();
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
@@ -182,8 +170,8 @@ public class TeamPacket implements MinecraftPacket {
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 color = ProtocolUtils.readVarInt(buf);
-                prefixModern = ComponentHolder.read(buf, protocolVersion);
-                suffixModern = ComponentHolder.read(buf, protocolVersion);
+                prefix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
+                suffix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
             } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 color = buf.readByte();
             }
@@ -203,11 +191,11 @@ public class TeamPacket implements MinecraftPacket {
         buf.writeByte(action.ordinal());
         if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
             if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                ProtocolUtils.writeString(buf, displayNameLegacy);
-                ProtocolUtils.writeString(buf, prefixLegacy);
-                ProtocolUtils.writeString(buf, suffixLegacy);
+                ProtocolUtils.writeString(buf, displayName.getLegacyText(16));
+                ProtocolUtils.writeString(buf, prefix.getLegacyText(16));
+                ProtocolUtils.writeString(buf, suffix.getLegacyText(16));
             } else {
-                displayNameModern.write(buf);
+                getComponentHolder(displayName, protocolVersion).write(buf);
             }
             buf.writeByte(flags);
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
@@ -218,8 +206,8 @@ public class TeamPacket implements MinecraftPacket {
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 ProtocolUtils.writeVarInt(buf, color);
-                prefixModern.write(buf);
-                suffixModern.write(buf);
+                getComponentHolder(prefix, protocolVersion).write(buf);
+                getComponentHolder(suffix, protocolVersion).write(buf);
             } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
                 // buf.writeByte(color);
@@ -235,6 +223,13 @@ public class TeamPacket implements MinecraftPacket {
                 ProtocolUtils.writeString(buf, player);
             }
         }
+    }
+
+    @NotNull
+    private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
+        ComponentHolder holder = (ComponentHolder) textHolder.getComponentHolder();
+        if (holder == null) holder = new ComponentHolder(version, textHolder.getModernText());
+        return holder;
     }
 
     @Override
@@ -256,35 +251,19 @@ public class TeamPacket implements MinecraftPacket {
         return name;
     }
 
-
     @Nullable
-    public String getDisplayNameLegacy() {
-        return displayNameLegacy;
+    public TextHolder getDisplayName() {
+        return displayName;
     }
 
     @Nullable
-    public ComponentHolder getDisplayNameModern() {
-        return displayNameModern;
+    public TextHolder getPrefix() {
+        return prefix;
     }
 
     @Nullable
-    public String getPrefixLegacy() {
-        return prefixLegacy;
-    }
-
-    @Nullable
-    public ComponentHolder getPrefixModern() {
-        return prefixModern;
-    }
-
-    @Nullable
-    public String getSuffixLegacy() {
-        return suffixLegacy;
-    }
-
-    @Nullable
-    public ComponentHolder getSuffixModern() {
-        return suffixModern;
+    public TextHolder getSuffix() {
+        return suffix;
     }
 
     @NotNull

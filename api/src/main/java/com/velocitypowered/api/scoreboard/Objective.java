@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,9 +38,9 @@ public interface Objective {
     String getName();
 
     @NotNull
-    Component getTitle();
+    TextHolder getTitle();
 
-    void setTitle(@NotNull Component title);
+    void setTitle(@NotNull TextHolder title);
 
     @NotNull
     HealthDisplay getHealthDisplay();
@@ -73,7 +74,7 @@ public interface Objective {
     interface Builder extends NumberFormat.Builder {
 
         @NotNull
-        Builder title(@NotNull Component title);
+        Builder title(@NotNull TextHolder title);
 
         @NotNull
         Builder healthDisplay(@NotNull HealthDisplay healthDisplay);

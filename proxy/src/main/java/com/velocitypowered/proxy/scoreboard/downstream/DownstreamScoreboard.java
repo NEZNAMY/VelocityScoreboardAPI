@@ -49,8 +49,7 @@ public class DownstreamScoreboard {
                 } else {
                     objectives.put(packet.getObjectiveName(), new DownstreamObjective(
                             packet.getObjectiveName(),
-                            packet.getTitleLegacy(),
-                            packet.getTitleModern(),
+                            packet.getTitle(),
                             packet.getHealthDisplay(),
                             packet.readNumberFormat(),
                             null

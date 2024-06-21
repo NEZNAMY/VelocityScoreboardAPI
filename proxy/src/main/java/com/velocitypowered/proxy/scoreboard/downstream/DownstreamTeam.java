@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.proxy.data.PacketLogger;
@@ -34,12 +35,9 @@ import java.util.Collection;
 public class DownstreamTeam {
     
     @NotNull private final String name;
-    @Nullable private String displayNameLegacy;
-    @Nullable private ComponentHolder displayNameModern;
-    @Nullable private String prefixLegacy;
-    @Nullable private ComponentHolder prefixModern;
-    @Nullable private String suffixLegacy;
-    @Nullable private ComponentHolder suffixModern;
+    @NotNull private TextHolder displayName;
+    @NotNull private TextHolder prefix;
+    @NotNull private TextHolder suffix;
     @NotNull private NameVisibility nameVisibility;
     @NotNull private CollisionRule collisionRule;
     private int color;
@@ -47,17 +45,13 @@ public class DownstreamTeam {
     boolean canSeeFriendlyInvisibles;
     @NotNull private final Collection<String> entries;
 
-    public DownstreamTeam(@NotNull String name, @Nullable String displayNameLegacy, @Nullable ComponentHolder displayNameModern,
-                          @Nullable String prefixLegacy, @Nullable ComponentHolder prefixModern, @Nullable String suffixLegacy,
-                          @Nullable ComponentHolder suffixModern, @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule,
+    public DownstreamTeam(@NotNull String name, @NotNull TextHolder displayName, @NotNull TextHolder prefix,
+                          @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule,
                           int color, boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
         this.name = name;
-        this.displayNameLegacy = displayNameLegacy;
-        this.displayNameModern = displayNameModern;
-        this.prefixLegacy = prefixLegacy;
-        this.prefixModern = prefixModern;
-        this.suffixLegacy = suffixLegacy;
-        this.suffixModern = suffixModern;
+        this.displayName = displayName;
+        this.prefix = prefix;
+        this.suffix = suffix;
         this.nameVisibility = nameVisibility;
         this.collisionRule = collisionRule;
         this.color = color;
@@ -70,12 +64,9 @@ public class DownstreamTeam {
     public static DownstreamTeam create(@NotNull TeamPacket packet) {
         return new DownstreamTeam(
                 packet.getName(),
-                packet.getDisplayNameLegacy(),
-                packet.getDisplayNameModern(),
-                packet.getPrefixLegacy(),
-                packet.getPrefixModern(),
-                packet.getSuffixLegacy(),
-                packet.getSuffixModern(),
+                packet.getDisplayName(),
+                packet.getPrefix(),
+                packet.getSuffix(),
                 packet.getNameTagVisibility(),
                 packet.getCollisionRule(),
                 packet.getColor(), 
@@ -86,12 +77,9 @@ public class DownstreamTeam {
     }
     
     public void update(@NotNull TeamPacket packet) {
-        displayNameLegacy = packet.getDisplayNameLegacy();
-        displayNameModern = packet.getDisplayNameModern();
-        prefixLegacy = packet.getPrefixLegacy();
-        prefixModern = packet.getPrefixModern();
-        suffixLegacy = packet.getSuffixLegacy();
-        suffixModern = packet.getSuffixModern();
+        displayName = packet.getDisplayName();
+        prefix = packet.getPrefix();
+        suffix = packet.getSuffix();
         nameVisibility = packet.getNameTagVisibility();
         collisionRule = packet.getCollisionRule();
         color = packet.getColor();
