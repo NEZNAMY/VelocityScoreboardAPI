@@ -64,7 +64,7 @@ public class VelocityScoreboardAPI {
     @Subscribe
     @SuppressWarnings("UnstableApiUsage")
     public void onSwitch(ServerPostConnectEvent e) {
-        System.out.println(e.getClass().getName());
+        /*System.out.println(e.getClass().getName());
         final ScoreboardManager manager = ScoreboardManager.getInstance();
         Scoreboard scoreboard = manager.getNewScoreboard(1);
         //scoreboard.addPlayer(e.getPlayer());
@@ -86,6 +86,6 @@ public class VelocityScoreboardAPI {
                 .prefix(Component.text("prefix "))
                 .suffix(Component.text(" suffix"))
                 .entries(e.getPlayer().getUsername()));
-        scoreboard.addPlayer(e.getPlayer());
+        scoreboard.addPlayer(e.getPlayer());*/
     }
 }
