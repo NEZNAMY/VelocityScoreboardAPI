@@ -111,20 +111,8 @@ subprojects {
         if (['api'].contains(project.name)) {
             publications {
                 mavenJavaCommon(MavenPublication) {
-                    groupId = 'com.velocitypowered'
-                    artifactId = 'scoreboard-api'
-                    version = "$rootProject.version"
-                    artifact shadowJar
-                    artifact sourcesJar
-                    artifact javadocJar
-                }
-            }
-        }
-        if (['proxy'].contains(project.name)) {
-            publications {
-                mavenJavaBukkit(MavenPublication) {
-                    groupId = 'com.velocitypowered'
-                    artifactId = 'scoreboard-proxy'
+                    groupId = 'net.william278'
+                    artifactId = 'velocity-scoreboard-api'
                     version = "$rootProject.version"
                     artifact shadowJar
                     artifact sourcesJar
