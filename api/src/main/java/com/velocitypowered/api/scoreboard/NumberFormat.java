@@ -30,17 +30,17 @@ import org.jetbrains.annotations.NotNull;
 public interface NumberFormat {
 
     @NotNull
-    default NumberFormat blank() {
+    static NumberFormat blank() {
         return BlankFormat.INSTANCE;
     }
 
     @NotNull
-    default NumberFormat styled(@NotNull Style style) {
+    static NumberFormat styled(@NotNull Style style) {
         return new StyledFormat(style);
     }
 
     @NotNull
-    default NumberFormat fixed(@NotNull Component text) {
+    static NumberFormat fixed(@NotNull Component text) {
         return new FixedFormat(text);
     }
 
