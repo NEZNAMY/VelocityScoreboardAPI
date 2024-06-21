@@ -24,10 +24,8 @@ import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.proxy.data.PacketLogger;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,22 +58,6 @@ public class DownstreamTeam {
         this.entries = entries;
     }
 
-    @NotNull
-    public static DownstreamTeam create(@NotNull TeamPacket packet) {
-        return new DownstreamTeam(
-                packet.getName(),
-                packet.getDisplayName(),
-                packet.getPrefix(),
-                packet.getSuffix(),
-                packet.getNameTagVisibility(),
-                packet.getCollisionRule(),
-                packet.getColor(), 
-                (packet.getFlags() & 0x01) > 0, 
-                (packet.getFlags() & 0x02) > 0,
-                packet.getEntries()
-        );
-    }
-    
     public void update(@NotNull TeamPacket packet) {
         displayName = packet.getDisplayName();
         prefix = packet.getPrefix();
