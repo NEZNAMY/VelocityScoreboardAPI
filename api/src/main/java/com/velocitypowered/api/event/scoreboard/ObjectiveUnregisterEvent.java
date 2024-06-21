@@ -18,15 +18,28 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.api.scoreboard;
+package com.velocitypowered.api.event.scoreboard;
 
-import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.event.ResultedEvent;
+import com.velocitypowered.api.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface ScoreboardProvider {
+public class ObjectiveUnregisterEvent extends ObjectiveEvent implements ResultedEvent<ResultedEvent.GenericResult> {
 
-    @NotNull
-    Scoreboard createScoreboard(int priority, @NotNull ProxyServer server);
+    private GenericResult result = GenericResult.allowed();
+
+    public ObjectiveUnregisterEvent(@NotNull Objective objective) {
+        super(objective);
+    }
+
+    @Override
+    public GenericResult getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(@NotNull GenericResult genericResult) {
+        this.result = genericResult;
+    }
 
 }

@@ -21,6 +21,7 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,9 +33,11 @@ public class ScoreboardManager {
     private static ScoreboardManager INSTANCE;
 
     private final ScoreboardProvider provider;
+    private final ProxyServer server;
 
-    private ScoreboardManager(@NotNull ScoreboardProvider provider) {
+    private ScoreboardManager(@NotNull ScoreboardProvider provider, @NotNull ProxyServer server) {
         this.provider = provider;
+        this.server = server;
     }
 
     /**
@@ -48,15 +51,15 @@ public class ScoreboardManager {
     }
 
     @ApiStatus.Internal
-    public static void registerApi(@NotNull ScoreboardProvider instance) {
-        INSTANCE = new ScoreboardManager(instance);
+    public static void registerApi(@NotNull ScoreboardProvider instance, @NotNull ProxyServer server) {
+        INSTANCE = new ScoreboardManager(instance, server);
     }
 
     @NotNull
     public Scoreboard getNewScoreboard(int priority) {
         if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
         if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-        return provider.createScoreboard(priority);
+        return provider.createScoreboard(priority, server);
     }
 
     public void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {

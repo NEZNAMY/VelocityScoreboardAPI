@@ -18,15 +18,29 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.api.scoreboard;
+package com.velocitypowered.api.event.scoreboard;
 
-import com.velocitypowered.api.proxy.ProxyServer;
+import com.google.common.base.Preconditions;
+import com.velocitypowered.api.scoreboard.Objective;
+import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface ScoreboardProvider {
+public abstract class TeamEvent {
+
+    private Team objective;
+
+    public TeamEvent(@NotNull Team objective) {
+        this.objective = objective;
+    }
 
     @NotNull
-    Scoreboard createScoreboard(int priority, @NotNull ProxyServer server);
+    public Team getObjective() {
+        return objective;
+    }
+
+    public void setObjective(@NotNull Team team) {
+        Preconditions.checkNotNull(team, "team");
+        this.objective = team;
+    }
 
 }

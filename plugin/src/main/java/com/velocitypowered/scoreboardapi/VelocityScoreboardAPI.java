@@ -20,18 +20,22 @@
 
 package com.velocitypowered.scoreboardapi;
 
+import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 public class VelocityScoreboardAPI {
 
-    public VelocityScoreboardAPI() throws Exception {
+    @Inject
+    public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != ProtocolVersion.MINECRAFT_1_21) {
                 throw new IllegalStateException("Your Velocity build is too new for this plugin version. This plugin version only supports up to 1.21" +
@@ -41,7 +45,7 @@ public class VelocityScoreboardAPI {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets();
-        ScoreboardManager.registerApi(VelocityScoreboard::new);
+        ScoreboardManager.registerApi(VelocityScoreboard::new, server);
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 

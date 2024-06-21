@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.event.scoreboard.ObjectiveDisplayEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
@@ -94,9 +95,12 @@ public class VelocityObjective implements Objective {
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
         this.displaySlot = displaySlot;
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
-        }
+        scoreboard.getProxyServer().getEventManager().fire(new ObjectiveDisplayEvent(this, displaySlot)).thenAccept((event) -> {
+            if (!event.getResult().isAllowed()) return;
+            for (ConnectedPlayer player : scoreboard.getPlayers()) {
+                player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
+            }
+        });
     }
 
     @Override
