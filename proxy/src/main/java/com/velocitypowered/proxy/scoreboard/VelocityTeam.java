@@ -233,7 +233,7 @@ public class VelocityTeam implements Team {
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
         scoreboard.getProxyServer().getEventManager().fireAndForget(
-                add ? new TeamEntryEvent.Add(entry, name) : new TeamEntryEvent.Remove(entry, name)
+                add ? new TeamEntryEvent.Add(name, entry) : new TeamEntryEvent.Remove(name, entry)
         );
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));

@@ -20,7 +20,6 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
-import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class TeamEvent {
