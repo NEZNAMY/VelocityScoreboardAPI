@@ -20,19 +20,20 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class ScoreboardManager {
 
     @NotNull private final Player player;
     @NotNull private final DownstreamScoreboard downstreamScoreboard;
-    @NotNull private final Set<VelocityScoreboard> pluginScoreboards = new HashSet<>();
+    @NotNull private final Multimap<Object, VelocityScoreboard> pluginScoreboards = Multimaps.newSetMultimap(Maps.newConcurrentMap(), Sets::newConcurrentHashSet);
 
     public ScoreboardManager(@NotNull Player player) {
         this.player = player;
@@ -45,16 +46,17 @@ public class ScoreboardManager {
     }
 
     public void registerScoreboard(@NotNull VelocityScoreboard scoreboard) {
-        if (!pluginScoreboards.add(scoreboard)) throw new IllegalStateException("The player is already in this scoreboard");
+        if (!pluginScoreboards.put(scoreboard.holder(), scoreboard)) throw new IllegalStateException("The player is already in this scoreboard");
     }
 
     public void unregisterScoreboard(@NotNull VelocityScoreboard scoreboard) {
-        if (!pluginScoreboards.remove(scoreboard)) throw new IllegalStateException("The player is not in this scoreboard");
+        if (!pluginScoreboards.remove(scoreboard.holder(), scoreboard)) throw new IllegalStateException("The player is not in this scoreboard");
     }
 
     public void handleDisconnect() {
-        for (VelocityScoreboard scoreboard : pluginScoreboards) {
+        for (VelocityScoreboard scoreboard : pluginScoreboards.values()) {
             scoreboard.getPlayers().remove((ConnectedPlayer) player);
         }
+        pluginScoreboards.clear();
     }
 }

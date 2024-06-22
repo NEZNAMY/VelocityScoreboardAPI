@@ -66,4 +66,6 @@ public interface Scoreboard {
 
     void unregisterTeam(@NotNull String teamName);
 
+    Object holder();
+
 }

@@ -50,7 +50,7 @@ public class VelocityScoreboardAPI {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
-        ScoreboardManager.registerApi(VelocityScoreboard::new, server);
+        ScoreboardManager.registerApi(server);
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 
@@ -61,7 +61,7 @@ public class VelocityScoreboardAPI {
 
     @Subscribe
     public void onQuit(DisconnectEvent e) {
-        DataHolder.getScoreboardManager(e.getPlayer()).handleDisconnect();
+        DataHolder.removeScoreboardManager(e.getPlayer());
     }
 
     @Subscribe
@@ -69,7 +69,7 @@ public class VelocityScoreboardAPI {
     public void onSwitch(ServerPostConnectEvent e) {
         /*System.out.println(e.getClass().getName());
         final ScoreboardManager manager = ScoreboardManager.getInstance();
-        Scoreboard scoreboard = manager.getNewScoreboard(1);
+        Scoreboard scoreboard = manager.getNewScoreboard(1, (priority, server) -> new VelocityScoreboard(priority, server, this));
         //scoreboard.addPlayer(e.getPlayer());
         Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
                 .title(Component.text("§4§lTitle"))

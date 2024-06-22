@@ -24,6 +24,7 @@ import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
+import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
@@ -67,7 +68,7 @@ public class TeamPacket implements MinecraftPacket {
     private CollisionRule collisionRule;
 
     /** Team color enum */
-    private int color;
+    private TeamColor color;
 
     /**
      * Team options:
@@ -98,7 +99,7 @@ public class TeamPacket implements MinecraftPacket {
 
     public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name, @Nullable TextHolder displayName,
                       @Nullable TextHolder prefix, @Nullable TextHolder suffix, @NotNull NameVisibility nameTagVisibility,
-                      @NotNull CollisionRule collisionRule, int color, byte flags, @Nullable Collection<String> entries) {
+                      @NotNull CollisionRule collisionRule, @NotNull TeamColor color, byte flags, @Nullable Collection<String> entries) {
         this.packetPriority = packetPriority;
         this.action = action;
         this.name = name;
@@ -168,6 +169,7 @@ public class TeamPacket implements MinecraftPacket {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
                 collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
             }
+            int color = 0;
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 color = ProtocolUtils.readVarInt(buf);
                 prefix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
@@ -175,6 +177,7 @@ public class TeamPacket implements MinecraftPacket {
             } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
                 color = buf.readByte();
             }
+            this.color = TeamColor.getById(color);
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
             int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
@@ -205,7 +208,7 @@ public class TeamPacket implements MinecraftPacket {
                 ProtocolUtils.writeString(buf, collisionRule.toString());
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                ProtocolUtils.writeVarInt(buf, color);
+                ProtocolUtils.writeVarInt(buf, color.id());
                 getComponentHolder(prefix, protocolVersion).write(buf);
                 getComponentHolder(suffix, protocolVersion).write(buf);
             } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
@@ -276,7 +279,8 @@ public class TeamPacket implements MinecraftPacket {
         return collisionRule;
     }
 
-    public int getColor() {
+    @NotNull
+    public TeamColor getColor() {
         return color;
     }
 

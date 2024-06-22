@@ -20,6 +20,8 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -33,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements Scoreboard {
 
@@ -42,15 +43,17 @@ public class VelocityScoreboard implements Scoreboard {
     /** Priority of this scoreboard */
     private final int priority;
     private final ProxyServer server;
+    private final Object plugin;
 
-    private final Collection<ConnectedPlayer> players = new HashSet<>();
-    private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
-    private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
-    private final EnumMap<DisplaySlot, VelocityObjective> displaySlots = new EnumMap<>(DisplaySlot.class);
+    private final Collection<ConnectedPlayer> players = Sets.newConcurrentHashSet();
+    private final Map<String, VelocityObjective> objectives = Maps.newConcurrentMap();
+    private final Map<String, VelocityTeam> teams = Maps.newConcurrentMap();
+    private final Map<DisplaySlot, VelocityObjective> displaySlots = Maps.newConcurrentMap();
 
-    public VelocityScoreboard(int priority, @NotNull ProxyServer server) {
+    public VelocityScoreboard(int priority, @NotNull ProxyServer server, @NotNull Object plugin) {
         this.priority = priority;
         this.server = server;
+        this.plugin = plugin;
     }
 
     @NotNull
@@ -151,6 +154,11 @@ public class VelocityScoreboard implements Scoreboard {
     public void unregisterTeam(@NotNull String teamName) {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         teams.remove(teamName).sendUnregister(players);
+    }
+
+    @Override
+    public Object holder() {
+        return plugin;
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {

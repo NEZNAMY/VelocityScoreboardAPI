@@ -22,10 +22,7 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.Lists;
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.scoreboard.CollisionRule;
-import com.velocitypowered.api.scoreboard.NameVisibility;
-import com.velocitypowered.api.scoreboard.Scoreboard;
-import com.velocitypowered.api.scoreboard.Team;
+import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +31,6 @@ import java.util.Collection;
 
 public class VelocityTeam implements Team {
 
-    static final int DEFAULT_COLOR = 21;
-
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
     @NotNull private TextHolder displayName;
@@ -43,7 +38,7 @@ public class VelocityTeam implements Team {
     @NotNull private TextHolder suffix;
     @NotNull private NameVisibility nameVisibility;
     @NotNull private CollisionRule collisionRule;
-    private int color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
+    @NotNull private TeamColor color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
     @NotNull private final Collection<String> entries;
@@ -51,7 +46,7 @@ public class VelocityTeam implements Team {
 
     private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TextHolder displayName,
                          @NotNull TextHolder prefix, @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility,
-                         @NotNull CollisionRule collisionRule, int color, boolean allowFriendlyFire,
+                         @NotNull CollisionRule collisionRule, @NotNull TeamColor color, boolean allowFriendlyFire,
                          boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
         this.scoreboard = scoreboard;
         this.name = name;
@@ -96,7 +91,8 @@ public class VelocityTeam implements Team {
         return collisionRule;
     }
 
-    public int getColor() {
+    @NotNull
+    public TeamColor getColor() {
         return color;
     }
 
@@ -154,7 +150,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void setColor(int color) {
+    public void setColor(TeamColor color) {
         checkState();
         if (this.color == color) return;
         this.color = color;
@@ -249,7 +245,7 @@ public class VelocityTeam implements Team {
         @NotNull private TextHolder suffix = TextHolder.EMPTY;
         @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
         @NotNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
-        private int color = DEFAULT_COLOR;
+        private TeamColor color = TeamColor.WHITE;
         private boolean allowFriendlyFire = true;
         private boolean canSeeFriendlyInvisibles = false;
         @NotNull private Collection<String> entries = Lists.newArrayList();
@@ -296,7 +292,7 @@ public class VelocityTeam implements Team {
 
         @NotNull
         @Override
-        public Builder color(int color) {
+        public Builder color(@NotNull TeamColor color) {
             this.color = color;
             return this;
         }

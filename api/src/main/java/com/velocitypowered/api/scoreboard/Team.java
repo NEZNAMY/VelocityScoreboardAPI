@@ -59,9 +59,10 @@ public interface Team {
 
     void setCollisionRule(@NotNull CollisionRule collisionRule);
 
-    int getColor();
+    @NotNull
+    TeamColor getColor();
 
-    void setColor(int color);
+    void setColor(@NotNull TeamColor color);
 
     boolean isAllowFriendlyFire();
 
@@ -96,7 +97,7 @@ public interface Team {
         Builder collisionRule(@NotNull CollisionRule collisionRule);
 
         @NotNull
-        Builder color(int color);
+        Builder color(@NotNull TeamColor color);
 
         @NotNull
         Builder allowFriendlyFire(boolean friendlyFire);

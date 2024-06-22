@@ -20,22 +20,24 @@
 
 package com.velocitypowered.proxy.data;
 
+import com.google.common.collect.Maps;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scoreboard.Score;
 import com.velocitypowered.proxy.scoreboard.ScoreboardManager;
-import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class DataHolder {
 
-    private static final Map<Player, ScoreboardManager> SCOREBOARD_MANAGERS = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<UUID, ScoreboardManager> SCOREBOARD_MANAGERS = Maps.newConcurrentMap();
 
     @NotNull
     public static ScoreboardManager getScoreboardManager(@NotNull Player player) {
-        return SCOREBOARD_MANAGERS.computeIfAbsent(player, ScoreboardManager::new);
+        return SCOREBOARD_MANAGERS.computeIfAbsent(player.getUniqueId(), uuid -> new ScoreboardManager(player));
+    }
+
+    public static void removeScoreboardManager(@NotNull Player player) {
+        Optional.ofNullable(SCOREBOARD_MANAGERS.remove(player.getUniqueId()))
+                .ifPresent(ScoreboardManager::handleDisconnect);
     }
 }
