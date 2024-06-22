@@ -88,7 +88,6 @@ public class DownstreamScoreboard {
 
     public void handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScorePacket.ScoreAction.SET) {
-            if (packet.getObjectiveName() == null) return; // Invalid packet
             handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
         } else {
             handleReset(packet.getObjectiveName(), packet.getScoreHolder());
