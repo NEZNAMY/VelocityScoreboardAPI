@@ -45,7 +45,7 @@ public class TextHolder {
     @Nullable
     private Component modernText;
 
-    /** Interval value used when this value was deserialized in packet decoder */
+    /** Internal value used when this value was deserialized in packet decoder */
     @Nullable
     private Object componentHolder;
 
