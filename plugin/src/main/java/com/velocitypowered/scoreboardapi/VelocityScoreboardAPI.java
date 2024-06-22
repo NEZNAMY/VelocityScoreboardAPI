@@ -21,17 +21,25 @@
 package com.velocitypowered.scoreboardapi;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.DataHolder;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardProvider;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TODO:
@@ -44,13 +52,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class VelocityScoreboardAPI {
 
+    private final ProxyServer server;
+
     /**
      * Constructs new instance with given server.
      *
-     * @param   server
-     *          Server instance
-     * @throws  Exception
-     *          If thrown during packer registration
+     * @param server Server instance
+     * @throws Exception If thrown during packer registration
      */
     @Inject
     public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
@@ -68,24 +76,46 @@ public class VelocityScoreboardAPI {
         PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
         ScoreboardManager.registerApi(server, new VelocityScoreboardProvider());
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
+        this.server = server;
     }
 
     /**
      * Injects custom channel duplex handler to listen to JoinGame packet.
      *
-     * @param   e
-     *          Login event
+     * @param e Login event
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
-        ((ConnectedPlayer)e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
+        ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
+    }
+
+    @Subscribe
+    public void onConnect(ServerPostConnectEvent e) {
+//        sendTestScoreboard(e.getPlayer());
+    }
+
+    private void sendTestScoreboard(Player player) {
+        Scoreboard scoreboard = ScoreboardManager.getInstance().getNewScoreboard(1, this);
+        scoreboard.addPlayer(player);
+        scoreboard.createObjective("test", (b) -> {
+            b.numberFormat(NumberFormat.styled(MiniMessage.miniMessage().deserialize("<red>").style()));
+            b.title(new TextHolder(Component.text("Test")));
+            b.displaySlot(DisplaySlot.SIDEBAR);
+        });
+        AtomicInteger i = new AtomicInteger(0);
+        server.getScheduler().buildTask(this, () -> {
+            scoreboard.getObjective("test").createScore("test", (b) -> {
+                b.score(i.getAndIncrement());
+                b.numberFormat(NumberFormat.styled(MiniMessage.miniMessage().deserialize("<green>").style()));
+                b.displayName(MiniMessage.miniMessage().deserialize("<gray>Test"));
+            });
+        }).repeat(1, TimeUnit.SECONDS).schedule();
     }
 
     /**
      * Removes player from scoreboards and map of scoreboards.
      *
-     * @param   e
-     *          Disconnect event
+     * @param e Disconnect event
      */
     @Subscribe
     public void onQuit(DisconnectEvent e) {

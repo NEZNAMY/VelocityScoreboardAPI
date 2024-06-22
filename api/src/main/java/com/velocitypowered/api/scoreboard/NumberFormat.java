@@ -20,8 +20,10 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.serializer.nbt.NBTComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -75,13 +77,30 @@ public interface NumberFormat {
     }
 
     /**
-     * Formatter that applies style to all scores.
      *
-     * @param   style
-     *          Style to apply to all scores
      */
-    record StyledFormat(@NotNull Style style) implements NumberFormat {
+    class StyledFormat implements NumberFormat {
+
+        private final Style style;
+
+        public StyledFormat(@NotNull CompoundBinaryTag tag) {
+            this(NBTComponentSerializer.nbt().deserializeStyle(tag));
+        }
+
+        public StyledFormat(@NotNull Style style) {
+            this.style = style;
+        }
+
+        public Style getStyle() {
+            return style;
+        }
+
+        public CompoundBinaryTag serialize() {
+            return NBTComponentSerializer.nbt().serializeStyle(style);
+        }
     }
+
+
 
     /**
      * Formatter that replaces score with specified text.

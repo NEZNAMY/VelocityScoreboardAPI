@@ -47,8 +47,7 @@ public class NumberFormatEncoder {
         int format = ProtocolUtils.readVarInt(buf);
         return switch (format) {
             case 0 -> NumberFormat.BlankFormat.INSTANCE;
-            case 1 -> NumberFormat.BlankFormat.INSTANCE;
-            //return new NumberFormat(Type.STYLED, readComponentStyle(buf, protocolVersion)); //TODO
+            case 1 -> new NumberFormat.StyledFormat(ProtocolUtils.readCompoundTag(buf, ver, null));
             case 2 -> new DeserializedFixedFormat(ComponentHolder.read(buf, ver));
             default -> throw new IllegalArgumentException("Unknown number format " + format);
         };
@@ -68,10 +67,8 @@ public class NumberFormatEncoder {
         if (format instanceof NumberFormat.BlankFormat) {
             ProtocolUtils.writeVarInt(buf, 0);
         } else if (format instanceof NumberFormat.StyledFormat styled) {
-            ProtocolUtils.writeVarInt(buf, 0); // write BLANK before this gets implemented
-
-            //ProtocolUtils.writeVarInt(buf, 1);
-            //writeComponentStyle((ComponentStyle) format.getValue(), buf, protocolVersion); //TODO
+            ProtocolUtils.writeVarInt(buf, 1);
+            ProtocolUtils.writeBinaryTag(buf, ver, styled.serialize());
         } else if (format instanceof NumberFormat.FixedFormat fixed) {
             ProtocolUtils.writeVarInt(buf, 2);
             new ComponentHolder(ver, fixed.component()).write(buf);
