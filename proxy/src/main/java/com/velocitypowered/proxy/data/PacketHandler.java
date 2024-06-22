@@ -29,8 +29,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 
+/**
+ * This class handles outgoing scoreboard packets, allowing to cancel them.
+ * If Scoreboard API gets merged into Velocity, content of this class will be moved to
+ * {@link MinecraftSessionHandler} class.
+ */
 public class PacketHandler {
 
+    /** Server connection field, because it is private */
     private static final Field serverConn;
 
     static {
@@ -42,6 +48,13 @@ public class PacketHandler {
         }
     }
 
+    /**
+     * Gets player from minecraft session handler.
+     *
+     * @param   handler
+     *          Handler to get player from
+     * @return  Player this handler belongs to
+     */
     @NotNull
     private static Player getPlayer(@NotNull MinecraftSessionHandler handler) {
         try {
@@ -52,31 +65,85 @@ public class PacketHandler {
         }
     }
 
+    /**
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
+    /**
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
+    /**
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
+    /**
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
-
+    /**
+     *
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
     }
 
+    /**
+     * Handles outgoing scoreboard packet.
+     *
+     * @param   handler
+     *          Handler that received the packet
+     * @param   packet
+     *          Received packet
+     * @return  {@code true} if packet should be cancelled, {@code false} if not
+     */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
         if (packet.getPacketPriority() == 0) DataHolder.getScoreboardManager(getPlayer(handler)).getDownstreamScoreboard().handle(packet);
         return false;
