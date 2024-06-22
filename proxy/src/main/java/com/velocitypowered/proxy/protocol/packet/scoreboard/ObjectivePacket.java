@@ -148,7 +148,6 @@ public class ObjectivePacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
-
     /**
      * Returns priority of this packet.
      *
