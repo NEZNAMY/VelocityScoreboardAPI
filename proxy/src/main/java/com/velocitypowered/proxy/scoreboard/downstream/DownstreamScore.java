@@ -25,17 +25,46 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * A score that comes from a backend scoreboard.
+ */
 public class DownstreamScore {
 
-    @NotNull private final String holder;
-    private int score;
-    @Nullable private ComponentHolder displayName;
-    @Nullable private NumberFormat numberFormat;
+    /** Score holder */
+    @NotNull
+    private final String holder;
 
+    /** Score value */
+    private int score;
+
+    /** Holder's display name */
+    @Nullable
+    private ComponentHolder displayName;
+
+    /** Number format for score */
+    @Nullable
+    private NumberFormat numberFormat;
+
+    /**
+     * Constructs new instance with given holder.
+     *
+     * @param   holder
+     *          Score holder
+     */
     public DownstreamScore(@NotNull String holder) {
         this.holder = holder;
     }
 
+    /**
+     * Updates values of this score.
+     *
+     * @param   score
+     *          Score value
+     * @param   displayName
+     *          Holder's display name
+     * @param   numberFormat
+     *          Number format for score
+     */
     public void update(int score, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         this.score = score;
         this.displayName = displayName;
