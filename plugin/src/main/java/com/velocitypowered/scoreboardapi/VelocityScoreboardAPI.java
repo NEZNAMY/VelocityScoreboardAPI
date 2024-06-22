@@ -41,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
  *  - Fix ComponentHolder usage in API module?
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
- *  - Clone team entries on creation and in getters to prevent random modifications
  *  - Better logging than System.out.println and error throwing
  */
 public class VelocityScoreboardAPI {

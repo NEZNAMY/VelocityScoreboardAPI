@@ -202,6 +202,8 @@ public interface Team {
      *
      * @param   entry
      *          Entry to add
+     * @see     #getEntries()
+     * @see     #removeEntry(String)
      */
     void addEntry(@NotNull String entry);
 

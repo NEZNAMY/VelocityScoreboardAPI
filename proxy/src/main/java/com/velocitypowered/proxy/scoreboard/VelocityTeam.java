@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
@@ -28,6 +29,7 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 public class VelocityTeam implements Team {
 
@@ -99,7 +101,7 @@ public class VelocityTeam implements Team {
     @Override
     @NotNull
     public Collection<String> getEntries() {
-        return entries;
+        return ImmutableSet.copyOf(entries);
     }
 
     @Override
@@ -312,7 +314,7 @@ public class VelocityTeam implements Team {
         @NotNull
         public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
             return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles), entries
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles), new HashSet<>(entries)
             );
         }
     }
