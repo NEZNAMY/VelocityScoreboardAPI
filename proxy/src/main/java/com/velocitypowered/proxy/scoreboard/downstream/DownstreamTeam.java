@@ -39,8 +39,8 @@ public class DownstreamTeam {
         this.entries = entries;
     }
 
-    public void update(@NotNull TeamPacket packet) {
-        properties = packet.getProperties();
+    public void update(@NotNull TeamProperties properties) {
+        this.properties = properties;
     }
 
     public void addEntries(@NotNull Collection<String> entries) {
