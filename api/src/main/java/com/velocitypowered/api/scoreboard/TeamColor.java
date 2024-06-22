@@ -46,5 +46,5 @@ public enum TeamColor {
     STRIKETHROUGH,
     UNDERLINED,
     ITALIC,
-    RESET;
+    RESET
 }
