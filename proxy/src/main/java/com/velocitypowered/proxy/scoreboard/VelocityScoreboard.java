@@ -116,7 +116,7 @@ public class VelocityScoreboard implements Scoreboard {
     @NotNull
     public Objective registerObjective(@NotNull Objective.Builder builder) {
         final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
-        if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
+        if (objectives.containsKey(objective.getName())) throw new IllegalStateException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
         objective.sendRegister(players);
         return objective;
@@ -129,7 +129,7 @@ public class VelocityScoreboard implements Scoreboard {
     }
 
     @Override
-    public void unregisterObjective(@NotNull String objectiveName) {
+    public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         objectives.remove(objectiveName).sendUnregister(players);
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
@@ -139,7 +139,7 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     public Team registerTeam(@NotNull Team.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
-        if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
+        if (teams.containsKey(team.getName())) throw new IllegalStateException("Team with this name already exists");
         teams.put(team.getName(), team);
         team.sendRegister(players);
         return team;
@@ -158,6 +158,7 @@ public class VelocityScoreboard implements Scoreboard {
     }
 
     @Override
+    @NotNull
     public Object holder() {
         return plugin;
     }

@@ -26,46 +26,152 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * A scoreboard with objectives and teams.
+ */
 public interface Scoreboard {
 
+    /**
+     * Adds a player into this scoreboard.
+     * 
+     * @param   player
+     *          Player to add
+     * @see     #removePlayer(Player) 
+     */
     void addPlayer(@NotNull Player player);
 
+    /**
+     * Removes player from this scoreboard.
+     * 
+     * @param   player
+     *          Player to remove
+     * @see     #addPlayer(Player)
+     */
     void removePlayer(@NotNull Player player);
 
+    /**
+     * Creates a new objective builder.
+     *
+     * @param   name
+     *          Objective name
+     * @return  Objective builder with given objective name
+     */
     @NotNull
     Objective.Builder objectiveBuilder(@NotNull String name);
 
+    /**
+     * Registers objective into this scoreboard.
+     *
+     * @param   builder
+     *          Objective builder
+     * @return  Registered objective
+     * @throws  IllegalStateException
+     *          If objective with this name already exists
+     */
     @NotNull
-    Objective registerObjective(@NotNull Objective.Builder builder);
+    Objective registerObjective(@NotNull Objective.Builder builder) throws IllegalStateException;
 
+    /**
+     * Registers objective into this scoreboard.
+     *
+     * @param   name
+     *          Objective name
+     * @param   consumer
+     *          Objective parameters
+     * @return  Registered objective
+     */
+    @NotNull
     default Objective createObjective(@NotNull String name, @NotNull Consumer<Objective.Builder> consumer) {
         Objective.Builder builder = objectiveBuilder(name);
         consumer.accept(builder);
         return registerObjective(builder);
     }
 
+    /**
+     * Gets objective by name. If no such objective is registered, returns {@code null}.
+     *
+     * @param   name
+     *          Objective name
+     * @return  Objective by given name or {@code null} if not present
+     */
     @Nullable
     Objective getObjective(@NotNull String name);
 
-    void unregisterObjective(@NotNull String objectiveName);
+    /**
+     * Unregisters objective by name.
+     *
+     * @param   objectiveName
+     *          Name of objective to unregister
+     * @throws  IllegalStateException
+     *          If no such objective is registered
+     */
+    void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException;
 
+    /**
+     * Creates a new team builder.
+     *
+     * @param   name
+     *          Team name
+     * @return  Team builder with given team name
+     */
     @NotNull
     Team.Builder teamBuilder(@NotNull String name);
 
+    /**
+     * Registers team into this scoreboard.
+     *
+     * @param   builder
+     *          Team builder
+     * @return  Registered team
+     * @throws  IllegalStateException
+     *          If team with this name already exists
+     */
     @NotNull
-    Team registerTeam(@NotNull Team.Builder builder);
+    Team registerTeam(@NotNull Team.Builder builder) throws IllegalStateException;
 
-    default void createTeam(@NotNull String name, @NotNull Consumer<Team.Builder> consumer) {
+    /**
+     * Registers team into this scoreboard.
+     *
+     * @param   name
+     *          Team name
+     * @param   consumer
+     *          Team builder
+     * @return  Registered team
+     * @throws  IllegalStateException
+     *          If team with this name already exists
+     */
+    @NotNull
+    default Team createTeam(@NotNull String name, @NotNull Consumer<Team.Builder> consumer) throws IllegalStateException {
         Team.Builder builder = teamBuilder(name);
         consumer.accept(builder);
-        registerTeam(builder);
+        return registerTeam(builder);
     }
 
+    /**
+     * Returns team with give name. If no such team is present, returns {@code null}.
+     *
+     * @param   teamName
+     *          Team name
+     * @return  Team with given name, {@code null} if no such team exists
+     */
     @Nullable
     Team getTeam(@NotNull String teamName);
 
-    void unregisterTeam(@NotNull String teamName);
+    /**
+     * Unregisters team with given name.
+     *
+     * @param   teamName
+     *          Name of team to unregister
+     * @throws  IllegalStateException
+     *          If no such team exists
+     */
+    void unregisterTeam(@NotNull String teamName) throws IllegalStateException;
 
+    /**
+     * Returns plugin that created this scoreboard.
+     *
+     * @return  plugin that created this scoreboard
+     */
+    @NotNull
     Object holder();
-
 }
