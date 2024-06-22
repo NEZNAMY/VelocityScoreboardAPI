@@ -43,7 +43,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TODO:
- *  - Fix StyledFormat to actually read/write properly
  *  - Implement packet handler to properly distribute packets based on priorities
  *  - Easier setScore API function
  *  - Decide on priorities (int or jut boolean - proxy or not)

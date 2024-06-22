@@ -67,6 +67,7 @@ public interface NumberFormat {
      * Format that hides numbers completely.
      */
     record BlankFormat() implements NumberFormat {
+
         /** Singleton instance of this class */
         public static final BlankFormat INSTANCE = new BlankFormat();
     }
