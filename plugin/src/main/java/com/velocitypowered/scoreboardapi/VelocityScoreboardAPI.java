@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
  *  - Clone team entries on creation and in getters to prevent random modifications
+ *  - Better logging than System.out.println
  */
 public class VelocityScoreboardAPI {
 
