@@ -28,11 +28,22 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Channel injection to listen to JoinGame packet. If Scoreboard API gets merged into Velocity,
+ * this will be replaced with a line in JOinGame packet handler.
+ */
 public class ChannelInjection extends ChannelDuplexHandler {
 
+    /** Injected player */
     @NotNull
     private final Player player;
 
+    /**
+     * Constructs new instance with given player.
+     *
+     * @param   player
+     *          Player to inject
+     */
     public ChannelInjection(@NotNull Player player) {
         this.player = player;
     }
