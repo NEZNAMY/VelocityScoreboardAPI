@@ -118,6 +118,14 @@ public interface Scoreboard {
     Team.Builder teamBuilder(@NotNull String name);
 
     /**
+     * Creates a new team property builder.
+     *
+     * @return  New team property builder
+     */
+    @NotNull
+    Team.PropertyBuilder teamPropertyBuilder();
+
+    /**
      * Registers team into this scoreboard.
      *
      * @param   builder

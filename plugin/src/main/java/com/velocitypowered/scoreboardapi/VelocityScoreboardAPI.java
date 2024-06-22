@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
  *  - Fix StyledFormat to actually read/write properly
  *  - Implement packet handler to properly distribute packets based on priorities
  *  - Easier setScore API function
- *  - Team#updateProperties to avoid sending up to 7 packets if only 1 can be sent
  *  - Fix ComponentHolder usage in API module?
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs

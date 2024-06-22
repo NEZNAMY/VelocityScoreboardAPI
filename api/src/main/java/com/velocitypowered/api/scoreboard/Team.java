@@ -186,6 +186,16 @@ public interface Team {
     void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
 
     /**
+     * Updates all team properties specified in the builder. Values without
+     * an assigned value will remain unchanged. Advantage of this function is that it
+     * only sends a single update packet instead of a packet for every updated property.
+     *
+     * @param   builder
+     *          Builder with changed properties
+     */
+    void updateProperties(@NotNull PropertyBuilder builder);
+
+    /**
      * Returns entries currently present in this team. The returned collection is immutable,
      * use {@link #addEntry(String)} and {@link #removeEntry(String)} for adding / removing entries.
      * 
@@ -219,6 +229,92 @@ public interface Team {
      *          If given entry is not in this team
      */
     void removeEntry(@NotNull String entry) throws IllegalArgumentException;
+
+    /**
+     * This is a builder for team properties.
+     */
+    interface PropertyBuilder {
+
+        /**
+         * Sets display name to specified value.
+         *
+         * @param   displayName
+         *          Team display name
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder displayName(@NotNull TextHolder displayName);
+
+        /**
+         * Sets prefix to specified value.
+         *
+         * @param   prefix
+         *          Team prefix
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder prefix(@NotNull TextHolder prefix);
+
+        /**
+         * Sets suffix to specified value.
+         *
+         * @param   suffix
+         *          Team suffix
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder suffix(@NotNull TextHolder suffix);
+
+        /**
+         * Sets nametag visibility to specified value.
+         *
+         * @param   visibility
+         *          Nametag visibility
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder nameVisibility(@NotNull NameVisibility visibility);
+
+        /**
+         * Sets collision rule to specified value.
+         *
+         * @param   collisionRule
+         *          Collision rule
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder collisionRule(@NotNull CollisionRule collisionRule);
+
+        /**
+         * Sets color to specified value.
+         *
+         * @param   color
+         *          Team color
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder color(@NotNull TeamColor color);
+
+        /**
+         * Sets friendly fire to specified value.
+         *
+         * @param   friendlyFire
+         *          Friendly fire
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder allowFriendlyFire(boolean friendlyFire);
+
+        /**
+         * Sets can see friendly invisibles to specified value.
+         *
+         * @param   canSeeFriendlyInvisibles
+         *          Can see friendly invisibles
+         * @return  this, for chaining
+         */
+        @NotNull
+        PropertyBuilder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
+    }
 
     /**
      * Team builder interface.

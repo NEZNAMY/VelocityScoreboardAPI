@@ -77,6 +77,12 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @NotNull
+    public Team.PropertyBuilder teamPropertyBuilder() {
+        return new VelocityTeam.PropertyBuilder();
+    }
+
+    @Override
+    @NotNull
     public Objective.Builder objectiveBuilder(@NotNull String name) {
         return new VelocityObjective.Builder(name);
     }

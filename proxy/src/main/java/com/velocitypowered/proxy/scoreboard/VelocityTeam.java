@@ -27,6 +27,7 @@ import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -169,6 +170,21 @@ public class VelocityTeam implements Team {
     }
 
     @Override
+    public void updateProperties(@NotNull Team.PropertyBuilder builder) {
+        checkState();
+        PropertyBuilder teamBuilder = (PropertyBuilder) builder;
+        if (teamBuilder.displayName != null) properties.setDisplayName(teamBuilder.displayName);
+        if (teamBuilder.prefix != null) properties.setPrefix(teamBuilder.prefix);
+        if (teamBuilder.suffix != null) properties.setSuffix(teamBuilder.suffix);
+        if (teamBuilder.nameVisibility != null) properties.setNameVisibility(teamBuilder.nameVisibility);
+        if (teamBuilder.collisionRule != null) properties.setCollisionRule(teamBuilder.collisionRule);
+        if (teamBuilder.color != null) properties.setColor(teamBuilder.color);
+        if (teamBuilder.allowFriendlyFire != null) properties.setAllowFriendlyFire(teamBuilder.allowFriendlyFire);
+        if (teamBuilder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(teamBuilder.canSeeFriendlyInvisibles);
+        sendUpdate();
+    }
+
+    @Override
     public void addEntry(@NotNull String entry) {
         checkState();
         if (entries.contains(entry)) return;
@@ -223,17 +239,77 @@ public class VelocityTeam implements Team {
         if (!registered) throw new IllegalStateException("This team was unregistered");
     }
 
-    public static class Builder implements Team.Builder {
+    public static class PropertyBuilder implements Team.PropertyBuilder {
+
+        @Nullable protected TextHolder displayName;
+        @Nullable protected TextHolder prefix;
+        @Nullable protected TextHolder suffix;
+        @Nullable protected NameVisibility nameVisibility;
+        @Nullable protected CollisionRule collisionRule;
+        @Nullable protected TeamColor color;
+        @Nullable protected Boolean allowFriendlyFire;
+        @Nullable protected Boolean canSeeFriendlyInvisibles;
+
+        @NotNull
+        @Override
+        public PropertyBuilder displayName(@NotNull TextHolder displayName) {
+            this.displayName = displayName;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder prefix(@NotNull TextHolder prefix) {
+            this.prefix = prefix;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder suffix(@NotNull TextHolder suffix) {
+            this.suffix = suffix;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder nameVisibility(@NotNull NameVisibility nameVisibility) {
+            this.nameVisibility = nameVisibility;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder collisionRule(@NotNull CollisionRule collisionRule) {
+            this.collisionRule = collisionRule;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder color(@NotNull TeamColor color) {
+            this.color = color;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder allowFriendlyFire(boolean allowFriendlyFire) {
+            this.allowFriendlyFire = allowFriendlyFire;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public PropertyBuilder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
+            this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+            return this;
+        }
+    }
+
+    public static class Builder extends PropertyBuilder implements Team.Builder {
 
         @NotNull private final String name;
-        @NotNull private TextHolder displayName;
-        @NotNull private TextHolder prefix = TextHolder.EMPTY;
-        @NotNull private TextHolder suffix = TextHolder.EMPTY;
-        @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
-        @NotNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
-        @NotNull private TeamColor color = TeamColor.RESET;
-        private boolean allowFriendlyFire = true;
-        private boolean canSeeFriendlyInvisibles = false;
         @NotNull private Collection<String> entries = Lists.newArrayList();
 
         public Builder(@NotNull String name) {
@@ -313,6 +389,14 @@ public class VelocityTeam implements Team {
          */
         @NotNull
         public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
+            if (displayName == null) displayName = new TextHolder(name);
+            if (prefix == null) prefix = TextHolder.EMPTY;
+            if (suffix == null) suffix = TextHolder.EMPTY;
+            if (nameVisibility == null) nameVisibility = NameVisibility.ALWAYS;
+            if (collisionRule == null) collisionRule = CollisionRule.ALWAYS;
+            if (color == null) color = TeamColor.RESET;
+            if (allowFriendlyFire == null) allowFriendlyFire = false;
+            if (canSeeFriendlyInvisibles == null) canSeeFriendlyInvisibles = false;
             return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
                     color, allowFriendlyFire, canSeeFriendlyInvisibles), new HashSet<>(entries)
             );
