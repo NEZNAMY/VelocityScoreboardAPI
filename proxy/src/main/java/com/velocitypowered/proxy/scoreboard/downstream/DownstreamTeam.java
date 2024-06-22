@@ -70,20 +70,13 @@ public class DownstreamTeam {
     }
 
     public void addEntries(@NotNull Collection<String> entries) {
-        for (String entry : new ArrayList<>(entries)) {
-            if (this.entries.contains(entry)) {
-                PacketLogger.invalidDownstreamPacket("Team " + name + " already contains entry " + entry);
-                entries.remove(entry);
-            }
-        }
         this.entries.addAll(entries);
     }
 
     public void removeEntries(@NotNull Collection<String> entries) {
-        for (String entry : new ArrayList<>(entries)) {
+        for (String entry : entries) {
             if (!this.entries.contains(entry)) {
                 PacketLogger.invalidDownstreamPacket("Team " + name + " does not contain entry " + entry);
-                entries.remove(entry);
             }
         }
         this.entries.removeAll(entries);
