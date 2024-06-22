@@ -66,7 +66,7 @@ public class VelocityScoreboardAPI {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
-        ScoreboardManager.registerApi(server);
+        ScoreboardManager.registerApi((priority, plugin) -> new VelocityScoreboard(priority, server, plugin));
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 

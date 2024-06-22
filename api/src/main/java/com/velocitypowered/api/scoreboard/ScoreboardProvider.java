@@ -20,13 +20,12 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import com.velocitypowered.api.proxy.ProxyServer;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface ScoreboardProvider {
 
     @NotNull
-    Scoreboard createScoreboard(int priority, @NotNull ProxyServer server);
+    Scoreboard createScoreboard(int priority, @NotNull Object plugin);
 
 }

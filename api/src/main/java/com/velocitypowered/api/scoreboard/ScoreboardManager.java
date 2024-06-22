@@ -32,10 +32,10 @@ public class ScoreboardManager {
 
     private static ScoreboardManager INSTANCE;
 
-    private final ProxyServer server;
+    private final ScoreboardProvider provider;
 
-    private ScoreboardManager(@NotNull ProxyServer server) {
-        this.server = server;
+    private ScoreboardManager(@NotNull ScoreboardProvider provider) {
+        this.provider = provider;
     }
 
     /**
@@ -49,15 +49,15 @@ public class ScoreboardManager {
     }
 
     @ApiStatus.Internal
-    public static void registerApi(@NotNull ProxyServer server) {
-        INSTANCE = new ScoreboardManager(server);
+    public static void registerApi(@NotNull ScoreboardProvider provider) {
+        INSTANCE = new ScoreboardManager(provider);
     }
 
     @NotNull
-    public Scoreboard getNewScoreboard(int priority, @NotNull ScoreboardProvider provider) {
+    public Scoreboard getNewScoreboard(int priority, @NotNull Object plugin) {
         if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
         if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-        return provider.createScoreboard(priority, server);
+        return provider.createScoreboard(priority, plugin);
     }
 
     public void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
