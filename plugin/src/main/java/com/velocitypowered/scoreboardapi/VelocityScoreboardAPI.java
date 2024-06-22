@@ -43,10 +43,18 @@ import org.jetbrains.annotations.NotNull;
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
  *  - Clone team entries on creation and in getters to prevent random modifications
- *  - Better logging than System.out.println
+ *  - Better logging than System.out.println and error throwing
  */
 public class VelocityScoreboardAPI {
 
+    /**
+     * Constructs new instance with given server.
+     *
+     * @param   server
+     *          Server instance
+     * @throws  Exception
+     *          If thrown during packer registration
+     */
     @Inject
     public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
         try {
@@ -65,11 +73,23 @@ public class VelocityScoreboardAPI {
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 
+    /**
+     * Injects custom channel duplex handler to listen to JoinGame packet.
+     *
+     * @param   e
+     *          Login event
+     */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         ((ConnectedPlayer)e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
     }
 
+    /**
+     * Removes player from scoreboards and map of scoreboards.
+     *
+     * @param   e
+     *          Disconnect event
+     */
     @Subscribe
     public void onQuit(DisconnectEvent e) {
         DataHolder.removeScoreboardManager(e.getPlayer());
