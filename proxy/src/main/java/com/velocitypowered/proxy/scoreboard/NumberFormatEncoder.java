@@ -27,9 +27,21 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 
-
+/**
+ * Class for encoding / decoding number formats. If the Scoreboard API gets merged into Velocity,
+ * these methods will be moved into {@link ProtocolUtils} class.
+ */
 public class NumberFormatEncoder {
 
+    /**
+     * Reads NumberFormat from buffer.
+     *
+     * @param   buf
+     *          Buffer to read from
+     * @param   ver
+     *          Protocol version used to encode the format
+     * @return  Decoded Number Format
+     */
     @NotNull
     public static NumberFormat read(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver) {
         int format = ProtocolUtils.readVarInt(buf);
@@ -42,6 +54,16 @@ public class NumberFormatEncoder {
         };
     }
 
+    /**
+     * Writes a NumberFormat to buffer.
+     *
+     * @param   buf
+     *          Buffer to write number format to
+     * @param   ver
+     *          Protocol version to write format for
+     * @param   format
+     *          NumberFormat to write
+     */
     public static void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver, @NotNull NumberFormat format) {
         if (format instanceof NumberFormat.BlankFormat) {
             ProtocolUtils.writeVarInt(buf, 0);
