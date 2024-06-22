@@ -69,6 +69,11 @@ public class DownstreamObjective {
         this.displaySlot = displaySlot;
     }
 
+    @NotNull
+    public String getName() {
+        return objectiveName;
+    }
+
     public void setDisplaySlot(@Nullable DisplaySlot displaySlot) {
         this.displaySlot = displaySlot;
     }

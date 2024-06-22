@@ -132,6 +132,7 @@ public class VelocityScoreboard implements Scoreboard {
     public void unregisterObjective(@NotNull String objectiveName) {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         objectives.remove(objectiveName).sendUnregister(players);
+        displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
     }
 
     @NotNull

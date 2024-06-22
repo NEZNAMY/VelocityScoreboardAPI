@@ -64,6 +64,7 @@ public class DownstreamScoreboard {
                 if (objectives.remove(packet.getObjectiveName()) == null) {
                     PacketLogger.invalidDownstreamPacket("This scoreboard does not contain objective called " + packet.getObjectiveName() + ", cannot unregister");
                 }
+                displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(packet.getObjectiveName()));
                 return;
             case UPDATE:
                 DownstreamObjective objective = objectives.get(packet.getObjectiveName());
