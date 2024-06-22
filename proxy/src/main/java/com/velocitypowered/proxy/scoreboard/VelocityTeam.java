@@ -180,15 +180,12 @@ public class VelocityTeam implements Team {
     @Override
     public void addEntry(@NotNull String entry) {
         checkState();
-        if (entries.add(entry)) {
-            sendModifyEntry(entry, true);
-        } else {
-            throw new IllegalArgumentException("This entry is already in the team");
-        }
+        if (entries.contains(entry)) return;
         for (VelocityTeam allTeams : scoreboard.getAllTeams()) {
-            if (allTeams == this) continue; // Do not remove from current one
             allTeams.entries.remove(entry);
         }
+        entries.add(entry);
+        sendModifyEntry(entry, true);
     }
 
     @Override
