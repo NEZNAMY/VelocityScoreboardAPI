@@ -22,7 +22,6 @@ package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

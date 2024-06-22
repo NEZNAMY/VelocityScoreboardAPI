@@ -31,7 +31,6 @@ import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.DataHolder;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 public class VelocityScoreboardAPI {

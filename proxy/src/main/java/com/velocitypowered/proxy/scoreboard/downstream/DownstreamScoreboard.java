@@ -26,7 +26,6 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.data.PacketLogger;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import com.velocitypowered.proxy.scoreboard.VelocityObjective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

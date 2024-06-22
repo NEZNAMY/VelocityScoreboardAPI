@@ -22,9 +22,7 @@ package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
-import com.velocitypowered.api.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
