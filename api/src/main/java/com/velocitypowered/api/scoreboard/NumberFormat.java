@@ -29,16 +29,35 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface NumberFormat {
 
+    /**
+     * Returns blank format where scores are completely hidden.
+     *
+     * @return  Blank number format
+     */
     @NotNull
     static NumberFormat blank() {
         return BlankFormat.INSTANCE;
     }
 
+    /**
+     * Returns styled format where scores use given style.
+     *
+     * @param   style
+     *          Style to use for scores
+     * @return  Styled format with given style
+     */
     @NotNull
     static NumberFormat styled(@NotNull Style style) {
         return new StyledFormat(style);
     }
 
+    /**
+     * Returns fixed format where scores are replaced with given text.
+     *
+     * @param   text
+     *          Text to replace scores with
+     * @return  Fixed format with given text
+     */
     @NotNull
     static NumberFormat fixed(@NotNull Component text) {
         return new FixedFormat(text);
