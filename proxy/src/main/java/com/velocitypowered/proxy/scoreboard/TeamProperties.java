@@ -124,11 +124,11 @@ public class TeamProperties {
             collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-            color = TeamColor.getById(ProtocolUtils.readVarInt(buf));
+            color = TeamColor.values()[ProtocolUtils.readVarInt(buf)];
             prefix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
             suffix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-            color = TeamColor.getById(buf.readByte());
+            color = TeamColor.values()[buf.readByte()];
         }
     }
 
@@ -159,12 +159,12 @@ public class TeamProperties {
             ProtocolUtils.writeString(buf, collisionRule.toString());
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-            ProtocolUtils.writeVarInt(buf, color.id());
+            ProtocolUtils.writeVarInt(buf, color.ordinal());
             getComponentHolder(prefix, protocolVersion).write(buf);
             getComponentHolder(suffix, protocolVersion).write(buf);
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
-            // buf.writeByte(color);
+            // buf.writeByte(color.ordinal());
         }
     }
 

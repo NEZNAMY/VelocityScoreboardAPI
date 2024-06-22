@@ -20,52 +20,31 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import java.util.Arrays;
-
+/**
+ * Enum for all possible scoreboard team colors.
+ */
 public enum TeamColor {
-    BLACK('0', 0),
-    DARK_BLUE('1', 1),
-    DARK_GREEN('2', 2),
-    DARK_AQUA('3', 3),
-    DARK_RED('4', 4),
-    DARK_PURPLE('5', 5),
-    GOLD('6', 6),
-    GRAY('7', 7),
-    DARK_GRAY('8', 8),
-    BLUE('9', 9),
-    GREEN('a', 10),
-    AQUA('b', 11),
-    RED('c', 12),
-    LIGHT_PURPLE('d', 13),
-    YELLOW('e', 14),
-    WHITE('f', 15),
-    OBFUSCATED('k', 16),
-    BOLD('f', 17),
-    STRIKETHROUGH('f', 18),
-    UNDERLINED('f', 19),
-    ITALIC('f', 20),
-    RESET('r', 21);
 
-    private final char colorChar;
-    private final int id;
-
-    TeamColor(char colorChar, int id) {
-        this.colorChar = colorChar;
-        this.id = id;
-    }
-
-    public char colorChar() {
-        return colorChar;
-    }
-
-    public int id() {
-        return id;
-    }
-
-    public static TeamColor getById(int id) {
-        return Arrays.stream(values())
-                .filter(color -> color.id == id)
-                .findFirst()
-                .orElse(WHITE);
-    }
+    BLACK,
+    DARK_BLUE,
+    DARK_GREEN,
+    DARK_AQUA,
+    DARK_RED,
+    DARK_PURPLE,
+    GOLD,
+    GRAY,
+    DARK_GRAY,
+    BLUE,
+    GREEN,
+    AQUA,
+    RED,
+    LIGHT_PURPLE,
+    YELLOW,
+    WHITE,
+    OBFUSCATED,
+    BOLD,
+    STRIKETHROUGH,
+    UNDERLINED,
+    ITALIC,
+    RESET;
 }
