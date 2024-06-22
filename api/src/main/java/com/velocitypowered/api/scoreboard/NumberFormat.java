@@ -75,22 +75,13 @@ public interface NumberFormat {
     }
 
     /**
+     * Formatter that applies style to all scores.
      *
+     * @param   style
+     *          Style to apply to all scores
      */
-    class StyledFormat implements NumberFormat {
-
-        private final Style style;
-
-        public StyledFormat(@NotNull Style style) {
-            this.style = style;
-        }
-
-        public Style style() {
-            return style;
-        }
+    record StyledFormat(@NotNull Style style) implements NumberFormat {
     }
-
-
 
     /**
      * Formatter that replaces score with specified text.
