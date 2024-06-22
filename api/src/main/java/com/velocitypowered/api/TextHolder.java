@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public class TextHolder {
 
     /** Text holder with empty value */
-    public static TextHolder EMPTY = new TextHolder("", Component.empty());
+    public static final TextHolder EMPTY = new TextHolder("", Component.empty());
 
     /** Raw text for 1.12- players */
     @Nullable
