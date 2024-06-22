@@ -80,11 +80,7 @@ public class DownstreamObjective {
     }
 
     public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
-        if (scores.containsKey(holder)) {
-            scores.get(holder).update(value, displayName, numberFormat);
-        } else {
-            scores.put(holder, new DownstreamScore(holder, value, displayName, numberFormat));
-        }
+        scores.computeIfAbsent(holder, DownstreamScore::new).update(value, displayName, numberFormat);
     }
 
     public void removeScore(@NotNull String holder) {

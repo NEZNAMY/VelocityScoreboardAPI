@@ -32,17 +32,13 @@ public class DownstreamScore {
     @Nullable private ComponentHolder displayName;
     @Nullable private NumberFormat numberFormat;
 
-    public DownstreamScore(@NotNull String holder, int score, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+    public DownstreamScore(@NotNull String holder) {
         this.holder = holder;
+    }
+
+    public void update(int score, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         this.score = score;
         this.displayName = displayName;
         this.numberFormat = numberFormat;
     }
-
-    public void update(int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
-        score = value;
-        this.displayName = displayName;
-        this.numberFormat = numberFormat;
-    }
-
 }
