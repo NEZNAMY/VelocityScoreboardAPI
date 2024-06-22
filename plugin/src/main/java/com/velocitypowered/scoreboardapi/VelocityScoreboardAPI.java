@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
  *  - Fix StyledFormat to actually read/write properly
  *  - Implement packet handler to properly distribute packets based on priorities
  *  - Easier setScore API function
- *  - Fix ComponentHolder usage in API module?
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
  *  - Better logging than System.out.println and error throwing

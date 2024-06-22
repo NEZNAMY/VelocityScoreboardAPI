@@ -39,15 +39,11 @@ public class TextHolder {
 
     /** Raw text for 1.12- players */
     @Nullable
-    private String legacyText;
+    protected String legacyText;
 
     /** Component for 1.13+ players */
     @Nullable
-    private Component modernText;
-
-    /** Internal value used when this value was deserialized in packet decoder */
-    @Nullable
-    private Object componentHolder;
+    protected Component modernText;
 
     /**
      * Constructs new instance with given legacy text for 1.12- players.
@@ -70,18 +66,6 @@ public class TextHolder {
      */
     public TextHolder(@NotNull Component modernText) {
         this.modernText = modernText;
-    }
-
-    /**
-     * Constructs new instance using given component holder.
-     *
-     * @param   componentHolder
-     *          Deserialized component holder
-     * @deprecated  Internal usage
-     */
-    @Deprecated
-    public TextHolder(@NotNull Object componentHolder) {
-        this.componentHolder = componentHolder;
     }
 
     /**
@@ -134,17 +118,5 @@ public class TextHolder {
     public Component getModernText() {
         if (modernText == null) modernText = Component.text(getLegacyText());
         return modernText;
-    }
-
-    /**
-     * Returns component holder if this value was deserialized.
-     *
-     * @return  Deserialized component holder
-     * @deprecated  Internal usage
-     */
-    @Nullable
-    @Deprecated
-    public Object getComponentHolder() {
-        return componentHolder;
     }
 }

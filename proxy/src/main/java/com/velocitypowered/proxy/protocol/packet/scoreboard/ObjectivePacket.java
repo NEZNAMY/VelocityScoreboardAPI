@@ -28,6 +28,7 @@ import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.proxy.scoreboard.DeserializedTextHolder;
 import com.velocitypowered.proxy.scoreboard.NumberFormatEncoder;
 import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -96,7 +97,7 @@ public class ObjectivePacket implements MinecraftPacket {
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) return;
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                title = new TextHolder(ComponentHolder.read(buf, protocolVersion));
+                title = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
                 healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
             } else {
                 title = new TextHolder(ProtocolUtils.readString(buf));
@@ -138,9 +139,8 @@ public class ObjectivePacket implements MinecraftPacket {
 
     @NotNull
     private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
-        ComponentHolder holder = (ComponentHolder) textHolder.getComponentHolder();
-        if (holder == null) holder = new ComponentHolder(version, textHolder.getModernText());
-        return holder;
+        if (textHolder instanceof DeserializedTextHolder) return ((DeserializedTextHolder) textHolder).getHolder();
+        return new ComponentHolder(version, textHolder.getModernText());
     }
 
     @Override

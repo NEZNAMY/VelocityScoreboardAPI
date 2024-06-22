@@ -112,7 +112,7 @@ public class TeamProperties {
             prefix = new TextHolder(ProtocolUtils.readString(buf));
             suffix = new TextHolder(ProtocolUtils.readString(buf));
         } else {
-            displayName = new TextHolder(ComponentHolder.read(buf, protocolVersion));
+            displayName = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
         }
         byte flags = buf.readByte();
         allowFriendlyFire = (flags & 0x01) > 0;
@@ -125,8 +125,8 @@ public class TeamProperties {
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
             color = TeamColor.values()[ProtocolUtils.readVarInt(buf)];
-            prefix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
-            suffix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
+            prefix = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
+            suffix = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             color = TeamColor.values()[buf.readByte()];
         }
@@ -170,9 +170,8 @@ public class TeamProperties {
 
     @NotNull
     private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
-        ComponentHolder holder = (ComponentHolder) textHolder.getComponentHolder();
-        if (holder == null) holder = new ComponentHolder(version, textHolder.getModernText());
-        return holder;
+        if (textHolder instanceof DeserializedTextHolder) return ((DeserializedTextHolder) textHolder).getHolder();
+        return new ComponentHolder(version, textHolder.getModernText());
     }
 
     /**
