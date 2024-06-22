@@ -53,6 +53,7 @@ public class VelocityObjective implements Objective {
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
         this.displaySlot = displaySlot;
+        if (displaySlot != null) scoreboard.setDisplaySlot(displaySlot, this);
     }
 
     @NotNull
@@ -94,6 +95,7 @@ public class VelocityObjective implements Objective {
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
         checkState();
         if (this.displaySlot == displaySlot) return;
+        scoreboard.setDisplaySlot(displaySlot, this);
         this.displaySlot = displaySlot;
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
@@ -189,6 +191,10 @@ public class VelocityObjective implements Objective {
         checkState();
         registered = false;
         sendUnregister(scoreboard.getPlayers());
+    }
+
+    public void clearDisplaySlot() {
+        this.displaySlot = null;
     }
 
     @NotNull

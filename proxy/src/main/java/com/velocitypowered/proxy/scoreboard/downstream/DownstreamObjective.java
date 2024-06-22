@@ -69,7 +69,7 @@ public class DownstreamObjective {
         this.displaySlot = displaySlot;
     }
 
-    public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
+    public void setDisplaySlot(@Nullable DisplaySlot displaySlot) {
         this.displaySlot = displaySlot;
     }
 

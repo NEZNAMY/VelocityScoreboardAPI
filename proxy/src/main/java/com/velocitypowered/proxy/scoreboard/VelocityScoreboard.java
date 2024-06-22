@@ -23,6 +23,7 @@ package com.velocitypowered.proxy.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
@@ -45,6 +46,7 @@ public class VelocityScoreboard implements Scoreboard {
     private final Collection<ConnectedPlayer> players = new HashSet<>();
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
+    private final EnumMap<DisplaySlot, VelocityObjective> displaySlots = new EnumMap<>(DisplaySlot.class);
 
     public VelocityScoreboard(int priority, @NotNull ProxyServer server) {
         this.priority = priority;
@@ -151,4 +153,8 @@ public class VelocityScoreboard implements Scoreboard {
         teams.remove(teamName).sendUnregister(players);
     }
 
+    public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
+        VelocityObjective previous = displaySlots.put(displaySlot, objective);
+        if (previous != null) previous.clearDisplaySlot();
+    }
 }

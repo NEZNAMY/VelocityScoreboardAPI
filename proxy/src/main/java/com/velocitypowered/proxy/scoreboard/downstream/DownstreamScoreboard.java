@@ -21,13 +21,16 @@
 package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.data.PacketLogger;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import com.velocitypowered.proxy.scoreboard.VelocityObjective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +38,7 @@ public class DownstreamScoreboard {
 
     private final Map<String, DownstreamObjective> objectives = new HashMap<>();
     private final Map<String, DownstreamTeam> teams = new HashMap<>();
+    private final EnumMap<DisplaySlot, DownstreamObjective> displaySlots = new EnumMap<>(DisplaySlot.class);
     @NotNull private final Player viewer;
 
     public DownstreamScoreboard(@NotNull Player viewer) {
@@ -76,6 +80,8 @@ public class DownstreamScoreboard {
         if (objective == null) {
             PacketLogger.invalidDownstreamPacket("Cannot set display slot of unknown objective " + packet.getObjectiveName());
         } else {
+            DownstreamObjective previous = displaySlots.put(packet.getPosition(), objective);
+            if (previous != null) previous.setDisplaySlot(null);
             objective.setDisplaySlot(packet.getPosition());
         }
     }
