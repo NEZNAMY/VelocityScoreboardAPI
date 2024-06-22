@@ -25,6 +25,7 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
+import net.kyori.adventure.text.serializer.nbt.NBTComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -47,7 +48,7 @@ public class NumberFormatEncoder {
         int format = ProtocolUtils.readVarInt(buf);
         return switch (format) {
             case 0 -> NumberFormat.BlankFormat.INSTANCE;
-            case 1 -> new NumberFormat.StyledFormat(ProtocolUtils.readCompoundTag(buf, ver, null));
+            case 1 -> new NumberFormat.StyledFormat(NBTComponentSerializer.nbt().deserializeStyle(ProtocolUtils.readCompoundTag(buf, ver, null)));
             case 2 -> new DeserializedFixedFormat(ComponentHolder.read(buf, ver));
             default -> throw new IllegalArgumentException("Unknown number format " + format);
         };
@@ -68,7 +69,7 @@ public class NumberFormatEncoder {
             ProtocolUtils.writeVarInt(buf, 0);
         } else if (format instanceof NumberFormat.StyledFormat styled) {
             ProtocolUtils.writeVarInt(buf, 1);
-            ProtocolUtils.writeBinaryTag(buf, ver, styled.serialize());
+            ProtocolUtils.writeBinaryTag(buf, ver, NBTComponentSerializer.nbt().serializeStyle(styled.style()));
         } else if (format instanceof NumberFormat.FixedFormat fixed) {
             ProtocolUtils.writeVarInt(buf, 2);
             new ComponentHolder(ver, fixed.component()).write(buf);
