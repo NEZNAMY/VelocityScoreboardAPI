@@ -25,7 +25,6 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 
