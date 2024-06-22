@@ -25,6 +25,13 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Class for holding displayable text. Minecraft 1.12 and lower uses legacy String,
+ * while 1.13+ uses Components. This class holds both values and allows to set value
+ * for each version interval. If initialized with only one value and the other one is
+ * needed, it will be computed automatically. Manually defining both legacy and modern
+ * text can be used to override automatic computation if one wants to display something else.
+ */
 public class TextHolder {
 
     /** Text holder with empty value */
@@ -38,32 +45,77 @@ public class TextHolder {
     @Nullable
     private Component modernText;
 
+    /** Interval value used when this value was deserialized in packet decoder */
     @Nullable
     private Object componentHolder;
 
+    /**
+     * Constructs new instance with given legacy text for 1.12- players.
+     * If used for 1.13+, display component will be computed automatically.
+     *
+     * @param   legacyText
+     *          Legacy text to display
+     */
     public TextHolder(@NotNull String legacyText) {
         this.legacyText = legacyText;
     }
 
+    /**
+     * Constructs new instance with given modern text for 1.13+ players.
+     * If displayed on 1.12-, legacy value will be computed automatically from component
+     * and cut to character limit of the feature displaying it.
+     *
+     * @param   modernText
+     *          Modern text to display
+     */
     public TextHolder(@NotNull Component modernText) {
         this.modernText = modernText;
     }
 
+    /**
+     * Constructs new instance using given component holder.
+     *
+     * @param   componentHolder
+     *          Deserialized component holder
+     * @deprecated  Internal usage
+     */
+    @Deprecated
     public TextHolder(@NotNull Object componentHolder) {
         this.componentHolder = componentHolder;
     }
 
+    /**
+     * Constructs new instance with given texts for both 1.12- and 1.13+.
+     *
+     * @param   legacyText
+     *          Text to display for 1.12- players
+     * @param   modernText
+     *          Text to display for 1.13+ players
+     */
     public TextHolder(@NotNull String legacyText, @NotNull Component modernText) {
         this.legacyText = legacyText;
         this.modernText = modernText;
     }
 
+    /**
+     * Returns legacy text for 1.12- players. If not set, it is computed and returned.
+     *
+     * @return  Legacy text for 1.12- players
+     */
     @NotNull
     public String getLegacyText() {
         if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(modernText);
         return legacyText;
     }
 
+    /**
+     * Returns legacy text for 1.12- players. If not set, it is computed. If it exceeds the maximum
+     * character limit, a substring cut down to the limit is returned.
+     *
+     * @param   charLimit
+     *          Maximum permitted character limit
+     * @return  Legacy text for 1.12- players cut down to limit
+     */
     @NotNull
     public String getLegacyText(int charLimit) {
         if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(modernText);
@@ -73,13 +125,25 @@ public class TextHolder {
         return legacyText;
     }
 
+    /**
+     * Returns modern text for 1.13+ players. If not set, it is computed and returned.
+     *
+     * @return  Modern text for 1.13+ players
+     */
     @NotNull
     public Component getModernText() {
         if (modernText == null) modernText = Component.text(legacyText);
         return modernText;
     }
 
+    /**
+     * Returns component holder if this value was deserialized.
+     *
+     * @return  Deserialized component holder
+     * @deprecated  Internal usage
+     */
     @Nullable
+    @Deprecated
     public Object getComponentHolder() {
         return componentHolder;
     }
