@@ -178,7 +178,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void removeEntry(@NotNull String entry) {
+    public void removeEntry(@NotNull String entry) throws IllegalArgumentException {
         checkState();
         if (entries.remove(entry)) {
             sendModifyEntry(entry, false);
@@ -302,11 +302,16 @@ public class VelocityTeam implements Team {
             return this;
         }
 
+        /**
+         * Builds this entry into a team.
+         *
+         * @param   scoreboard
+         *          Scoreboard to register this team into
+         * @return  Newly created team
+         */
         @NotNull
-        @Override
-        public Team build(@NotNull Scoreboard scoreboard) {
-            return new VelocityTeam(
-                    (VelocityScoreboard) scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
+        public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
+            return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
                     color, allowFriendlyFire, canSeeFriendlyInvisibles), entries
             );
         }

@@ -138,7 +138,7 @@ public class VelocityScoreboard implements Scoreboard {
     @NotNull
     @Override
     public Team registerTeam(@NotNull Team.Builder builder) {
-        final VelocityTeam team = (VelocityTeam) builder.build(this);
+        VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalArgumentException("Team with this name already exists");
         teams.put(team.getName(), team);
         team.sendRegister(players);
