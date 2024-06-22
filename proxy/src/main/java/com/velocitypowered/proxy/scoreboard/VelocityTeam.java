@@ -38,7 +38,7 @@ public class VelocityTeam implements Team {
     @NotNull private TextHolder suffix;
     @NotNull private NameVisibility nameVisibility;
     @NotNull private CollisionRule collisionRule;
-    @NotNull private TeamColor color; // Cannot use NamedTextColor because it does not have ordinals + does not support magic codes or even reset
+    @NotNull private TeamColor color;
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
     @NotNull private final Collection<String> entries;
@@ -245,7 +245,7 @@ public class VelocityTeam implements Team {
         @NotNull private TextHolder suffix = TextHolder.EMPTY;
         @NotNull private NameVisibility nameVisibility = NameVisibility.ALWAYS;
         @NotNull private CollisionRule collisionRule = CollisionRule.ALWAYS;
-        private TeamColor color = TeamColor.WHITE;
+        @NotNull private TeamColor color = TeamColor.RESET;
         private boolean allowFriendlyFire = true;
         private boolean canSeeFriendlyInvisibles = false;
         @NotNull private Collection<String> entries = Lists.newArrayList();

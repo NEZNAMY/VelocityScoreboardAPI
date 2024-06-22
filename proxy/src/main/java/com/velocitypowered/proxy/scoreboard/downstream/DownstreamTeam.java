@@ -38,14 +38,14 @@ public class DownstreamTeam {
     @NotNull private TextHolder suffix;
     @NotNull private NameVisibility nameVisibility;
     @NotNull private CollisionRule collisionRule;
-    private TeamColor color;
+    @NotNull private TeamColor color;
     boolean allowFriendlyFire;
     boolean canSeeFriendlyInvisibles;
     @NotNull private final Collection<String> entries;
 
     public DownstreamTeam(@NotNull String name, @NotNull TextHolder displayName, @NotNull TextHolder prefix,
                           @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule,
-                          TeamColor color, boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
+                          @NotNull TeamColor color, boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
         this.name = name;
         this.displayName = displayName;
         this.prefix = prefix;
