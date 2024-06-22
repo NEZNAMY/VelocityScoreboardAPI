@@ -18,17 +18,18 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.api.scoreboard;
+package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scoreboard.Scoreboard;
+import com.velocitypowered.api.scoreboard.ScoreboardProvider;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ScoreboardProvider {
+public class VelocityScoreboardProvider extends ScoreboardProvider {
 
-    protected ScoreboardProvider() {
-    }
-
+    @Override
     @NotNull
-    public abstract Scoreboard createScoreboard(int priority, @NotNull ProxyServer server, @NotNull Object holder);
-
+    public Scoreboard createScoreboard(int priority, @NotNull ProxyServer server, @NotNull Object holder) {
+        return new VelocityScoreboard(priority, server, holder);
+    }
 }

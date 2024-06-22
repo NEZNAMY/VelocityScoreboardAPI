@@ -30,6 +30,7 @@ import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.DataHolder;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
+import com.velocitypowered.proxy.scoreboard.VelocityScoreboardProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -66,7 +67,7 @@ public class VelocityScoreboardAPI {
             throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
         }
         PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
-        ScoreboardManager.registerApi((priority, plugin) -> new VelocityScoreboard(priority, server, plugin));
+        ScoreboardManager.registerApi(server, new VelocityScoreboardProvider());
         System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
     }
 

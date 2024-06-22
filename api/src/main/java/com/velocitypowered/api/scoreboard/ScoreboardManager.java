@@ -32,9 +32,11 @@ public class ScoreboardManager {
 
     private static ScoreboardManager INSTANCE;
 
+    private final ProxyServer server;
     private final ScoreboardProvider provider;
 
-    private ScoreboardManager(@NotNull ScoreboardProvider provider) {
+    private ScoreboardManager(@NotNull ProxyServer server, @NotNull ScoreboardProvider provider) {
+        this.server = server;
         this.provider = provider;
     }
 
@@ -49,15 +51,18 @@ public class ScoreboardManager {
     }
 
     @ApiStatus.Internal
-    public static void registerApi(@NotNull ScoreboardProvider provider) {
-        INSTANCE = new ScoreboardManager(provider);
+    public static void registerApi(@NotNull ProxyServer server, @NotNull ScoreboardProvider provider) {
+        if (INSTANCE != null) {
+            throw new IllegalStateException("The VelocityScoreboardAPI has already been registered");
+        }
+        INSTANCE = new ScoreboardManager(server, provider);
     }
 
     @NotNull
     public Scoreboard getNewScoreboard(int priority, @NotNull Object plugin) {
         if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
         if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-        return provider.createScoreboard(priority, plugin);
+        return provider.createScoreboard(priority, server, plugin);
     }
 
     public void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
