@@ -136,7 +136,7 @@ public class VelocityObjective implements Objective {
     @NotNull
     public Score registerScore(@NotNull Score.Builder builder) {
         checkState();
-        VelocityScore score = (VelocityScore) builder.build(this);
+        VelocityScore score = ((VelocityScore.Builder)builder).build(this);
         scores.put(score.getHolder(), score);
         score.sendUpdate(scoreboard.getPlayers());
         return score;

@@ -163,12 +163,16 @@ public class VelocityScore implements Score {
             return this;
         }
 
-        @Override
+        /**
+         * Builds this score.
+         *
+         * @param   objective
+         *          Objective to build this score into
+         * @return  New built score
+         */
         @NotNull
-        public Score build(@NotNull Objective objective) {
-            return new VelocityScore((VelocityObjective) objective, holder, score, displayName, numberFormat);
+        public VelocityScore build(@NotNull VelocityObjective objective) {
+            return new VelocityScore(objective, holder, score, displayName, numberFormat);
         }
-
     }
-
 }
