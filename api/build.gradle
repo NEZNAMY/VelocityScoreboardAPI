@@ -4,6 +4,5 @@ plugins {
 
 dependencies {
     compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
-    compileOnly 'net.kyori:adventure-nbt:4.17.0'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
 }
