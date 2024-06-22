@@ -23,34 +23,77 @@ package com.velocitypowered.api.event.scoreboard;
 import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Abstract class for team-related events.
+ */
 public abstract class TeamEvent extends ScoreboardEvent{
 
+    /** Affected team */
+    @NotNull
     private final String team;
 
-    public TeamEvent(@NotNull Player player, @NotNull String team) {
-        super(player);
+    /**
+     * Constructs new instance with given parameters.
+     *
+     * @param   player
+     *          Player who received the scoreboard change
+     * @param   priority
+     *          Scoreboard source priority
+     * @param   team
+     *          Name of affected team
+     */
+    public TeamEvent(@NotNull Player player, int priority, @NotNull String team) {
+        super(player, priority);
         this.team = team;
     }
 
+    /**
+     * Returns affected team.,
+     *
+     * @return  affected team
+     */
     @NotNull
     public String getTeam() {
         return team;
     }
 
+    /**
+     * This event is called when a team is registered.
+     */
     public static class Register extends TeamEvent {
 
-        public Register(@NotNull Player player, @NotNull String team) {
-            super(player, team);
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   priority
+         *          Scoreboard source priority
+         * @param   team
+         *          Name of affected team
+         */
+        public Register(@NotNull Player player, int priority, @NotNull String team) {
+            super(player, priority, team);
         }
-
     }
 
+    /**
+     * This event is called when a team is unregistered.
+     */
     public static class Unregister extends TeamEvent {
 
-        public Unregister(@NotNull Player player, @NotNull String team) {
-            super(player, team);
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   priority
+         *          Scoreboard source priority
+         * @param   team
+         *          Name of affected team
+         */
+        public Unregister(@NotNull Player player, int priority, @NotNull String team) {
+            super(player, priority, team);
         }
-
     }
-
 }

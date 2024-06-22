@@ -24,51 +24,115 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class for Objective events.
+ */
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
+    /** Objective name */
     @NotNull
     private final String objective;
 
-    public ObjectiveEvent(@NotNull Player player, @NotNull String objective) {
-        super(player);
+    /**
+     * Constructs new instance with given parameters.
+     *
+     * @param   player
+     *          Player who received the scoreboard change
+     * @param   priority
+     *          Scoreboard source priority
+     * @param   objective
+     *          Name of affected objective
+     */
+    public ObjectiveEvent(@NotNull Player player, int priority, @NotNull String objective) {
+        super(player, priority);
         this.objective = objective;
     }
 
+    /**
+     * Returns name of affected objective.
+     *
+     * @return  name of affected objective
+     */
     @NotNull
     public String getObjective() {
         return objective;
     }
 
+    /**
+     * This event is called when an objective is assigned a display slot.
+     */
     public static class Display extends ObjectiveEvent {
 
-        @NotNull private final DisplaySlot newSlot;
+        /** New display slot */
+        @NotNull
+        private final DisplaySlot newSlot;
 
-        public Display(@NotNull Player player, @NotNull String objective, @NotNull DisplaySlot newSlot) {
-            super(player, objective);
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   priority
+         *          Scoreboard source priority
+         * @param   objective
+         *          Name of affected objective
+         * @param   newSlot
+         *          New display slot
+         */
+        public Display(@NotNull Player player, int priority, @NotNull String objective, @NotNull DisplaySlot newSlot) {
+            super(player, priority, objective);
             this.newSlot = newSlot;
         }
 
+        /**
+         * Returns new display slot for the objective.
+         *
+         * @return  New display slot for the objective
+         */
         @NotNull
         public DisplaySlot getNewSlot() {
             return newSlot;
         }
-
     }
 
+    /**
+     * This event is called when an objective is registered.
+     */
     public static class Register extends ObjectiveEvent {
 
-        public Register(@NotNull Player player, @NotNull String objective) {
-            super(player, objective);
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   priority
+         *          Scoreboard source priority
+         * @param   objective
+         *          Name of affected objective
+         */
+        public Register(@NotNull Player player, int priority, @NotNull String objective) {
+            super(player, priority, objective);
         }
-
     }
 
+    /**
+     * This event is called when an objective is unregistered.
+     */
     public static class Unregister extends ObjectiveEvent {
 
-        public Unregister(@NotNull Player player, @NotNull String objective) {
-            super(player, objective);
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   priority
+         *          Scoreboard source priority
+         * @param   objective
+         *          Name of affected objective
+         */
+        public Unregister(@NotNull Player player, int priority, @NotNull String objective) {
+            super(player, priority, objective);
         }
-
     }
 
 }

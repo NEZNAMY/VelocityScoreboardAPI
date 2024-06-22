@@ -39,7 +39,6 @@ import org.jetbrains.annotations.NotNull;
  *  - Easier setScore API function
  *  - Team#updateProperties to avoid sending up to 7 packets if only 1 can be sent
  *  - Fix ComponentHolder usage in API module?
- *  - Add priority field to events
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
  *  - Clone team entries on creation and in getters to prevent random modifications

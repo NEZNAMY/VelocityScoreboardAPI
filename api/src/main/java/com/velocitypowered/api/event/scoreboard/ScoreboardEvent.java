@@ -32,23 +32,38 @@ public abstract class ScoreboardEvent {
     @NotNull
     private final Player player;
 
+    /** Scoreboard priority (0 = backend, higher = proxy plugins) */
+    private final int priority;
+
     /**
      * Constructs new instance with given player.
      *
      * @param   player
      *          Player who received the change
+     * @param   priority
+     *          Scoreboard priority
      */
-    protected ScoreboardEvent(@NotNull Player player) {
+    protected ScoreboardEvent(@NotNull Player player, int priority) {
         this.player = player;
+        this.priority = priority;
     }
 
     /**
      * Returns player who received the scoreboard change.
      *
-     * @return  player who received the scoreboard change
+     * @return  Player who received the scoreboard change
      */
     @NotNull
     public Player getPlayer() {
         return player;
+    }
+
+    /**
+     * Returns scoreboard priority. 0 is for backend scoreboard, higher values for proxy plugins.
+     *
+     * @return  Scoreboard priority
+     */
+    public int getPriority() {
+        return priority;
     }
 }
