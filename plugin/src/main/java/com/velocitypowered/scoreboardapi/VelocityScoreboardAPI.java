@@ -43,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
  *  - Add priority field to events
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
+ *  - Clone team entries on creation and in getters to prevent random modifications
  */
 public class VelocityScoreboardAPI {
 
