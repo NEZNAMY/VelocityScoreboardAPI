@@ -24,14 +24,27 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.StateRegistry;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.function.Supplier;
 
+/**
+ * Class for scoreboard packet registration. If ScoreboardAPI gets merged into Velocity,
+ * this will be moved into {@link StateRegistry} class.
+ */
 public class PacketRegistry {
 
-    public static void registerPackets(ProtocolVersion maximumSupportedVersion) throws Exception {
+    /**
+     * Registers scoreboard packets.
+     *
+     * @param   maximumSupportedVersion
+     *          Maximum supported protocol version by current version
+     * @throws  Exception
+     *          If thrown by reflective operation
+     */
+    public static void registerPackets(@NotNull ProtocolVersion maximumSupportedVersion) throws Exception {
         Field f = StateRegistry.class.getDeclaredField("clientbound");
         f.setAccessible(true);
         StateRegistry.PacketRegistry clientbound = (StateRegistry.PacketRegistry) f.get(StateRegistry.PLAY);
