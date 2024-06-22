@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
@@ -73,33 +72,5 @@ public class VelocityScoreboardAPI {
     @Subscribe
     public void onQuit(DisconnectEvent e) {
         DataHolder.removeScoreboardManager(e.getPlayer());
-    }
-
-    @Subscribe
-    @SuppressWarnings("UnstableApiUsage")
-    public void onSwitch(ServerPostConnectEvent e) {
-        /*System.out.println(e.getClass().getName());
-        final ScoreboardManager manager = ScoreboardManager.getInstance();
-        Scoreboard scoreboard = manager.getNewScoreboard(1, (priority, server) -> new VelocityScoreboard(priority, server, this));
-        //scoreboard.addPlayer(e.getPlayer());
-        Objective sidebar = scoreboard.createObjective("MyObjective", builder -> builder
-                .title(Component.text("§4§lTitle"))
-                .displaySlot(DisplaySlot.SIDEBAR)
-                .healthDisplay(HealthDisplay.INTEGER)
-                .fixedNumberFormat(Component.text("-")));
-        sidebar.createScore("Line1", builder -> builder.score(69)
-                .displayName(Component.text("Custom name for Line1"))
-                .fixedNumberFormat(Component.text("NumberFormat")));
-        sidebar.createScore("Line2", builder -> {});
-
-        scoreboard.createTeam("Team1", builder -> builder
-                .prefix(Component.text("prefix "))
-                .suffix(Component.text(" suffix"))
-                .entries("Line2"));
-        scoreboard.createTeam("Team2", builder -> builder
-                .prefix(Component.text("prefix "))
-                .suffix(Component.text(" suffix"))
-                .entries(e.getPlayer().getUsername()));
-        scoreboard.addPlayer(e.getPlayer());*/
     }
 }
