@@ -32,43 +32,109 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * An objective coming from a downstream scoreboard.
+ */
 public class DownstreamObjective {
 
-    @NotNull private final String objectiveName;
-    @Nullable private TextHolder title;
-    @Nullable private HealthDisplay healthDisplay;
-    @Nullable private NumberFormat numberFormat;
-    @Nullable private DisplaySlot displaySlot;
-    @NotNull private final Map<String, DownstreamScore> scores = new ConcurrentHashMap<>();
+    /** Name of the objective */
+    @NotNull
+    private final String objectiveName;
 
-    public DownstreamObjective(@NotNull String objectiveName, @NotNull TextHolder title, @Nullable HealthDisplay healthDisplay,
-                               @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
+    /** Objective title */
+    @Nullable
+    private TextHolder title;
+
+    /** Health display (1.8+) */
+    @Nullable
+    private HealthDisplay healthDisplay;
+
+    /** Default number format for all scores (1.20.3+) */
+    @Nullable
+    private NumberFormat numberFormat;
+
+    /** Display slot of the objective */
+    @Nullable
+    private DisplaySlot displaySlot;
+
+    /** Registered scores */
+    @NotNull
+    private final Map<String, DownstreamScore> scores = new ConcurrentHashMap<>();
+
+    /**
+     * Constructs new instance with given parameters.
+     *
+     * @param   objectiveName
+     *          Objective name
+     * @param   title
+     *          Objective title
+     * @param   healthDisplay
+     *          Health display type (1.8+)
+     * @param   numberFormat
+     *          Default number format for all scores (1.20.3+)
+     */
+    public DownstreamObjective(@NotNull String objectiveName, @NotNull TextHolder title,
+                               @Nullable HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
         this.objectiveName = objectiveName;
         this.title = title;
         this.healthDisplay = healthDisplay;
         this.numberFormat = numberFormat;
-        this.displaySlot = displaySlot;
     }
 
+    /**
+     * Returns name of the objective.
+     *
+     * @return  Name of the objective
+     */
     @NotNull
     public String getName() {
         return objectiveName;
     }
 
+    /**
+     * Sets display slot of this objective.
+     *
+     * @param   displaySlot
+     *          New display slot
+     */
     public void setDisplaySlot(@Nullable DisplaySlot displaySlot) {
         this.displaySlot = displaySlot;
     }
 
+    /**
+     * Updates objective properties.
+     *
+     * @param   packet
+     *          Packet to take parameters from
+     */
     public void update(@NotNull ObjectivePacket packet) {
         title = packet.getTitle();
         healthDisplay = packet.getHealthDisplay();
         numberFormat = packet.getNumberFormat();
     }
 
+    /**
+     * Sets score into the objective.
+     *
+     * @param   holder
+     *          Score holder
+     * @param   value
+     *          Score value
+     * @param   displayName
+     *          Score holder's display name (1.20.3+)
+     * @param   numberFormat
+     *          Number formatter for score (1.20.3+)
+     */
     public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         scores.computeIfAbsent(holder, DownstreamScore::new).update(value, displayName, numberFormat);
     }
 
+    /**
+     * Removes score from this objective.
+     *
+     * @param   holder
+     *          Score holder to remove
+     */
     public void removeScore(@NotNull String holder) {
         scores.remove(holder);
     }
