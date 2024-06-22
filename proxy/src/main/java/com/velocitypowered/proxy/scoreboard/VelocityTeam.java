@@ -185,6 +185,10 @@ public class VelocityTeam implements Team {
         } else {
             throw new IllegalArgumentException("This entry is already in the team");
         }
+        for (VelocityTeam allTeams : scoreboard.getAllTeams()) {
+            if (allTeams == this) continue; // Do not remove from current one
+            allTeams.entries.remove(entry);
+        }
     }
 
     @Override

@@ -167,6 +167,10 @@ public class DownstreamScoreboard {
                 } else {
                     team2.addEntries(packet.getEntries());
                 }
+                for (DownstreamTeam allTeams : teams.values()) {
+                    if (allTeams == team2) continue; // Current team, do not remove from that one
+                    allTeams.removeEntriesIfPresent(packet.getEntries());
+                }
                 return;
             case REMOVE_PLAYER:
                 DownstreamTeam team3 = teams.get(packet.getName());

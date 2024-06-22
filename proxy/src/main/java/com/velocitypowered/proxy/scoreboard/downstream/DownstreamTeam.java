@@ -88,4 +88,8 @@ public class DownstreamTeam {
         }
         this.entries.removeAll(entries);
     }
+
+    public void removeEntriesIfPresent(@NotNull Collection<String> entries) {
+        this.entries.removeAll(entries);
+    }
 }

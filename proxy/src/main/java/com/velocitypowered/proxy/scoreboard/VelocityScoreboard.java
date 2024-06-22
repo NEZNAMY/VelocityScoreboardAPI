@@ -157,4 +157,8 @@ public class VelocityScoreboard implements Scoreboard {
         VelocityObjective previous = displaySlots.put(displaySlot, objective);
         if (previous != null) previous.clearDisplaySlot();
     }
+
+    public Collection<VelocityTeam> getAllTeams() {
+        return teams.values();
+    }
 }
