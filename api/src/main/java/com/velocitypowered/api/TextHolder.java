@@ -104,7 +104,7 @@ public class TextHolder {
      */
     @NotNull
     public String getLegacyText() {
-        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(modernText);
+        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(getModernText());
         return legacyText;
     }
 
@@ -118,7 +118,7 @@ public class TextHolder {
      */
     @NotNull
     public String getLegacyText(int charLimit) {
-        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(modernText);
+        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(getModernText());
         if (legacyText.length() > charLimit) {
             return legacyText.substring(0, charLimit);
         }
@@ -132,7 +132,7 @@ public class TextHolder {
      */
     @NotNull
     public Component getModernText() {
-        if (modernText == null) modernText = Component.text(legacyText);
+        if (modernText == null) modernText = Component.text(getLegacyText());
         return modernText;
     }
 
