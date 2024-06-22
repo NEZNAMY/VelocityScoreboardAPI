@@ -20,16 +20,12 @@
 
 package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
-import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.scoreboard.CollisionRule;
-import com.velocitypowered.api.scoreboard.NameVisibility;
-import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.proxy.data.PacketHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.data.PacketHandler;
+import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,30 +48,8 @@ public class TeamPacket implements MinecraftPacket {
     /** Team name, limited to 16 characters on <1.18 */
     private String name;
 
-    /** Display name of the team (used somewhere in spectator gamemode?) */
-    private TextHolder displayName;
-
-    /** Team prefix */
-    private TextHolder prefix;
-
-    /** Team suffix */
-    private TextHolder suffix;
-
-    /** Nametag visibility for 1.8+ */
-    private NameVisibility nameTagVisibility;
-
-    /** Collision rule for 1.9+ */
-    private CollisionRule collisionRule;
-
-    /** Team color enum */
-    private TeamColor color;
-
-    /**
-     * Team options:
-     *      0x01 - Allow friendly fire
-     *      0x02 - Can see friendly invisibles
-     */
-    private byte flags;
+    /** Team properties */
+    private TeamProperties properties;
 
     /** Players in this team */
     private Collection<String> entries;
@@ -97,19 +71,12 @@ public class TeamPacket implements MinecraftPacket {
         this.packetPriority = packetPriority;
     }
 
-    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name, @Nullable TextHolder displayName,
-                      @Nullable TextHolder prefix, @Nullable TextHolder suffix, @NotNull NameVisibility nameTagVisibility,
-                      @NotNull CollisionRule collisionRule, @NotNull TeamColor color, byte flags, @Nullable Collection<String> entries) {
+    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name,
+                      @Nullable TeamProperties properties, @Nullable Collection<String> entries) {
         this.packetPriority = packetPriority;
         this.action = action;
         this.name = name;
-        this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.nameTagVisibility = nameTagVisibility;
-        this.collisionRule = collisionRule;
-        this.color = color;
-        this.flags = flags;
+        this.properties = properties;
         this.entries = entries;
     }
 
@@ -155,29 +122,7 @@ public class TeamPacket implements MinecraftPacket {
         name = ProtocolUtils.readString(buf);
         action = TeamAction.byId(buf.readByte());
         if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
-            if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                displayName = new TextHolder(ProtocolUtils.readString(buf));
-                prefix = new TextHolder(ProtocolUtils.readString(buf));
-                suffix = new TextHolder(ProtocolUtils.readString(buf));
-            } else {
-                displayName = new TextHolder(ComponentHolder.read(buf, protocolVersion));
-            }
-            flags = buf.readByte();
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                nameTagVisibility = NameVisibility.getByName(ProtocolUtils.readString(buf));
-            }
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
-                collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
-            }
-            int color = 0;
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                color = ProtocolUtils.readVarInt(buf);
-                prefix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
-                suffix = new TextHolder(ComponentHolder.read(buf, protocolVersion));
-            } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                color = buf.readByte();
-            }
-            this.color = TeamColor.getById(color);
+            properties = new TeamProperties(buf, protocolVersion);
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
             int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
@@ -193,28 +138,7 @@ public class TeamPacket implements MinecraftPacket {
         ProtocolUtils.writeString(buf, name);
         buf.writeByte(action.ordinal());
         if (action == TeamAction.REGISTER || action == TeamAction.UPDATE) {
-            if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                ProtocolUtils.writeString(buf, displayName.getLegacyText(16));
-                ProtocolUtils.writeString(buf, prefix.getLegacyText(16));
-                ProtocolUtils.writeString(buf, suffix.getLegacyText(16));
-            } else {
-                getComponentHolder(displayName, protocolVersion).write(buf);
-            }
-            buf.writeByte(flags);
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                ProtocolUtils.writeString(buf, nameTagVisibility.toString());
-            }
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
-                ProtocolUtils.writeString(buf, collisionRule.toString());
-            }
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                ProtocolUtils.writeVarInt(buf, color.id());
-                getComponentHolder(prefix, protocolVersion).write(buf);
-                getComponentHolder(suffix, protocolVersion).write(buf);
-            } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
-                // buf.writeByte(color);
-            }
+            properties.encode(buf, protocolVersion);
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
@@ -226,13 +150,6 @@ public class TeamPacket implements MinecraftPacket {
                 ProtocolUtils.writeString(buf, player);
             }
         }
-    }
-
-    @NotNull
-    private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
-        ComponentHolder holder = (ComponentHolder) textHolder.getComponentHolder();
-        if (holder == null) holder = new ComponentHolder(version, textHolder.getModernText());
-        return holder;
     }
 
     @Override
@@ -255,37 +172,8 @@ public class TeamPacket implements MinecraftPacket {
     }
 
     @Nullable
-    public TextHolder getDisplayName() {
-        return displayName;
-    }
-
-    @Nullable
-    public TextHolder getPrefix() {
-        return prefix;
-    }
-
-    @Nullable
-    public TextHolder getSuffix() {
-        return suffix;
-    }
-
-    @NotNull
-    public NameVisibility getNameTagVisibility() {
-        return nameTagVisibility;
-    }
-
-    @NotNull
-    public CollisionRule getCollisionRule() {
-        return collisionRule;
-    }
-
-    @NotNull
-    public TeamColor getColor() {
-        return color;
-    }
-
-    public byte getFlags() {
-        return flags;
+    public TeamProperties getProperties() {
+        return properties;
     }
 
     @Nullable

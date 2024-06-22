@@ -20,12 +20,9 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.scoreboard.CollisionRule;
-import com.velocitypowered.api.scoreboard.NameVisibility;
-import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.PacketLogger;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -33,40 +30,17 @@ import java.util.Collection;
 public class DownstreamTeam {
     
     @NotNull private final String name;
-    @NotNull private TextHolder displayName;
-    @NotNull private TextHolder prefix;
-    @NotNull private TextHolder suffix;
-    @NotNull private NameVisibility nameVisibility;
-    @NotNull private CollisionRule collisionRule;
-    @NotNull private TeamColor color;
-    boolean allowFriendlyFire;
-    boolean canSeeFriendlyInvisibles;
+    @NotNull private TeamProperties properties;
     @NotNull private final Collection<String> entries;
 
-    public DownstreamTeam(@NotNull String name, @NotNull TextHolder displayName, @NotNull TextHolder prefix,
-                          @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule,
-                          @NotNull TeamColor color, boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
+    public DownstreamTeam(@NotNull String name, @NotNull TeamProperties properties, @NotNull Collection<String> entries) {
         this.name = name;
-        this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.nameVisibility = nameVisibility;
-        this.collisionRule = collisionRule;
-        this.color = color;
-        this.allowFriendlyFire = allowFriendlyFire;
-        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+        this.properties = properties;
         this.entries = entries;
     }
 
     public void update(@NotNull TeamPacket packet) {
-        displayName = packet.getDisplayName();
-        prefix = packet.getPrefix();
-        suffix = packet.getSuffix();
-        nameVisibility = packet.getNameTagVisibility();
-        collisionRule = packet.getCollisionRule();
-        color = packet.getColor();
-        allowFriendlyFire = (packet.getFlags() & 0x1) > 0;
-        canSeeFriendlyInvisibles = (packet.getFlags() & 0x2) > 0;
+        properties = packet.getProperties();
     }
 
     public void addEntries(@NotNull Collection<String> entries) {

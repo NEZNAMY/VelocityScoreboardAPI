@@ -134,18 +134,7 @@ public class DownstreamScoreboard {
                 if (teams.containsKey(packet.getName())) {
                     PacketLogger.invalidDownstreamPacket("This scoreboard already contains team called " + packet.getName());
                 } else {
-                    teams.put(packet.getName(), new DownstreamTeam(
-                            packet.getName(),
-                            packet.getDisplayName(),
-                            packet.getPrefix(),
-                            packet.getSuffix(),
-                            packet.getNameTagVisibility(),
-                            packet.getCollisionRule(),
-                            packet.getColor(),
-                            (packet.getFlags() & 0x01) > 0,
-                            (packet.getFlags() & 0x02) > 0,
-                            packet.getEntries()
-                    ));
+                    teams.put(packet.getName(), new DownstreamTeam(packet.getName(), packet.getProperties(), packet.getEntries()));
                 }
                 return;
             case UNREGISTER:

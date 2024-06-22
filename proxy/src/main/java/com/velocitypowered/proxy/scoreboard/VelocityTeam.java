@@ -33,77 +33,70 @@ public class VelocityTeam implements Team {
 
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
-    @NotNull private TextHolder displayName;
-    @NotNull private TextHolder prefix;
-    @NotNull private TextHolder suffix;
-    @NotNull private NameVisibility nameVisibility;
-    @NotNull private CollisionRule collisionRule;
-    @NotNull private TeamColor color;
-    boolean allowFriendlyFire;
-    boolean canSeeFriendlyInvisibles;
+    @NotNull private final TeamProperties properties;
     @NotNull private final Collection<String> entries;
     private boolean registered = true;
 
-    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TextHolder displayName,
-                         @NotNull TextHolder prefix, @NotNull TextHolder suffix, @NotNull NameVisibility nameVisibility,
-                         @NotNull CollisionRule collisionRule, @NotNull TeamColor color, boolean allowFriendlyFire,
-                         boolean canSeeFriendlyInvisibles, @NotNull Collection<String> entries) {
+    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TeamProperties properties, @NotNull Collection<String> entries) {
         this.scoreboard = scoreboard;
         this.name = name;
-        this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.nameVisibility = nameVisibility;
-        this.collisionRule = collisionRule;
-        this.color = color;
-        this.allowFriendlyFire = allowFriendlyFire;
-        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
+        this.properties = properties;
         this.entries = entries;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;
     }
 
+    @Override
     @NotNull
     public TextHolder getDisplayName() {
-        return displayName;
+        return properties.getDisplayName();
     }
 
+    @Override
     @NotNull
     public TextHolder getPrefix() {
-        return prefix;
+        return properties.getPrefix();
     }
 
+    @Override
     @NotNull
     public TextHolder getSuffix() {
-        return suffix;
+        return properties.getSuffix();
     }
 
+    @Override
     @NotNull
     public NameVisibility getNameVisibility() {
-        return nameVisibility;
+        return properties.getNameTagVisibility();
     }
 
+    @Override
     @NotNull
     public CollisionRule getCollisionRule() {
-        return collisionRule;
+        return properties.getCollisionRule();
     }
 
+    @Override
     @NotNull
     public TeamColor getColor() {
-        return color;
+        return properties.getColor();
     }
 
+    @Override
     public boolean isAllowFriendlyFire() {
-        return allowFriendlyFire;
+        return properties.isAllowFriendlyFire();
     }
 
+    @Override
     public boolean isCanSeeFriendlyInvisibles() {
-        return canSeeFriendlyInvisibles;
+        return properties.isCanSeeFriendlyInvisibles();
     }
 
+    @Override
     @NotNull
     public Collection<String> getEntries() {
         return entries;
@@ -112,65 +105,65 @@ public class VelocityTeam implements Team {
     @Override
     public void setDisplayName(@NotNull TextHolder displayName) {
         checkState();
-        if (this.displayName == displayName) return;
-        this.displayName = displayName;
-        sendUpdate();
+        if (properties.setDisplayName(displayName)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setPrefix(@NotNull TextHolder prefix) {
         checkState();
-        if (this.prefix == prefix) return;
-        this.prefix = prefix;
-        sendUpdate();
+        if (properties.setPrefix(prefix)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setSuffix(@NotNull TextHolder suffix) {
         checkState();
-        if (this.suffix == suffix) return;
-        this.suffix = suffix;
-        sendUpdate();
+        if (properties.setSuffix(suffix)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setNameVisibility(@NotNull NameVisibility visibility) {
         checkState();
-        if (this.nameVisibility == visibility) return;
-        this.nameVisibility = visibility;
-        sendUpdate();
+        if (properties.setNameVisibility(visibility)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setCollisionRule(@NotNull CollisionRule collisionRule) {
         checkState();
-        if (this.collisionRule == collisionRule) return;
-        this.collisionRule = collisionRule;
-        sendUpdate();
+        if (properties.setCollisionRule(collisionRule)) {
+            sendUpdate();
+        }
     }
 
     @Override
-    public void setColor(TeamColor color) {
+    public void setColor(@NotNull TeamColor color) {
         checkState();
-        if (this.color == color) return;
-        this.color = color;
-        sendUpdate();
+        if (properties.setColor(color)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setAllowFriendlyFire(boolean friendlyFire) {
         checkState();
-        if (this.allowFriendlyFire == friendlyFire) return;
-        this.allowFriendlyFire = friendlyFire;
-        sendUpdate();
+        if (properties.setAllowFriendlyFire(friendlyFire)) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
         checkState();
-        if (this.canSeeFriendlyInvisibles == canSeeFriendlyInvisibles) return;
-        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
-        sendUpdate();
+        if (properties.setCanSeeFriendlyInvisibles(canSeeFriendlyInvisibles)) {
+            sendUpdate();
+        }
     }
 
     @Override
@@ -196,15 +189,13 @@ public class VelocityTeam implements Team {
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
         for (ConnectedPlayer player : players) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name,
-                    displayName, prefix, suffix, nameVisibility, collisionRule, color, getFlags(), entries));
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, properties, entries));
         }
     }
 
     private void sendUpdate() {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name,
-                    displayName, prefix, suffix, nameVisibility, collisionRule, color, getFlags(), null));
+            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name, properties, null));
         }
     }
 
@@ -218,13 +209,6 @@ public class VelocityTeam implements Team {
         for (ConnectedPlayer player : scoreboard.getPlayers()) {
             player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
         }
-    }
-
-    private byte getFlags() {
-        byte flags = 0;
-        if (allowFriendlyFire) flags += 1;
-        if (canSeeFriendlyInvisibles) flags += 2;
-        return flags;
     }
 
     public void unregister() {
@@ -322,8 +306,8 @@ public class VelocityTeam implements Team {
         @Override
         public Team build(@NotNull Scoreboard scoreboard) {
             return new VelocityTeam(
-                    (VelocityScoreboard) scoreboard, name, displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles, entries
+                    (VelocityScoreboard) scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles), entries
             );
         }
     }
