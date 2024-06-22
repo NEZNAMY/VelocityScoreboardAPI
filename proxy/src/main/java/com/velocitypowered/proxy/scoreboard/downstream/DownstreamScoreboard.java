@@ -54,7 +54,7 @@ public class DownstreamScoreboard {
                             packet.getObjectiveName(),
                             packet.getTitle(),
                             packet.getHealthDisplay(),
-                            packet.readNumberFormat(),
+                            packet.getNumberFormat(),
                             null
                     ));
                 }

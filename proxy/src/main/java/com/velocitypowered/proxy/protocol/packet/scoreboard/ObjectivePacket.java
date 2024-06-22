@@ -148,32 +148,63 @@ public class ObjectivePacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Returns objective action.
+     *
+     * @return  objective action
+     */
     @NotNull
     public ObjectiveAction getAction() {
         return action;
     }
 
+    /**
+     * Returns name of the objective.
+     *
+     * @return  name of the objective
+     */
     @NotNull
     public String getObjectiveName() {
         return objectiveName;
     }
 
+    /**
+     * Returns title of the objective (for register and update actions only).
+     *
+     * @return  title of the objective
+     */
     @Nullable
     public TextHolder getTitle() {
         return title;
     }
 
+    /**
+     * Returns health display of the objective.
+     *
+     * @return  health display of the objective
+     */
     @Nullable
     public HealthDisplay getHealthDisplay() {
         return healthDisplay;
     }
 
+    /**
+     * Returns default number format for all scores in this objective.
+     *
+     * @return  default number format for all scores in this objective
+     */
     @Nullable
-    public NumberFormat readNumberFormat() {
+    public NumberFormat getNumberFormat() {
         return numberFormat;
     }
 

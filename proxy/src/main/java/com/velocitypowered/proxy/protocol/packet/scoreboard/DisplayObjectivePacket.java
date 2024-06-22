@@ -91,15 +91,30 @@ public class DisplayObjectivePacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Returns position the objective was assigned to.
+     *
+     * @return  position the objective was assigned
+     */
     @NotNull
     public DisplaySlot getPosition() {
         return position;
     }
 
+    /**
+     * Returns name of objective to assign position to.
+     *
+     * @return  name of objective to assign position to
+     */
     @NotNull
     public String getObjectiveName() {
         return objectiveName;

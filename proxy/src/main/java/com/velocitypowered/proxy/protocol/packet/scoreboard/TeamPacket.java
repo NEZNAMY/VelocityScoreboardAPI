@@ -71,6 +71,20 @@ public class TeamPacket implements MinecraftPacket {
         this.packetPriority = packetPriority;
     }
 
+    /**
+     * Constructs new instance with given parameters.
+     *
+     * @param   packetPriority
+     *          Priority of the packet
+     * @param   action
+     *          Team action
+     * @param   name
+     *          Team name
+     * @param   properties
+     *          Team properties
+     * @param   entries
+     *          Entries in the team
+     */
     public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name,
                       @Nullable TeamProperties properties, @Nullable Collection<String> entries) {
         this.packetPriority = packetPriority;
@@ -157,25 +171,50 @@ public class TeamPacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Returns team action.
+     *
+     * @return  team action
+     */
     @NotNull
     public TeamAction getAction() {
         return action;
     }
 
+    /**
+     * Returns team name.
+     *
+     * @return  team name
+     */
     @NotNull
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns team properties (only for register and update actions).
+     *
+     * @return  team properties
+     */
     @Nullable
     public TeamProperties getProperties() {
         return properties;
     }
 
+    /**
+     * Returns entries in the team (only for register / add player / remove player).
+     *
+     * @return  entries in the team
+     */
     @Nullable
     public Collection<String> getEntries() {
         return entries;

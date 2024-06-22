@@ -81,7 +81,7 @@ public class DownstreamObjective {
     public void update(@NotNull ObjectivePacket packet) {
         title = packet.getTitle();
         healthDisplay = packet.getHealthDisplay();
-        numberFormat = packet.readNumberFormat();
+        numberFormat = packet.getNumberFormat();
     }
 
     public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {

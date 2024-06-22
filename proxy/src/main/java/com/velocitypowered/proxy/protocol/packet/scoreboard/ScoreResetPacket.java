@@ -84,15 +84,30 @@ public class ScoreResetPacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Returns score holder who should be removed from objective.
+     *
+     * @return  score holder who should be removed from objective
+     */
     @NotNull
     public String getScoreHolder() {
         return scoreHolder;
     }
 
+    /**
+     * Returns objective from which the holder should be removed, null for all objectives.
+     *
+     * @return  objective from which the holder should be removed
+     */
     @Nullable
     public String getObjectiveName() {
         return objectiveName;

@@ -115,29 +115,59 @@ public class ScoreSetPacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Return score holder who should be set in the objective.
+     *
+     * @return  score holder who should be set in the objective
+     */
     @NotNull
     public String getScoreHolder() {
         return scoreHolder;
     }
 
+    /**
+     * Returns name of objective where holder should be set.
+     *
+     * @return  name of objective where holder should be set
+     */
     @NotNull
     public String getObjectiveName() {
         return objectiveName;
     }
 
+    /**
+     * Returns value assigned to score holder.
+     *
+     * @return  value assigned to score holder
+     */
     public int getValue() {
         return value;
     }
 
+    /**
+     * Returns custom name for the score holder.
+     *
+     * @return  custom name for the score holder
+     */
     @Nullable
     public ComponentHolder getDisplayName() {
         return displayName;
     }
 
+    /**
+     * Returns number format for the score.
+     *
+     * @return  number format for the score
+     */
     @Nullable
     public NumberFormat getNumberFormat() {
         return numberFormat;

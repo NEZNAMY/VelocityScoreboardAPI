@@ -37,13 +37,13 @@ public class ScorePacket implements MinecraftPacket {
     /** Packet priority (higher value = higher priority) */
     private final int packetPriority;
 
-    /** Packet action (0 = set, 1 = remove) */
+    /** Packet action */
     private ScoreAction action;
 
     /** Score holder who the score belongs to */
     private String scoreHolder;
 
-    /** Objective from which the holder should be removed (null for all objectives ?) */
+    /** Objective where the score should be modified */
     private String objectiveName;
 
     /** Score value */
@@ -112,25 +112,50 @@ public class ScorePacket implements MinecraftPacket {
         return PacketHandler.handle(minecraftSessionHandler, this);
     }
 
+    /**
+     * Returns priority of this packet.
+     *
+     * @return  priority of this packet
+     */
     public int getPacketPriority() {
         return packetPriority;
     }
 
+    /**
+     * Returns packet action.
+     *
+     * @return  packet action
+     */
     @NotNull
     public ScoreAction getAction() {
         return action;
     }
 
+    /**
+     * Returns score holder.
+     *
+     * @return  score holder
+     */
     @NotNull
     public String getScoreHolder() {
         return scoreHolder;
     }
 
+    /**
+     * Returns objective where this score should be modified.
+     *
+     * @return  objective where this score should be modified
+     */
     @Nullable
     public String getObjectiveName() {
         return objectiveName;
     }
 
+    /**
+     * Returns score value.
+     *
+     * @return  score value
+     */
     public int getValue() {
         return value;
     }
