@@ -146,7 +146,7 @@ public class DownstreamScoreboard {
                 if (team == null) {
                     PacketLogger.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot update");
                 } else {
-                    team.update(packet.getProperties());
+                    team.setProperties(packet.getProperties());
                 }
                 return;
             case ADD_PLAYER:
