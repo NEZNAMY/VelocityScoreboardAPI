@@ -142,27 +142,19 @@ public class VelocityObjective implements Objective {
     }
 
     @Override
-    @NotNull
-    public Score getScore(@NotNull String name) {
+    @Nullable
+    public Score getScore(@NotNull String holder) {
         checkState();
-        return scores.get(name);
+        return scores.get(holder);
     }
 
     @Override
-    public void removeScore(@NotNull String name) {
+    public void removeScore(@NotNull String holder) {
         checkState();
-        VelocityScore score = scores.get(name);
-        if (score == null) throw new IllegalArgumentException("Score \"" + name + "\" is not in this objective");
+        VelocityScore score = scores.get(holder);
+        if (score == null) throw new IllegalArgumentException("Score \"" + holder + "\" is not in this objective");
         score.remove();
-        scores.remove(name);
-    }
-
-    @Override
-    public void removeScore(@NotNull Score score) {
-        checkState();
-        if (!((VelocityScore)score).isRegistered()) throw new IllegalStateException("This score has already been unregistered");
-        ((VelocityScore) score).remove();
-        scores.remove(score.getHolder());
+        scores.remove(holder);
     }
 
     public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
@@ -247,12 +239,17 @@ public class VelocityObjective implements Objective {
             return this;
         }
 
-        @Override
+        /**
+         * Builds this objective.
+         *
+         * @param   scoreboard
+         *          Scoreboard to register into
+         * @return  Objective from builder
+         */
         @NotNull
-        public VelocityObjective build(@NotNull Scoreboard scoreboard) {
-            return new VelocityObjective((VelocityScoreboard) scoreboard, name, title, healthDisplay, numberFormat, displaySlot);
+        public VelocityObjective build(@NotNull VelocityScoreboard scoreboard) {
+            return new VelocityObjective(scoreboard, name, title, healthDisplay, numberFormat, displaySlot);
         }
-
     }
 
 }

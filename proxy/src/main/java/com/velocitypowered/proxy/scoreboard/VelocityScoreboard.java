@@ -115,7 +115,7 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     @NotNull
     public Objective registerObjective(@NotNull Objective.Builder builder) {
-        final VelocityObjective objective = (VelocityObjective) builder.build(this);
+        final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalArgumentException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
         objective.sendRegister(players);

@@ -26,31 +26,97 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
+/**
+ * A scoreboard objective with scores.
+ */
 public interface Objective {
 
-    @Nullable
-    DisplaySlot getDisplaySlot();
-
-    void setDisplaySlot(@NotNull DisplaySlot displaySlot);
-
+    /**
+     * Returns name of this objective.
+     *
+     * @return  name of this objective
+     */
     @NotNull
     String getName();
 
+    /**
+     * Returns display slot where this objective is displayed.
+     *
+     * @return  display slot where this objective is displayed
+     * @see     #setDisplaySlot(DisplaySlot)
+     */
+    @Nullable
+    DisplaySlot getDisplaySlot();
+
+    /**
+     * Sets display slot of this objective.
+     *
+     * @param   displaySlot
+     *          New display slot
+     * @see     #getDisplaySlot()
+     */
+    void setDisplaySlot(@NotNull DisplaySlot displaySlot);
+
+    /**
+     * Gets title of this objective.
+     * 
+     * @return  title of this objective
+     * @see     #setTitle(TextHolder) 
+     */
     @NotNull
     TextHolder getTitle();
 
+    /**
+     * Sets title of this objective.
+     * 
+     * @param   title
+     *          New title to use
+     * @see     #getTitle() 
+     */
     void setTitle(@NotNull TextHolder title);
 
+    /**
+     * Gets health display of this objective.
+     * 
+     * @return  health display of this objective
+     * @see     #setHealthDisplay(HealthDisplay) 
+     */
     @NotNull
     HealthDisplay getHealthDisplay();
 
+    /**
+     * Sets health display type.
+     * 
+     * @param   healthDisplay
+     *          New health display
+     * @see     #getHealthDisplay() 
+     */
     void setHealthDisplay(@NotNull HealthDisplay healthDisplay);
 
+    /**
+     * Returns default number format for all scores in this objective.
+     * 
+     * @return  default number format for all scores in this objective
+     * @see     #setNumberFormat(NumberFormat) 
+     */
     @Nullable
     NumberFormat getNumberFormat();
 
+    /**
+     * Sets default number format for all scores in this objective.
+     * 
+     * @param   numberFormat
+     *          Default number format for all scores
+     */
     void setNumberFormat(@Nullable NumberFormat numberFormat);
 
+    /**
+     * Creates a new score builder.
+     * 
+     * @param   holder
+     *          Score holder name
+     * @return  Score builder
+     */
     @NotNull
     Score.Builder scoreBuilder(@NotNull String holder);
 
@@ -63,28 +129,69 @@ public interface Objective {
         registerScore(builder);
     }
 
-    @NotNull
-    Score getScore(@NotNull String name);
+    /**
+     * Gets score of given holder.
+     * 
+     * @param   holder
+     *          Score holder name
+     * @return  Score of given holder
+     * @see     #removeScore(String) 
+     */
+    @Nullable
+    Score getScore(@NotNull String holder);
 
-    void removeScore(@NotNull String name);
+    /**
+     * Removes score of given holder.
+     * 
+     * @param   holder
+     *          Score holder
+     * @see     #getScore(String)
+     */
+    void removeScore(@NotNull String holder);
 
-    void removeScore(@NotNull Score score);
-
+    /**
+     * Interface for building objectives.
+     */
     interface Builder {
 
+        /**
+         * Sets objective title.
+         *
+         * @param   title
+         *          Title to display
+         * @return  this, for chaining
+         */
         @NotNull
         Builder title(@NotNull TextHolder title);
 
+        /**
+         * Sets health display.
+         *
+         * @param   healthDisplay
+         *          Health display type
+         * @return  this, for chaining
+         */
         @NotNull
         Builder healthDisplay(@NotNull HealthDisplay healthDisplay);
 
+        /**
+         * Sets display slot.
+         *
+         * @param   displaySlot
+         *          Display slot
+         * @return  this, for chaining
+         */
         @NotNull
         Builder displaySlot(@NotNull DisplaySlot displaySlot);
 
+        /**
+         * Sets default number format for all scores.
+         *
+         * @param   numberFormat
+         *          Default number format for all scores
+         * @return  this, for chaining
+         */
         @NotNull
         Builder numberFormat(@Nullable NumberFormat numberFormat);
-
-        @NotNull
-        Objective build(@NotNull Scoreboard scoreboard);
     }
 }
