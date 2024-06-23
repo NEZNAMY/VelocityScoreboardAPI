@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.google.common.base.Preconditions;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.NumberFormat;
