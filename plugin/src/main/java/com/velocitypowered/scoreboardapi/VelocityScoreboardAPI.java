@@ -58,10 +58,9 @@ public class VelocityScoreboardAPI {
      * Constructs new instance with given server.
      *
      * @param server Server instance
-     * @throws Exception If thrown during packer registration
      */
     @Inject
-    public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
+    public VelocityScoreboardAPI(@NotNull ProxyServer server) {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
@@ -76,9 +75,18 @@ public class VelocityScoreboardAPI {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
             return;
         }
-        PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
+
+        try {
+            PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
+        } catch (Throwable e) {
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            LoggerManager.log(Level.ERROR,"<red>An error occurred while registering packets.");
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            return;
+        }
+
         ScoreboardManager.registerApi(server, new VelocityScoreboardProvider());
-        LoggerManager.log(Level.INFO,"<green> Successfully injected Scoreboard API.");
+        LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
         this.server = server;
     }
 
