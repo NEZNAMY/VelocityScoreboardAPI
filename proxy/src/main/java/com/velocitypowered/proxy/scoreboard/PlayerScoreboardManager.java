@@ -28,13 +28,17 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PlayerScoreboardManager {
 
     @NotNull private final Player player;
     @NotNull private final DownstreamScoreboard downstreamScoreboard;
     @NotNull private final Multimap<Object, VelocityScoreboard> pluginScoreboards = Multimaps.newSetMultimap(new ConcurrentHashMap<>(), Sets::newConcurrentHashSet);
+    @NotNull private final Map<Integer, VelocityScoreboard> priorityScoreboards = new ConcurrentSkipListMap<>(Comparator.reverseOrder());
 
     public PlayerScoreboardManager(@NotNull Player player) {
         this.player = player;
@@ -47,11 +51,26 @@ public class PlayerScoreboardManager {
     }
 
     public void registerScoreboard(@NotNull VelocityScoreboard scoreboard) {
-        if (!pluginScoreboards.put(scoreboard.holder(), scoreboard)) throw new IllegalStateException("The player is already in this scoreboard");
+        if (priorityScoreboards.put(scoreboard.getPriority(), scoreboard) != null) {
+            throw new IllegalStateException("A scoreboard with the same priority is already registered");
+        }
+        if (!pluginScoreboards.put(scoreboard.holder(), scoreboard)) {
+            throw new IllegalStateException("The player is already in this scoreboard");
+        }
     }
 
     public void unregisterScoreboard(@NotNull VelocityScoreboard scoreboard) {
-        if (!pluginScoreboards.remove(scoreboard.holder(), scoreboard)) throw new IllegalStateException("The player is not in this scoreboard");
+        if (!pluginScoreboards.remove(scoreboard.holder(), scoreboard)) {
+            throw new IllegalStateException("The player is not in this scoreboard");
+        }
+        if (priorityScoreboards.remove(scoreboard.getPriority()) == null) {
+            throw new IllegalStateException("Priority scoreboard not found");
+        }
+    }
+
+    @NotNull
+    public Map<Integer, VelocityScoreboard> getPriorityScoreboards() {
+        return priorityScoreboards;
     }
 
     public void handleDisconnect() {
