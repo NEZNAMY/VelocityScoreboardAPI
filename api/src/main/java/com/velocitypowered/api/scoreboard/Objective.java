@@ -120,13 +120,28 @@ public interface Objective {
     @NotNull
     Score.Builder scoreBuilder(@NotNull String holder);
 
+    /**
+     * Registers a score with the given Score.Builder object.
+     *
+     * @param builder the Score.Builder object representing the score to be registered
+     * @return the registered Score object
+     * @see Score.Builder
+     */
     @NotNull
     Score registerScore(@NotNull Score.Builder builder);
 
-    default void createScore(@NotNull String holder, @NotNull Consumer<Score.Builder> consumer) {
+    /**
+     * Creates a score with the given holder and customization options.
+     *
+     * @param holder    The name of the score holder
+     * @param consumer  The consumer function that defines the customization options for the score builder
+     * @return The registered Score object
+     */
+    @NotNull
+    default Score createScore(@NotNull String holder, @NotNull Consumer<Score.Builder> consumer) {
         Score.Builder builder = scoreBuilder(holder);
         consumer.accept(builder);
-        registerScore(builder);
+        return registerScore(builder);
     }
 
     /**

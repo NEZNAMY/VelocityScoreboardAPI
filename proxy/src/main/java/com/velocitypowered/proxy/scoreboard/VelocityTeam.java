@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
@@ -30,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 public class VelocityTeam implements Team {
 
@@ -398,7 +398,7 @@ public class VelocityTeam implements Team {
             if (allowFriendlyFire == null) allowFriendlyFire = false;
             if (canSeeFriendlyInvisibles == null) canSeeFriendlyInvisibles = false;
             return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles), new HashSet<>(entries)
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles), Sets.newConcurrentHashSet(entries)
             );
         }
     }

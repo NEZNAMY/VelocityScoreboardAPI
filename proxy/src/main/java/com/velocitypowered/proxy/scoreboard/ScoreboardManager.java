@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
@@ -29,11 +28,13 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class ScoreboardManager {
 
     @NotNull private final Player player;
     @NotNull private final DownstreamScoreboard downstreamScoreboard;
-    @NotNull private final Multimap<Object, VelocityScoreboard> pluginScoreboards = Multimaps.newSetMultimap(Maps.newConcurrentMap(), Sets::newConcurrentHashSet);
+    @NotNull private final Multimap<Object, VelocityScoreboard> pluginScoreboards = Multimaps.newSetMultimap(new ConcurrentHashMap<>(), Sets::newConcurrentHashSet);
 
     public ScoreboardManager(@NotNull Player player) {
         this.player = player;

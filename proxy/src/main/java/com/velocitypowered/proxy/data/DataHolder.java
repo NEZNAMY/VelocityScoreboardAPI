@@ -20,16 +20,16 @@
 
 package com.velocitypowered.proxy.data;
 
-import com.google.common.collect.Maps;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.proxy.scoreboard.ScoreboardManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataHolder {
 
-    private static final Map<UUID, ScoreboardManager> SCOREBOARD_MANAGERS = Maps.newConcurrentMap();
+    private static final Map<UUID, ScoreboardManager> SCOREBOARD_MANAGERS = new ConcurrentHashMap<>();
 
     @NotNull
     public static ScoreboardManager getScoreboardManager(@NotNull Player player) {

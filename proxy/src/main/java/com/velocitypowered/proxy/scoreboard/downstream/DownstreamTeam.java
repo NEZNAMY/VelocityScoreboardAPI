@@ -20,7 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.velocitypowered.proxy.data.PacketLogger;
+import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,10 +88,20 @@ public class DownstreamTeam {
     public void removeEntries(@NotNull Collection<String> entries) {
         for (String entry : entries) {
             if (!this.entries.contains(entry)) {
-                PacketLogger.invalidDownstreamPacket("Team " + name + " does not contain entry " + entry);
+                LoggerManager.invalidDownstreamPacket("Team " + name + " does not contain entry " + entry);
             }
         }
         this.entries.removeAll(entries);
+    }
+
+    /**
+     * Retrieves the properties of the team.
+     *
+     * @return The properties of the team
+     */
+    @NotNull
+    public TeamProperties getProperties() {
+        return properties;
     }
 
     /**

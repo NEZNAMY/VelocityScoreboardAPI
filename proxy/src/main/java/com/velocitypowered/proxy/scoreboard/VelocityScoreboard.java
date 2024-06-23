@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.Player;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements Scoreboard {
 
@@ -46,9 +46,9 @@ public class VelocityScoreboard implements Scoreboard {
     private final Object plugin;
 
     private final Collection<ConnectedPlayer> players = Sets.newConcurrentHashSet();
-    private final Map<String, VelocityObjective> objectives = Maps.newConcurrentMap();
-    private final Map<String, VelocityTeam> teams = Maps.newConcurrentMap();
-    private final Map<DisplaySlot, VelocityObjective> displaySlots = Maps.newConcurrentMap();
+    private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
+    private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
+    private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
 
     public VelocityScoreboard(int priority, @NotNull ProxyServer server, @NotNull Object plugin) {
         this.priority = priority;
