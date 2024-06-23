@@ -27,15 +27,34 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This class hold data for players. If Scoreboard API gets merged into velocity,
+ * this will be turned into a field in {@link com.velocitypowered.proxy.connection.client.ConnectedPlayer}.
+ */
 public class DataHolder {
 
+    /** Scoreboard managers of players */
     private static final Map<UUID, ScoreboardManager> SCOREBOARD_MANAGERS = new ConcurrentHashMap<>();
 
+    /**
+     * Returns scoreboard manager of a player.
+     *
+     * @param   player
+     *          Player to get scoreboard manager for
+     * @return  Scoreboard manager of player
+     */
     @NotNull
     public static ScoreboardManager getScoreboardManager(@NotNull Player player) {
         return SCOREBOARD_MANAGERS.computeIfAbsent(player.getUniqueId(), uuid -> new ScoreboardManager(player));
     }
 
+    /**
+     * Removes player from map of scoreboards on disconnect. This is also forwarded to
+     * scoreboard manager to remove player from all scoreboards they were in.
+     *
+     * @param   player
+     *          Player to remove from tracking
+     */
     public static void removeScoreboardManager(@NotNull Player player) {
         Optional.ofNullable(SCOREBOARD_MANAGERS.remove(player.getUniqueId()))
                 .ifPresent(ScoreboardManager::handleDisconnect);

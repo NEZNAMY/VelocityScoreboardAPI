@@ -26,6 +26,9 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
+/**
+ * This class managers logging of various problems that may occur.
+ */
 public class LoggerManager {
 
     /**
