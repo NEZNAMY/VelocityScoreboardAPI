@@ -21,7 +21,7 @@
 package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.proxy.scoreboard.ScoreboardManager;
+import com.velocitypowered.proxy.scoreboard.PlayerScoreboardManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DataHolder {
 
     /** Scoreboard managers of players */
-    private static final Map<UUID, ScoreboardManager> SCOREBOARD_MANAGERS = new ConcurrentHashMap<>();
+    private static final Map<UUID, PlayerScoreboardManager> SCOREBOARD_MANAGERS = new ConcurrentHashMap<>();
 
     /**
      * Returns scoreboard manager of a player.
@@ -44,8 +44,8 @@ public class DataHolder {
      * @return  Scoreboard manager of player
      */
     @NotNull
-    public static ScoreboardManager getScoreboardManager(@NotNull Player player) {
-        return SCOREBOARD_MANAGERS.computeIfAbsent(player.getUniqueId(), uuid -> new ScoreboardManager(player));
+    public static PlayerScoreboardManager getScoreboardManager(@NotNull Player player) {
+        return SCOREBOARD_MANAGERS.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerScoreboardManager(player));
     }
 
     /**
@@ -57,6 +57,6 @@ public class DataHolder {
      */
     public static void removeScoreboardManager(@NotNull Player player) {
         Optional.ofNullable(SCOREBOARD_MANAGERS.remove(player.getUniqueId()))
-                .ifPresent(ScoreboardManager::handleDisconnect);
+                .ifPresent(PlayerScoreboardManager::handleDisconnect);
     }
 }

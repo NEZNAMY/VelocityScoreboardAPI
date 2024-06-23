@@ -30,13 +30,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ScoreboardManager {
+public class PlayerScoreboardManager {
 
     @NotNull private final Player player;
     @NotNull private final DownstreamScoreboard downstreamScoreboard;
     @NotNull private final Multimap<Object, VelocityScoreboard> pluginScoreboards = Multimaps.newSetMultimap(new ConcurrentHashMap<>(), Sets::newConcurrentHashSet);
 
-    public ScoreboardManager(@NotNull Player player) {
+    public PlayerScoreboardManager(@NotNull Player player) {
         this.player = player;
         downstreamScoreboard = new DownstreamScoreboard(player);
     }
