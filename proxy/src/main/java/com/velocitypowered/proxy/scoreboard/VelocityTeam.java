@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class VelocityTeam implements Team {
 
@@ -169,7 +170,6 @@ public class VelocityTeam implements Team {
         }
     }
 
-    @Override
     public void updateProperties(@NotNull Team.PropertyBuilder builder) {
         checkState();
         PropertyBuilder teamBuilder = (PropertyBuilder) builder;
@@ -182,6 +182,13 @@ public class VelocityTeam implements Team {
         if (teamBuilder.allowFriendlyFire != null) properties.setAllowFriendlyFire(teamBuilder.allowFriendlyFire);
         if (teamBuilder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(teamBuilder.canSeeFriendlyInvisibles);
         sendUpdate();
+    }
+
+    @Override
+    public void updateProperties(@NotNull Consumer<Team.PropertyBuilder> builderConsumer) {
+        PropertyBuilder builder = new PropertyBuilder();
+        builderConsumer.accept(builder);
+        updateProperties(builder);
     }
 
     @Override

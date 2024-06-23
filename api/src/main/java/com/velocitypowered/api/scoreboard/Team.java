@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * An interface representing a scoreboard team.
@@ -186,21 +187,22 @@ public interface Team {
     void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
 
     /**
-     * Updates all team properties specified in the builder. Values without
-     * an assigned value will remain unchanged. Advantage of this function is that it
-     * only sends a single update packet instead of a packet for every updated property.
+     * Updates all team properties specified in the builder consumer.
+     * Values without an assigned value will remain unchanged.
+     * Advantage of this function is that it only sends a single update packet
+     * instead of a packet for every updated property.
      *
-     * @param   builder
-     *          Builder with changed properties
+     * @param   builderConsumer
+     *          Consumer with changed properties
      */
-    void updateProperties(@NotNull PropertyBuilder builder);
+    void updateProperties(@NotNull Consumer<PropertyBuilder> builderConsumer);
 
     /**
      * Returns entries currently present in this team. The returned collection is immutable,
      * use {@link #addEntry(String)} and {@link #removeEntry(String)} for adding / removing entries.
-     * 
+     *
      * @return  Entries in this team
-     * @see     #addEntry(String) 
+     * @see     #addEntry(String)
      * @see     #removeEntry(String)
      */
     @NotNull
