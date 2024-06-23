@@ -50,7 +50,6 @@ public class DownstreamScoreboard {
                 if (objectives.containsKey(packet.getObjectiveName())) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains objective called " + packet.getObjectiveName());
                 } else {
-                    Preconditions.checkNotNull(packet.getTitle(), "Objective title must be present for register action");
                     objectives.put(packet.getObjectiveName(), new DownstreamObjective(
                             packet.getObjectiveName(),
                             packet.getTitle(),
@@ -89,7 +88,6 @@ public class DownstreamScoreboard {
 
     public void handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScorePacket.ScoreAction.SET) {
-            Preconditions.checkNotNull(packet.getObjectiveName(), "Score value must be present for set action");
             handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
         } else {
             handleReset(packet.getObjectiveName(), packet.getScoreHolder());
@@ -132,8 +130,6 @@ public class DownstreamScoreboard {
     public void handle(@NotNull TeamPacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
-                Preconditions.checkNotNull(packet.getProperties(), "Team properties must be present for register action");
-                Preconditions.checkNotNull(packet.getEntries(), "Team entries must be present for register action");
                 if (teams.containsKey(packet.getName())) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains team called " + packet.getName());
                 } else {
@@ -146,7 +142,6 @@ public class DownstreamScoreboard {
                 }
             }
             case UPDATE -> {
-                Preconditions.checkNotNull(packet.getProperties(), "Team properties must be present for update action");
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot update");
@@ -155,7 +150,6 @@ public class DownstreamScoreboard {
                 }
             }
             case ADD_PLAYER -> {
-                Preconditions.checkNotNull(packet.getEntries(), "Team entries must be present for add player action");
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot add entries");
@@ -168,7 +162,6 @@ public class DownstreamScoreboard {
                 }
             }
             case REMOVE_PLAYER -> {
-                Preconditions.checkNotNull(packet.getEntries(), "Team entries must be present for remove player action");
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot remove entries");

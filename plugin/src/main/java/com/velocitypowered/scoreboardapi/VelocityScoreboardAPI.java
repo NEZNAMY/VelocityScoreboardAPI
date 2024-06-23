@@ -32,11 +32,13 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.DataHolder;
+import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.event.Level;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,7 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VelocityScoreboardAPI {
 
-    private final ProxyServer server;
+    private ProxyServer server;
 
     /**
      * Constructs new instance with given server.
@@ -63,18 +65,21 @@ public class VelocityScoreboardAPI {
     public VelocityScoreboardAPI(@NotNull ProxyServer server) throws Exception {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
-                System.out.println("[VelocityScoreboardAPI] ---------------------------------------------------------------------------------------------------");
-                System.out.println("[VelocityScoreboardAPI] Your Velocity build supports MC version " + ProtocolVersion.MAXIMUM_VERSION +
+                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+                LoggerManager.log(Level.ERROR,"<red>Your Velocity build supports MC version " + ProtocolVersion.MAXIMUM_VERSION +
                         ", but this plugin only supports up to " + VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION + ".");
-                System.out.println("[VelocityScoreboardAPI] Plugin will be disabled for players with unsupported versions to avoid risk.");
-                System.out.println("[VelocityScoreboardAPI] ---------------------------------------------------------------------------------------------------");
+                LoggerManager.log(Level.ERROR,"<red>Plugin will be disabled for players with unsupported versions to avoid risk.");
+                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
             }
         } catch (NoSuchFieldError e) {
-            throw new IllegalStateException("The plugin requires a newer velocity build that supports MC 1.21.");
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            LoggerManager.log(Level.ERROR,"<red>The plugin requires a newer velocity build that supports MC 1.21.");
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            return;
         }
         PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
         ScoreboardManager.registerApi(server, new VelocityScoreboardProvider());
-        System.out.println("[VelocityScoreboardAPI] Successfully injected Scoreboard API.");
+        LoggerManager.log(Level.INFO,"<green> Successfully injected Scoreboard API.");
         this.server = server;
     }
 

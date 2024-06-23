@@ -20,9 +20,10 @@
 
 package com.velocitypowered.proxy.data;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 public class LoggerManager {
@@ -30,7 +31,7 @@ public class LoggerManager {
     /**
      * The logger instance.
      */
-    private final static Logger logger = LoggerFactory.getLogger("VelocityScoreboardAPI");
+    private final static ComponentLogger logger = ComponentLogger.logger("VelocityScoreboardAPI");
 
     /**
      * Logs an error message indicating an invalid downstream packet.
@@ -45,10 +46,21 @@ public class LoggerManager {
      * Logs a message with the specified log level.
      *
      * @param level      the log level
-     * @param message    the log message
+     * @param message    the log message (MiniMessage format)
      * @param exceptions the exceptions associated with the log message (optional)
      */
     public static void log(@NotNull Level level, @NotNull String message, @NotNull Throwable... exceptions) {
+        log(level, MiniMessage.miniMessage().deserialize(message), exceptions);
+    }
+
+    /**
+     * Logs a message with the specified log level.
+     *
+     * @param level      the log level
+     * @param message    the log message
+     * @param exceptions the exceptions associated with the log message (optional)
+     */
+    public static void log(@NotNull Level level, @NotNull Component message, @NotNull Throwable... exceptions) {
         switch (level) {
             case ERROR -> {
                 if (exceptions.length > 0) {
