@@ -49,7 +49,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  *  - Easier setScore API function
  *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
- *  - Better logging than System.out.println and error throwing
  */
 public class VelocityScoreboardAPI {
 
