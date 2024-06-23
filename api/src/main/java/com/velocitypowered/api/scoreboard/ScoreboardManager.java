@@ -20,28 +20,22 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Entrypoint for the Velocity Scoreboard API.
  */
-public class ScoreboardManager {
+public abstract class ScoreboardManager {
 
+    /** Instance of this class set internally */
+    @Nullable
     private static ScoreboardManager INSTANCE;
-
-    private final ProxyServer server;
-    private final ScoreboardProvider provider;
-
-    private ScoreboardManager(@NotNull ProxyServer server, @NotNull ScoreboardProvider provider) {
-        this.server = server;
-        this.provider = provider;
-    }
 
     /**
      * Get an instance of the Velocity Scoreboard API.
+     *
      * @return a ScoreboardManager instance
      */
     @NotNull
@@ -50,24 +44,31 @@ public class ScoreboardManager {
         return INSTANCE;
     }
 
+    /**
+     * Sets instance of the Scoreboard API. Internal use.
+     *
+     * @param   instance
+     *          Scoreboard API instance
+     */
     @ApiStatus.Internal
-    public static void registerApi(@NotNull ProxyServer server, @NotNull ScoreboardProvider provider) {
-        if (INSTANCE != null) {
-            throw new IllegalStateException("The VelocityScoreboardAPI has already been registered");
-        }
-        INSTANCE = new ScoreboardManager(server, provider);
+    public static void setInstance(@NotNull ScoreboardManager instance) {
+        if (INSTANCE != null) throw new IllegalStateException("The VelocityScoreboardAPI has already been registered");
+        INSTANCE = instance;
     }
 
+    /**
+     * Creates a new scoreboard with given parameters. Priority is used for deciding which source
+     * has a higher priority when a conflict occurs. Must be greater than 0.
+     * Priority 0 is reserved for downstream scoreboard.
+     *
+     * @param   priority
+     *          Scoreboard priority
+     * @param   plugin
+     *          Plugin using this scoreboard
+     * @return  New scoreboard
+     */
     @NotNull
-    public Scoreboard getNewScoreboard(int priority, @NotNull Object plugin) {
-        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
-        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-        return provider.createScoreboard(priority, server, plugin);
-    }
-
-    public void setScoreboard(@NotNull Player player, @NotNull Scoreboard scoreboard) {
-        scoreboard.addPlayer(player);
-    }
+    public abstract Scoreboard getNewScoreboard(int priority, @NotNull Object plugin);
 
     /**
      * An exception indicating the plugin has been accessed before it has been registered.

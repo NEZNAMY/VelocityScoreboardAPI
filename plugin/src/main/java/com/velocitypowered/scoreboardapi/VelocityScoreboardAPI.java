@@ -34,7 +34,7 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.DataHolder;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
-import com.velocitypowered.proxy.scoreboard.VelocityScoreboardProvider;
+import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +85,7 @@ public class VelocityScoreboardAPI {
             return;
         }
 
-        ScoreboardManager.registerApi(server, new VelocityScoreboardProvider());
+        ScoreboardManager.setInstance(new VelocityScoreboardManager(server));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
         this.server = server;
     }

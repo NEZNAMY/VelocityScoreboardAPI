@@ -22,14 +22,32 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.Scoreboard;
-import com.velocitypowered.api.scoreboard.ScoreboardProvider;
+import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import org.jetbrains.annotations.NotNull;
 
-public class VelocityScoreboardProvider extends ScoreboardProvider {
+/**
+ * Implementation of ScoreboardManager, an entry point for Scoreboard API.
+ */
+public class VelocityScoreboardManager extends ScoreboardManager {
+
+    /** Reference to server */
+    private final ProxyServer server;
+
+    /**
+     * Constructs new instance with given server reference
+     *
+     * @param   server
+     *          Velocity server reference
+     */
+    public VelocityScoreboardManager(@NotNull ProxyServer server) {
+        this.server = server;
+    }
 
     @Override
     @NotNull
-    public Scoreboard createScoreboard(int priority, @NotNull ProxyServer server, @NotNull Object holder) {
-        return new VelocityScoreboard(priority, server, holder);
+    public Scoreboard getNewScoreboard(int priority, @NotNull Object plugin) {
+        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
+        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
+        return new VelocityScoreboard(priority, server, plugin);
     }
 }
