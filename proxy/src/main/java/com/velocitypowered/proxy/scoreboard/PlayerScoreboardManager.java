@@ -51,9 +51,10 @@ public class PlayerScoreboardManager {
     }
 
     public void registerScoreboard(@NotNull VelocityScoreboard scoreboard) {
-        if (priorityScoreboards.put(scoreboard.getPriority(), scoreboard) != null) {
+        if (priorityScoreboards.containsKey(scoreboard.getPriority())) {
             throw new IllegalStateException("A scoreboard with the same priority is already registered");
         }
+        priorityScoreboards.put(scoreboard.getPriority(), scoreboard);
         if (!pluginScoreboards.put(scoreboard.holder(), scoreboard)) {
             throw new IllegalStateException("The player is already in this scoreboard");
         }
