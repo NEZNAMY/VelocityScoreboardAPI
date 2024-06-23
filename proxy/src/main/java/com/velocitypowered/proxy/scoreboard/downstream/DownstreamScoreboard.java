@@ -32,17 +32,40 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This is a downstream tracker that reflects on what the backend tried to display to the player.
+ */
 public class DownstreamScoreboard {
 
+    /** Registered objectives on the backend */
     private final Map<String, DownstreamObjective> objectives = new ConcurrentHashMap<>();
-    private final Map<String, DownstreamTeam> teams = new ConcurrentHashMap<>();
-    private final Map<DisplaySlot, DownstreamObjective> displaySlots = new ConcurrentHashMap<>();
-    @NotNull private final Player viewer;
 
+    /** Registered teams on the backend */
+    private final Map<String, DownstreamTeam> teams = new ConcurrentHashMap<>();
+
+    /** Display slots assigned to objectives */
+    private final Map<DisplaySlot, DownstreamObjective> displaySlots = new ConcurrentHashMap<>();
+
+    /** Viewer this scoreboard view belongs to */
+    @NotNull
+    private final Player viewer;
+
+    /**
+     * Constructs new instance with given parameter.
+     *
+     * @param   viewer
+     *          Player who this view will belong to
+     */
     public DownstreamScoreboard(@NotNull Player viewer) {
         this.viewer = viewer;
     }
 
+    /**
+     * Handles incoming objective packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Objective packet coming from backend
+     */
     public void handle(@NotNull ObjectivePacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
@@ -74,6 +97,12 @@ public class DownstreamScoreboard {
         }
     }
 
+    /**
+     * Handles incoming display objective packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Display objective packet coming from backend
+     */
     public void handle(@NotNull DisplayObjectivePacket packet) {
         DownstreamObjective objective = objectives.get(packet.getObjectiveName());
         if (objective == null) {
@@ -85,6 +114,12 @@ public class DownstreamScoreboard {
         }
     }
 
+    /**
+     * Handles incoming score packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Score packet coming from backend
+     */
     public void handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScorePacket.ScoreAction.SET) {
             handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
@@ -93,10 +128,22 @@ public class DownstreamScoreboard {
         }
     }
 
+    /**
+     * Handles incoming set score packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Set score packet coming from backend
+     */
     public void handle(@NotNull ScoreSetPacket packet) {
         handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat());
     }
 
+    /**
+     * Handles incoming reset score packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Reset score packet coming from backend
+     */
     public void handle(@NotNull ScoreResetPacket packet) {
         handleReset(packet.getObjectiveName(), packet.getScoreHolder());
     }
@@ -126,6 +173,12 @@ public class DownstreamScoreboard {
         }
     }
 
+    /**
+     * Handles incoming team packet coming from backend and updates tracked values.
+     *
+     * @param   packet
+     *          Team packet coming from backend
+     */
     public void handle(@NotNull TeamPacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
