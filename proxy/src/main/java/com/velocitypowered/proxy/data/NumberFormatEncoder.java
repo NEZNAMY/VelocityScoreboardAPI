@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.scoreboard;
+package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;

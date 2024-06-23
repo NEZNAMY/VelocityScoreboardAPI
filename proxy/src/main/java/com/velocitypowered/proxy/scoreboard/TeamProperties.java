@@ -25,6 +25,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.TeamColor;
+import com.velocitypowered.proxy.data.DeserializedTextHolder;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;

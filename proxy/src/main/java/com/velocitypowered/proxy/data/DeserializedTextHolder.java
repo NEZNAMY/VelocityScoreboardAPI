@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.proxy.scoreboard;
+package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
