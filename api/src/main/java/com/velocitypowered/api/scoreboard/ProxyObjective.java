@@ -74,7 +74,6 @@ public interface ProxyObjective extends Objective {
      *          Score holder name
      * @return  Score of given holder
      * @see     #removeScore(String)
-     * @see     #scoreBuilder(String)
      * @see     #setScore(String, Consumer)
      */
     @Nullable
@@ -89,21 +88,13 @@ public interface ProxyObjective extends Objective {
     Set<ProxyScore> getAllScores();
 
     /**
-     * Creates a new score builder.
-     * 
-     * @param   holder
-     *          Score holder name
-     * @return  Score builder
-     */
-    @NotNull
-    ProxyScore.Builder scoreBuilder(@NotNull String holder);
-
-    /**
      * Creates or updates a score with the given holder and customization options.
      *
      * @param holder    The name of the score holder
      * @param consumer  The consumer function that defines the customization options for the score builder
      * @return The registered or updated Score object
+     * @see #getScore(String) 
+     * @see #removeScore(String) 
      */
     @NotNull
     ProxyScore setScore(@NotNull String holder, @NotNull Consumer<ProxyScore.Builder> consumer);
@@ -114,6 +105,7 @@ public interface ProxyObjective extends Objective {
      * @param   holder
      *          Score holder
      * @see     #getScore(String)
+     * @see     #setScore(String, Consumer) 
      */
     void removeScore(@NotNull String holder);
 

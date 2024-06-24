@@ -128,21 +128,15 @@ public class VelocityObjective implements ProxyObjective {
 
     @Override
     @NotNull
-    public ProxyScore.Builder scoreBuilder(@NotNull String holder) {
-        return new VelocityScore.Builder(holder);
-    }
-
-    @Override
-    @NotNull
     public ProxyScore setScore(@NotNull String holder, @NotNull Consumer<ProxyScore.Builder> consumer) {
         checkState();
-        ProxyScore.Builder builder = scoreBuilder(holder);
+        VelocityScore.Builder builder = new VelocityScore.Builder(holder);
         consumer.accept(builder);
         VelocityScore score = scores.get(holder);
         if (score != null) {
             score.updateProperties((VelocityScore.Builder) consumer);
         } else {
-            score = ((VelocityScore.Builder)builder).build(this);
+            score = builder.build(this);
             scores.put(score.getHolder(), score);
             score.sendUpdate();
         }
