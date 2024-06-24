@@ -23,7 +23,9 @@ package com.velocitypowered.scoreboardapi;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.protocol.packet.JoinGamePacket;
+import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -35,9 +37,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ChannelInjection extends ChannelDuplexHandler {
 
-    /** Injected player */
-    @NotNull
-    private final Player player;
+    private final DownstreamScoreboard downstreamScoreboard;
+    private final VelocityScoreboard proxyScoreboard;
 
     /**
      * Constructs new instance with given player.
@@ -46,15 +47,16 @@ public class ChannelInjection extends ChannelDuplexHandler {
      *          Player to inject
      */
     public ChannelInjection(@NotNull Player player) {
-        this.player = player;
+        downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
+        proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);
     }
 
     @Override
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         super.write(context, packet, channelPromise);
         if (packet instanceof JoinGamePacket) {
-            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player).clear();
-            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player).resend(); // TODO async?
+            downstreamScoreboard.clear();
+            proxyScoreboard.resend(); // TODO async?
         }
     }
 
