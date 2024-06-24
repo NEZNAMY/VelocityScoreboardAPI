@@ -124,7 +124,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
     }
 
     @Override
-    public @NotNull Set<ProxyTeam> getTeams() {
+    @NotNull
+    public Set<ProxyTeam> getTeams() {
         return Set.copyOf(teams.values());
     }
 
@@ -137,10 +138,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
         VelocityObjective previous = displaySlots.put(displaySlot, objective);
         if (previous != null) previous.clearDisplaySlot();
-    }
-
-    public Set<VelocityTeam> getAllTeams() {
-        return Set.copyOf(teams.values());
     }
 
     public void resend() {
@@ -259,7 +256,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
             case REMOVE_PLAYER -> {
                 viewer.getConnection().write(packet);
                 // Check if backend wanted to display this player
-                for (DownstreamTeam team : downstream.getAllTeams()) {
+                for (Team team : downstream.getTeams()) {
                     for (String removedEntry : packet.getEntries()) {
                         if (team.getEntries().contains(removedEntry)) {
                             // Backend team has this player, add back

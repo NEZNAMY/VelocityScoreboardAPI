@@ -278,11 +278,6 @@ public class DownstreamScoreboard implements Scoreboard {
         return Set.copyOf(teams.values());
     }
 
-    @NotNull
-    public Collection<DownstreamTeam> getAllTeams() {
-        return teams.values();
-    }
-
     /**
      * Clears this scoreboard on server switch when JoinGame packet is received.
      */

@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler;
@@ -220,7 +221,7 @@ public class PacketHandler {
         } else {
             if (packet.getAction() == TeamPacket.TeamAction.ADD_PLAYER || packet.getAction() == TeamPacket.TeamAction.REMOVE_PLAYER) {
                 Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
-                for (VelocityTeam proxyTeam : getProxy(handler).getAllTeams()) {
+                for (ProxyTeam proxyTeam : getProxy(handler).getTeams()) {
                     for (String addedEntry : packet.getEntries()) {
                         if (proxyTeam.getEntries().contains(addedEntry)) {
                             // Proxy team has this player assigned, cancel action

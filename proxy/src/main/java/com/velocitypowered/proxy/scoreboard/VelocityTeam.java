@@ -194,8 +194,8 @@ public class VelocityTeam implements ProxyTeam {
     public void addEntry(@NotNull String entry) {
         checkState();
         if (entries.contains(entry)) return;
-        for (VelocityTeam allTeams : scoreboard.getAllTeams()) {
-            allTeams.entries.remove(entry);
+        for (ProxyTeam allTeams : scoreboard.getTeams()) {
+            ((VelocityTeam)allTeams).entries.remove(entry);
         }
         entries.add(entry);
         sendModifyEntry(entry, true);
