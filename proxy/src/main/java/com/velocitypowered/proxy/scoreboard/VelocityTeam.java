@@ -212,7 +212,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     public void removeEntriesRaw(@NotNull Collection<String> entries) {
-        entries.removeAll(entries);
+        this.entries.removeAll(entries);
     }
 
     public void sendRegister() {
