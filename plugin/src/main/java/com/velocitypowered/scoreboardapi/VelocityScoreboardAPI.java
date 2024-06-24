@@ -34,7 +34,6 @@ import org.slf4j.event.Level;
 /**
  * TODO:
  *  - Easier setScore API function
- *  - Finish Javadocs
  *  - Call events
  */
 public class VelocityScoreboardAPI {
