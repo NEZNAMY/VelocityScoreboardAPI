@@ -54,9 +54,9 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
     }
 
     /**
-     * Returns effected objective.
+     * Returns affected objective.
      *
-     * @return  Effected objective
+     * @return  Affected objective
      */
     @NotNull
     public Objective getObjective() {
