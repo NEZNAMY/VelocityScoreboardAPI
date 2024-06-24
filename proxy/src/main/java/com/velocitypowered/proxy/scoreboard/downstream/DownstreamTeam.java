@@ -100,6 +100,7 @@ public class DownstreamTeam implements Team {
         this.entries.removeAll(entries);
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;
@@ -143,12 +144,12 @@ public class DownstreamTeam implements Team {
 
     @Override
     public boolean isAllowFriendlyFire() {
-        return false;
+        return properties.isAllowFriendlyFire();
     }
 
     @Override
     public boolean isCanSeeFriendlyInvisibles() {
-        return false;
+        return properties.isCanSeeFriendlyInvisibles();
     }
 
     /**
