@@ -137,6 +137,11 @@ public class PacketHandler {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
+        if (packet.getObjectiveName() == null) {
+            // Remove from all objectives, cancel for now //TODO
+            return true;
+        }
+
         VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName()); // TODO Nullable on remove on 1.7.x, fix
         if (objective != null) {
             // Proxy is occupying this objective, cancel packet
@@ -159,6 +164,10 @@ public class PacketHandler {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
+        if (packet.getObjectiveName() == null) {
+            // Remove from all objectives, cancel for now //TODO
+            return true;
+        }
         VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
         if (objective != null) {
             // Proxy is occupying this objective, cancel packet
