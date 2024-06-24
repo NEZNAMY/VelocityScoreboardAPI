@@ -169,25 +169,20 @@ public class VelocityTeam implements ProxyTeam {
         }
     }
 
-    public void updateProperties(@NotNull ProxyTeam.PropertyBuilder builder) {
-        checkState();
-        PropertyBuilder teamBuilder = (PropertyBuilder) builder;
-        if (teamBuilder.displayName != null) properties.setDisplayName(teamBuilder.displayName);
-        if (teamBuilder.prefix != null) properties.setPrefix(teamBuilder.prefix);
-        if (teamBuilder.suffix != null) properties.setSuffix(teamBuilder.suffix);
-        if (teamBuilder.nameVisibility != null) properties.setNameVisibility(teamBuilder.nameVisibility);
-        if (teamBuilder.collisionRule != null) properties.setCollisionRule(teamBuilder.collisionRule);
-        if (teamBuilder.color != null) properties.setColor(teamBuilder.color);
-        if (teamBuilder.allowFriendlyFire != null) properties.setAllowFriendlyFire(teamBuilder.allowFriendlyFire);
-        if (teamBuilder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(teamBuilder.canSeeFriendlyInvisibles);
-        sendUpdate();
-    }
-
     @Override
     public void updateProperties(@NotNull Consumer<ProxyTeam.PropertyBuilder> builderConsumer) {
+        checkState();
         PropertyBuilder builder = new PropertyBuilder();
         builderConsumer.accept(builder);
-        updateProperties(builder);
+        if (builder.displayName != null) properties.setDisplayName(builder.displayName);
+        if (builder.prefix != null) properties.setPrefix(builder.prefix);
+        if (builder.suffix != null) properties.setSuffix(builder.suffix);
+        if (builder.nameVisibility != null) properties.setNameVisibility(builder.nameVisibility);
+        if (builder.collisionRule != null) properties.setCollisionRule(builder.collisionRule);
+        if (builder.color != null) properties.setColor(builder.color);
+        if (builder.allowFriendlyFire != null) properties.setAllowFriendlyFire(builder.allowFriendlyFire);
+        if (builder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(builder.canSeeFriendlyInvisibles);
+        sendUpdate();
     }
 
     @Override
