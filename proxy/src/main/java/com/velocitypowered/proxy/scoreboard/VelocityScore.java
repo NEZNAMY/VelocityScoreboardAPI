@@ -72,10 +72,6 @@ public class VelocityScore implements ProxyScore {
         return numberFormat;
     }
 
-    public boolean isRegistered() {
-        return registered;
-    }
-
     @Override
     public void setScore(int score) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
