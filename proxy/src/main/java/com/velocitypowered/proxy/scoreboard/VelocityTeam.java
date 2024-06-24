@@ -193,14 +193,14 @@ public class VelocityTeam implements ProxyTeam {
             ((VelocityTeam)allTeams).entries.remove(entry);
         }
         entries.add(entry);
-        sendModifyEntry(entry, true);
+        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true));
     }
 
     @Override
     public void removeEntry(@NotNull String entry) throws IllegalArgumentException {
         checkState();
         if (entries.remove(entry)) {
-            sendModifyEntry(entry, false);
+            scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false));
         } else {
             throw new IllegalArgumentException("This entry is not in the team");
         }
@@ -216,10 +216,6 @@ public class VelocityTeam implements ProxyTeam {
 
     private void sendUpdate() {
         scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
-    }
-
-    private void sendModifyEntry(@NotNull String entry, boolean add) {
-        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, add));
     }
 
     public void unregister() {
