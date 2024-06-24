@@ -21,13 +21,9 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * An interface representing a scoreboard team.
