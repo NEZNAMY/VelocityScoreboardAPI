@@ -211,6 +211,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
             }
             case UNREGISTER -> {
                 viewer.getConnection().write(packet);
+
                 // Check if backend wanted to display an objective with this name
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
@@ -224,9 +225,15 @@ public class VelocityScoreboard implements ProxyScoreboard {
                             viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
                         }
                     }
-                    // Send display slot if free
-                    if (objective.getDisplaySlot() != null && !displaySlots.containsKey(objective.getDisplaySlot())) {
-                        viewer.getConnection().write(new DisplayObjectivePacket(objective.getDisplaySlot(), objective.getName()));
+                }
+
+                // Check if backend wanted to display an objective in this slot
+                for (DisplaySlot slot : DisplaySlot.values()) {
+                    if (displaySlots.containsKey(slot)) continue; // This slot is occupied by proxy
+                    DownstreamObjective obj = downstream.getObjective(slot);
+                    if (obj != null) {
+                        // This slot is only used by backend, display it (may send unnecessary packets)
+                        viewer.getConnection().write(new DisplayObjectivePacket(slot, obj.getName()));
                     }
                 }
             }
