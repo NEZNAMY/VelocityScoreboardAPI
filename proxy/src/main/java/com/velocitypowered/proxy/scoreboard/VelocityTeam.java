@@ -211,6 +211,10 @@ public class VelocityTeam implements ProxyTeam {
         }
     }
 
+    public void removeEntriesRaw(@NotNull Collection<String> entries) {
+        entries.removeAll(entries);
+    }
+
     public void sendRegister() {
         scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries));
     }

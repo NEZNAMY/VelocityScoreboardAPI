@@ -112,6 +112,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("Team with this name already exists");
+        for (VelocityTeam allTeams : teams.values()) {
+            allTeams.removeEntriesRaw(team.getEntries());
+        }
         teams.put(team.getName(), team);
         team.sendRegister();
         return team;
