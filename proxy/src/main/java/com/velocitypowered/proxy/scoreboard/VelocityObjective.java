@@ -134,7 +134,7 @@ public class VelocityObjective implements ProxyObjective {
         consumer.accept(builder);
         VelocityScore score = scores.get(holder);
         if (score != null) {
-            score.updateProperties((VelocityScore.Builder) consumer);
+            score.updateProperties(builder);
         } else {
             score = builder.build(this);
             scores.put(score.getHolder(), score);
