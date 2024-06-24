@@ -191,6 +191,16 @@ public class TeamPacket implements MinecraftPacket {
     }
 
     /**
+     * Sets entries in this packet.
+     *
+     * @param   entries
+     *          New entry list
+     */
+    public void setEntries(@NotNull Collection<String> entries) {
+        this.entries = entries;
+    }
+
+    /**
      * Enum for objective packet action.
      */
     public enum TeamAction {

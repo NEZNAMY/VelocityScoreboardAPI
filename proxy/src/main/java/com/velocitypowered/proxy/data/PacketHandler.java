@@ -26,10 +26,16 @@ import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler;
 import com.velocitypowered.proxy.connection.backend.VelocityServerConnection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import com.velocitypowered.proxy.scoreboard.VelocityObjective;
+import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import com.velocitypowered.proxy.scoreboard.VelocityTeam;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * This class handles outgoing scoreboard packets, allowing to cancel them.
@@ -66,6 +72,14 @@ public class PacketHandler {
             throw new RuntimeException(e);
         }
     }
+    
+    private static DownstreamScoreboard getDownstream(@NotNull MinecraftSessionHandler handler) {
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler));
+    }
+
+    private static VelocityScoreboard getProxy(@NotNull MinecraftSessionHandler handler) {
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getScoreboard(getPlayer(handler));
+    }
 
     /**
      * Handles outgoing scoreboard packet.
@@ -77,7 +91,15 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        if (getProxy(handler).getObjective(packet.getPosition()) != null) {
+            // This slot is occupied by proxy scoreboard, cancel packet
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -90,7 +112,16 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
+        if (objective != null) {
+            // Proxy already contains objective with this name, cancel everything
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -103,7 +134,16 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName()); // TODO Nullable on remove on 1.7.x, fix
+        if (objective != null) {
+            // Proxy is occupying this objective, cancel packet
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -116,8 +156,18 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
+        if (objective != null) {
+            // Proxy is occupying this objective, cancel packet
+            return true;
+        }
+
+        return false;
     }
+
     /**
      *
      * Handles outgoing scoreboard packet.
@@ -129,7 +179,16 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
+        if (objective != null) {
+            // Proxy is occupying this objective, cancel packet
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -142,6 +201,28 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
+        // Filter out invalid packets
+        if (getDownstream(handler).handle(packet)) return true;
+
+        VelocityTeam team = getProxy(handler).getTeam(packet.getName());
+        if (team != null) {
+            // Proxy is occupying this team, cancel packet
+            return true;
+        } else {
+            if (packet.getAction() == TeamPacket.TeamAction.ADD_PLAYER || packet.getAction() == TeamPacket.TeamAction.REMOVE_PLAYER) {
+                Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
+                for (VelocityTeam proxyTeam : getProxy(handler).getAllTeams()) {
+                    for (String addedEntry : packet.getEntries()) {
+                        if (proxyTeam.getEntries().contains(addedEntry)) {
+                            // Proxy team has this player assigned, cancel action
+                            modifiedEntries.remove(addedEntry);
+                        }
+                    }
+                }
+                packet.setEntries(modifiedEntries);
+            }
+        }
+
+        return false;
     }
 }

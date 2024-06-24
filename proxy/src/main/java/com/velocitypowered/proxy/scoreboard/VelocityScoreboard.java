@@ -55,25 +55,25 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public Team.Builder teamBuilder(@NotNull String name) {
+    public VelocityTeam.Builder teamBuilder(@NotNull String name) {
         return new VelocityTeam.Builder(name);
     }
 
     @Override
     @NotNull
-    public Team.PropertyBuilder teamPropertyBuilder() {
+    public VelocityTeam.PropertyBuilder teamPropertyBuilder() {
         return new VelocityTeam.PropertyBuilder();
     }
 
     @Override
     @NotNull
-    public Objective.Builder objectiveBuilder(@NotNull String name) {
+    public VelocityObjective.Builder objectiveBuilder(@NotNull String name) {
         return new VelocityObjective.Builder(name);
     }
 
     @Override
     @NotNull
-    public Objective registerObjective(@NotNull Objective.Builder builder) {
+    public VelocityObjective registerObjective(@NotNull Objective.Builder builder) {
         final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalStateException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
@@ -83,7 +83,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public Objective getObjective(@NotNull String name) {
+    public VelocityObjective getObjective(@NotNull String name) {
         return objectives.get(name);
     }
 
@@ -96,7 +96,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @NotNull
     @Override
-    public Team registerTeam(@NotNull Team.Builder builder) {
+    public VelocityTeam registerTeam(@NotNull Team.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("Team with this name already exists");
         teams.put(team.getName(), team);
@@ -106,7 +106,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public Team getTeam(@NotNull String teamName) {
+    public VelocityTeam getTeam(@NotNull String teamName) {
         return teams.get(teamName);
     }
 
@@ -140,5 +140,10 @@ public class VelocityScoreboard implements Scoreboard {
     public void sendPacket(@NotNull MinecraftPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         viewer.getConnection().write(packet);
+    }
+
+    @Nullable
+    public Objective getObjective(@NotNull DisplaySlot displaySlot) {
+        return displaySlots.get(displaySlot);
     }
 }
