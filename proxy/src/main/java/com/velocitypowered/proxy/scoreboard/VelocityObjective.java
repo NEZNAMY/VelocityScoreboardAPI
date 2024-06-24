@@ -177,8 +177,8 @@ public class VelocityObjective implements ProxyObjective {
 
     public void unregister() {
         checkState();
-        registered = false;
         sendUnregister();
+        registered = false;
     }
 
     public void clearDisplaySlot() {

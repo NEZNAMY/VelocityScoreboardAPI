@@ -104,7 +104,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
-        objectives.remove(objectiveName).sendUnregister();
+        objectives.remove(objectiveName).unregister();
     }
 
     @NotNull
