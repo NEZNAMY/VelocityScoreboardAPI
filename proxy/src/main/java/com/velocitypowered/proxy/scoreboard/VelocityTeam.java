@@ -229,8 +229,8 @@ public class VelocityTeam implements ProxyTeam {
 
     public void unregister() {
         checkState();
-        registered = false;
         sendUnregister();
+        registered = false;
     }
 
     private void checkState() {
