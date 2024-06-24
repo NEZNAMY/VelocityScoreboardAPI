@@ -31,6 +31,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public class VelocityScore implements ProxyScore {
 
     @NotNull private final VelocityObjective objective;
@@ -93,6 +95,14 @@ public class VelocityScore implements ProxyScore {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         if (this.numberFormat == numberFormat) return;
         this.numberFormat = numberFormat;
+        sendUpdate();
+    }
+
+    public void updateProperties(@NotNull VelocityScore.Builder builder) {
+        if (!registered) throw new IllegalStateException("This score was unregistered");
+        this.score = builder.score;
+        this.displayName = builder.displayName;
+        this.numberFormat = builder.numberFormat;
         sendUpdate();
     }
 

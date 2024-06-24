@@ -34,8 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
 /**
- * TODO:
- *  - Easier setScore API function
+ * Entrypoint for Velocity Scoreboard API.
  */
 public class VelocityScoreboardAPI {
 

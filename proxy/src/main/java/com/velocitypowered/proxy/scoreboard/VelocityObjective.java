@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class VelocityObjective implements ProxyObjective {
 
@@ -133,11 +134,18 @@ public class VelocityObjective implements ProxyObjective {
 
     @Override
     @NotNull
-    public ProxyScore registerScore(@NotNull ProxyScore.Builder builder) {
+    public ProxyScore setScore(@NotNull String holder, @NotNull Consumer<ProxyScore.Builder> consumer) {
         checkState();
-        VelocityScore score = ((VelocityScore.Builder)builder).build(this);
-        scores.put(score.getHolder(), score);
-        score.sendUpdate();
+        ProxyScore.Builder builder = scoreBuilder(holder);
+        consumer.accept(builder);
+        VelocityScore score = scores.get(holder);
+        if (score != null) {
+            score.updateProperties((VelocityScore.Builder) consumer);
+        } else {
+            score = ((VelocityScore.Builder)builder).build(this);
+            scores.put(score.getHolder(), score);
+            score.sendUpdate();
+        }
         return score;
     }
 
