@@ -77,8 +77,7 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
 
     /**
@@ -91,8 +90,7 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
 
     /**
@@ -105,8 +103,7 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
 
     /**
@@ -119,8 +116,7 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
     /**
      *
@@ -133,8 +129,7 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
 
     /**
@@ -147,7 +142,6 @@ public class PacketHandler {
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
     public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
-        ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
-        return false;
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler)).handle(packet);
     }
 }

@@ -65,12 +65,14 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Objective packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull ObjectivePacket packet) {
+    public boolean handle(@NotNull ObjectivePacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
                 if (objectives.containsKey(packet.getObjectiveName())) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains objective called " + packet.getObjectiveName());
+                    return true;
                 } else {
                     objectives.put(packet.getObjectiveName(), new DownstreamObjective(
                             packet.getObjectiveName(),
@@ -83,6 +85,7 @@ public class DownstreamScoreboard {
             case UNREGISTER -> {
                 if (objectives.remove(packet.getObjectiveName()) == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain objective called " + packet.getObjectiveName() + ", cannot unregister");
+                    return true;
                 }
                 displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(packet.getObjectiveName()));
             }
@@ -90,11 +93,13 @@ public class DownstreamScoreboard {
                 DownstreamObjective objective = objectives.get(packet.getObjectiveName());
                 if (objective == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain objective called " + packet.getObjectiveName() + ", cannot update");
+                    return true;
                 } else {
                     objective.update(packet);
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -102,15 +107,18 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Display objective packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull DisplayObjectivePacket packet) {
+    public boolean handle(@NotNull DisplayObjectivePacket packet) {
         DownstreamObjective objective = objectives.get(packet.getObjectiveName());
         if (objective == null) {
             LoggerManager.invalidDownstreamPacket("Cannot set display slot of unknown objective " + packet.getObjectiveName());
+            return true;
         } else {
             DownstreamObjective previous = displaySlots.put(packet.getPosition(), objective);
             if (previous != null) previous.setDisplaySlot(null);
             objective.setDisplaySlot(packet.getPosition());
+            return false;
         }
     }
 
@@ -119,12 +127,13 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Score packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull ScorePacket packet) {
+    public boolean handle(@NotNull ScorePacket packet) {
         if (packet.getAction() == ScorePacket.ScoreAction.SET) {
-            handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
+            return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
         } else {
-            handleReset(packet.getObjectiveName(), packet.getScoreHolder());
+            return handleReset(packet.getObjectiveName(), packet.getScoreHolder());
         }
     }
 
@@ -133,9 +142,10 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Set score packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull ScoreSetPacket packet) {
-        handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat());
+    public boolean handle(@NotNull ScoreSetPacket packet) {
+        return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat());
     }
 
     /**
@@ -143,22 +153,25 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Reset score packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull ScoreResetPacket packet) {
-        handleReset(packet.getObjectiveName(), packet.getScoreHolder());
+    public boolean handle(@NotNull ScoreResetPacket packet) {
+        return handleReset(packet.getObjectiveName(), packet.getScoreHolder());
     }
 
-    private void handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
+    private boolean handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
                            @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
             LoggerManager.invalidDownstreamPacket("Cannot set score for unknown objective " + objectiveName);
+            return true;
         } else {
             objective.setScore(holder, value, displayName, numberFormat);
+            return false;
         }
     }
 
-    private void handleReset(@Nullable String objectiveName, @NotNull String holder) {
+    private boolean handleReset(@Nullable String objectiveName, @NotNull String holder) {
         if (objectiveName == null) {
             for (DownstreamObjective objective : objectives.values()) {
                 objective.removeScore(holder);
@@ -167,10 +180,12 @@ public class DownstreamScoreboard {
             DownstreamObjective objective = objectives.get(objectiveName);
             if (objective == null) {
                 LoggerManager.invalidDownstreamPacket("Cannot reset score for unknown objective " + objectiveName);
+                return true;
             } else {
                 objective.removeScore(holder);
             }
         }
+        return false;
     }
 
     /**
@@ -178,12 +193,14 @@ public class DownstreamScoreboard {
      *
      * @param   packet
      *          Team packet coming from backend
+     * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public void handle(@NotNull TeamPacket packet) {
+    public boolean handle(@NotNull TeamPacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
                 if (teams.containsKey(packet.getName())) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains team called " + packet.getName());
+                    return true;
                 } else {
                     teams.put(packet.getName(), new DownstreamTeam(packet.getName(), packet.getProperties(), packet.getEntries()));
                 }
@@ -191,12 +208,14 @@ public class DownstreamScoreboard {
             case UNREGISTER -> {
                 if (teams.remove(packet.getName()) == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot unregister");
+                    return true;
                 }
             }
             case UPDATE -> {
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot update");
+                    return true;
                 } else {
                     team.setProperties(packet.getProperties());
                 }
@@ -205,6 +224,7 @@ public class DownstreamScoreboard {
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot add entries");
+                    return true;
                 } else {
                     team.addEntries(packet.getEntries());
                 }
@@ -217,11 +237,13 @@ public class DownstreamScoreboard {
                 DownstreamTeam team = teams.get(packet.getName());
                 if (team == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot remove entries");
+                    return true;
                 } else {
                     team.removeEntries(packet.getEntries());
                 }
             }
         }
+        return false;
     }
 
     /**
