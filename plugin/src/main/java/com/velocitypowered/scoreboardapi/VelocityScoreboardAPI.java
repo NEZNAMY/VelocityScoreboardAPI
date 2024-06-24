@@ -45,7 +45,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * TODO:
  *  - Implement packet handler to properly distribute packets based on priorities
  *  - Easier setScore API function
- *  - Decide on priorities (int or jut boolean - proxy or not)
  *  - Finish Javadocs
  */
 public class VelocityScoreboardAPI {
