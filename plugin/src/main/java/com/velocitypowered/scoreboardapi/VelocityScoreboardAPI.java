@@ -21,25 +21,15 @@
 package com.velocitypowered.scoreboardapi;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TODO:
@@ -49,15 +39,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class VelocityScoreboardAPI {
 
-    private ProxyServer server;
-
     /**
-     * Constructs new instance with given server.
-     *
-     * @param server Server instance
+     * Constructs new instance.
      */
     @Inject
-    public VelocityScoreboardAPI(@NotNull ProxyServer server) {
+    public VelocityScoreboardAPI() {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
@@ -84,7 +70,6 @@ public class VelocityScoreboardAPI {
 
         ScoreboardManager.setInstance(new VelocityScoreboardManager());
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
-        this.server = server;
     }
 
     /**
@@ -95,27 +80,5 @@ public class VelocityScoreboardAPI {
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
-    }
-
-    @Subscribe
-    public void onConnect(ServerPostConnectEvent e) {
-//        sendTestScoreboard(e.getPlayer());
-    }
-
-    private void sendTestScoreboard(Player player) {
-        ProxyScoreboard scoreboard = ScoreboardManager.getInstance().getProxyScoreboard(player);
-        scoreboard.createObjective("test", (b) -> {
-            b.numberFormat(NumberFormat.styled(MiniMessage.miniMessage().deserialize("<red>").style()));
-            b.title(new TextHolder(Component.text("Test")));
-            b.displaySlot(DisplaySlot.SIDEBAR);
-        });
-        AtomicInteger i = new AtomicInteger(0);
-        server.getScheduler().buildTask(this, () -> {
-            scoreboard.getObjective("test").createScore("test", (b) -> {
-                b.score(i.getAndIncrement());
-                b.numberFormat(NumberFormat.styled(MiniMessage.miniMessage().deserialize("<green>").style()));
-                b.displayName(MiniMessage.miniMessage().deserialize("<gray>Test"));
-            });
-        }).repeat(1, TimeUnit.SECONDS).schedule();
     }
 }
