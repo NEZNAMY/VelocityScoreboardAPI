@@ -100,7 +100,7 @@ public interface Team {
      *
      * @return  Can see friendly invisibles flag value
      */
-    boolean isCanSeeFriendlyInvisibles();;
+    boolean isCanSeeFriendlyInvisibles();
 
     /**
      * Returns entries currently present in this team. The returned collection is immutable.
