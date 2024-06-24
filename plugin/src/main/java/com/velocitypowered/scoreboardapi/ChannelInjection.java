@@ -21,8 +21,9 @@
 package com.velocitypowered.scoreboardapi;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.protocol.packet.JoinGamePacket;
-import com.velocitypowered.proxy.data.DataHolder;
+import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -51,7 +52,7 @@ public class ChannelInjection extends ChannelDuplexHandler {
     @Override
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         if (packet instanceof JoinGamePacket) {
-            DataHolder.getScoreboardManager(player).getDownstreamScoreboard().clear();
+            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getDownstreamScoreboard(player).clear();
         }
         super.write(context, packet, channelPromise);
     }

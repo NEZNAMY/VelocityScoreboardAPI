@@ -38,13 +38,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   priority
-     *          Scoreboard source priority
+     * @param   proxy
+     *          Scoreboard source
      * @param   objective
      *          Name of affected objective
      */
-    public ObjectiveEvent(@NotNull Player player, int priority, @NotNull String objective) {
-        super(player, priority);
+    public ObjectiveEvent(@NotNull Player player, boolean proxy, @NotNull String objective) {
+        super(player, proxy);
         this.objective = objective;
     }
 
@@ -72,15 +72,15 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          * @param   newSlot
          *          New display slot
          */
-        public Display(@NotNull Player player, int priority, @NotNull String objective, @NotNull DisplaySlot newSlot) {
-            super(player, priority, objective);
+        public Display(@NotNull Player player, boolean proxy, @NotNull String objective, @NotNull DisplaySlot newSlot) {
+            super(player, proxy, objective);
             this.newSlot = newSlot;
         }
 
@@ -105,13 +105,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          */
-        public Register(@NotNull Player player, int priority, @NotNull String objective) {
-            super(player, priority, objective);
+        public Register(@NotNull Player player, boolean proxy, @NotNull String objective) {
+            super(player, proxy, objective);
         }
     }
 
@@ -125,13 +125,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          */
-        public Unregister(@NotNull Player player, int priority, @NotNull String objective) {
-            super(player, priority, objective);
+        public Unregister(@NotNull Player player, boolean proxy, @NotNull String objective) {
+            super(player, proxy, objective);
         }
     }
 

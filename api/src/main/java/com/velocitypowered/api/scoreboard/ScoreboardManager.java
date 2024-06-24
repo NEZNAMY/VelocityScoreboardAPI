@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,18 +58,14 @@ public abstract class ScoreboardManager {
     }
 
     /**
-     * Creates a new scoreboard with given parameters. Priority is used for deciding which source
-     * has a higher priority when a conflict occurs. Must be greater than 0.
-     * Priority 0 is reserved for downstream scoreboard.
+     * Returns player's proxy scoreboard.
      *
-     * @param   priority
-     *          Scoreboard priority
-     * @param   plugin
-     *          Plugin using this scoreboard
-     * @return  New scoreboard
+     * @param   player
+     *          Player to get proxy scoreboard of
+     * @return  Player's proxy scoreboard
      */
     @NotNull
-    public abstract Scoreboard getNewScoreboard(int priority, @NotNull Object plugin);
+    public abstract Scoreboard getScoreboard(@NotNull Player player);
 
     /**
      * An exception indicating the plugin has been accessed before it has been registered.

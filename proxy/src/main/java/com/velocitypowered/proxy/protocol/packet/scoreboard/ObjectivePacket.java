@@ -42,9 +42,6 @@ import java.util.Locale;
  */
 public class ObjectivePacket implements MinecraftPacket {
 
-    /** Packet priority (higher value = higher priority) */
-    private final int packetPriority;
-
     /** Packet action */
     private ObjectiveAction action;
 
@@ -64,22 +61,19 @@ public class ObjectivePacket implements MinecraftPacket {
      * Constructs new instance for packet decoding.
      */
     public ObjectivePacket() {
-        this.packetPriority = 0;
     }
 
     /**
      * Constructs new instance for packet sending.
      *
-     * @param packetPriority Packet priority
      * @param action         Packet action
      * @param objectiveName  Objective name
      * @param title          Objective title
      * @param healthDisplay  Health display for 1.8+ players
      * @param numberFormat   Default number format for all scores in this objective (1.20.3+)
      */
-    public ObjectivePacket(int packetPriority, @NotNull ObjectiveAction action, @NotNull String objectiveName, @Nullable TextHolder title,
+    public ObjectivePacket(@NotNull ObjectiveAction action, @NotNull String objectiveName, @Nullable TextHolder title,
                            @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
-        this.packetPriority = packetPriority;
         this.action = action;
         this.objectiveName = objectiveName;
         this.title = title;
@@ -146,15 +140,6 @@ public class ObjectivePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns priority of this packet.
-     *
-     * @return  priority of this packet
-     */
-    public int getPacketPriority() {
-        return packetPriority;
     }
 
     /**

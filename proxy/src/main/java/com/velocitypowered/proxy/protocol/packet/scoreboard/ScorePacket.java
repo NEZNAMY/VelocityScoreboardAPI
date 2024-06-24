@@ -34,9 +34,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ScorePacket implements MinecraftPacket {
 
-    /** Packet priority (higher value = higher priority) */
-    private final int packetPriority;
-
     /** Packet action */
     private ScoreAction action;
 
@@ -53,14 +50,11 @@ public class ScorePacket implements MinecraftPacket {
      * Constructs new instance for packet decoding.
      */
     public ScorePacket() {
-        this.packetPriority = 0;
     }
 
     /**
      * Constructs new instance for packet sending.
      *
-     * @param   packetPriority
-     *          Packet priority
      * @param   action
      *          Packet action
      * @param   scoreHolder
@@ -70,9 +64,8 @@ public class ScorePacket implements MinecraftPacket {
      * @param   value
      *          Score value
      */
-    public ScorePacket(int packetPriority, @NotNull ScoreAction action, @NotNull String scoreHolder,
+    public ScorePacket(@NotNull ScoreAction action, @NotNull String scoreHolder,
                        @Nullable String objectiveName, int value) {
-        this.packetPriority = packetPriority;
         this.action = action;
         this.scoreHolder = scoreHolder;
         this.objectiveName = objectiveName;
@@ -110,15 +103,6 @@ public class ScorePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns priority of this packet.
-     *
-     * @return  priority of this packet
-     */
-    public int getPacketPriority() {
-        return packetPriority;
     }
 
     /**

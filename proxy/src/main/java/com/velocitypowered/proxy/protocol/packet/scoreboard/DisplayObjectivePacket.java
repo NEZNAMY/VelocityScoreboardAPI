@@ -34,9 +34,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DisplayObjectivePacket implements MinecraftPacket {
 
-    /** Packet priority (higher value = higher priority) */
-    private final int packetPriority;
-
     /** Display slot */
     private DisplaySlot position;
 
@@ -47,21 +44,17 @@ public class DisplayObjectivePacket implements MinecraftPacket {
      * Constructs new instance for packet decoding.
      */
     public DisplayObjectivePacket() {
-        this.packetPriority = 0;
     }
 
     /**
      * Constructs new instance for packet sending.
      *
-     * @param   packetPriority
-     *          Priority of this packet
      * @param   position
      *          Display slot
      * @param   objectiveName
      *          Objective name
      */
-    public DisplayObjectivePacket(int packetPriority, @NotNull DisplaySlot position, @NotNull String objectiveName) {
-        this.packetPriority = packetPriority;
+    public DisplayObjectivePacket(@NotNull DisplaySlot position, @NotNull String objectiveName) {
         this.position = position;
         this.objectiveName = objectiveName;
     }
@@ -89,15 +82,6 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns priority of this packet.
-     *
-     * @return  priority of this packet
-     */
-    public int getPacketPriority() {
-        return packetPriority;
     }
 
     /**

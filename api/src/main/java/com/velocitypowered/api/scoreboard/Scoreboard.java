@@ -20,7 +20,6 @@
 
 package com.velocitypowered.api.scoreboard;
 
-import com.velocitypowered.api.proxy.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,24 +29,6 @@ import java.util.function.Consumer;
  * A scoreboard with objectives and teams.
  */
 public interface Scoreboard {
-
-    /**
-     * Adds a player into this scoreboard.
-     * 
-     * @param   player
-     *          Player to add
-     * @see     #removePlayer(Player) 
-     */
-    void addPlayer(@NotNull Player player);
-
-    /**
-     * Removes player from this scoreboard.
-     * 
-     * @param   player
-     *          Player to remove
-     * @see     #addPlayer(Player)
-     */
-    void removePlayer(@NotNull Player player);
 
     /**
      * Creates a new objective builder.
@@ -174,12 +155,4 @@ public interface Scoreboard {
      *          If no such team exists
      */
     void unregisterTeam(@NotNull String teamName) throws IllegalStateException;
-
-    /**
-     * Returns plugin that created this scoreboard.
-     *
-     * @return  plugin that created this scoreboard
-     */
-    @NotNull
-    Object holder();
 }

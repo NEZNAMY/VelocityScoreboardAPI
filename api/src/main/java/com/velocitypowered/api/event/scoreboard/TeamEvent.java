@@ -37,13 +37,13 @@ public abstract class TeamEvent extends ScoreboardEvent{
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   priority
-     *          Scoreboard source priority
+     * @param   proxy
+     *          Scoreboard source
      * @param   team
      *          Name of affected team
      */
-    public TeamEvent(@NotNull Player player, int priority, @NotNull String team) {
-        super(player, priority);
+    public TeamEvent(@NotNull Player player, boolean proxy, @NotNull String team) {
+        super(player, proxy);
         this.team = team;
     }
 
@@ -67,13 +67,13 @@ public abstract class TeamEvent extends ScoreboardEvent{
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   team
          *          Name of affected team
          */
-        public Register(@NotNull Player player, int priority, @NotNull String team) {
-            super(player, priority, team);
+        public Register(@NotNull Player player, boolean proxy, @NotNull String team) {
+            super(player, proxy, team);
         }
     }
 
@@ -87,13 +87,13 @@ public abstract class TeamEvent extends ScoreboardEvent{
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   team
          *          Name of affected team
          */
-        public Unregister(@NotNull Player player, int priority, @NotNull String team) {
-            super(player, priority, team);
+        public Unregister(@NotNull Player player, boolean proxy, @NotNull String team) {
+            super(player, proxy, team);
         }
     }
 }

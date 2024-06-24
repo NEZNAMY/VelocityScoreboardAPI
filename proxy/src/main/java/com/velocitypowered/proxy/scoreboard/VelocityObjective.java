@@ -22,7 +22,6 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
-import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
@@ -96,9 +95,7 @@ public class VelocityObjective implements Objective {
         if (this.displaySlot == displaySlot) return;
         scoreboard.setDisplaySlot(displaySlot, this);
         this.displaySlot = displaySlot;
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
-        }
+        scoreboard.getViewer().getConnection().write(new DisplayObjectivePacket(displaySlot, name));
     }
 
     @Override
@@ -137,7 +134,7 @@ public class VelocityObjective implements Objective {
         checkState();
         VelocityScore score = ((VelocityScore.Builder)builder).build(this);
         scores.put(score.getHolder(), score);
-        score.sendUpdate(scoreboard.getPlayers());
+        score.sendUpdate();
         return score;
     }
 
@@ -157,31 +154,25 @@ public class VelocityObjective implements Objective {
         scores.remove(holder);
     }
 
-    public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        for (ConnectedPlayer player : players) {
-            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
-            if (displaySlot != null) {
-                player.getConnection().write(new DisplayObjectivePacket(scoreboard.getPriority(), displaySlot, name));
-            }
+    public void sendRegister() {
+        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
+        if (displaySlot != null) {
+            scoreboard.getViewer().getConnection().write(new DisplayObjectivePacket(displaySlot, name));
         }
     }
 
     private void sendUpdate() {
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
-        }
+        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
     }
 
-    public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        for (ConnectedPlayer player : players) {
-            player.getConnection().write(new ObjectivePacket(scoreboard.getPriority(), ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
-        }
+    public void sendUnregister() {
+        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
     }
 
     public void unregister() {
         checkState();
         registered = false;
-        sendUnregister(scoreboard.getPlayers());
+        sendUnregister();
     }
 
     public void clearDisplaySlot() {

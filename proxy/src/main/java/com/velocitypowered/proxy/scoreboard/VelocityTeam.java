@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
-import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -212,34 +211,26 @@ public class VelocityTeam implements Team {
         }
     }
 
-    public void sendRegister(@NotNull Collection<ConnectedPlayer> players) {
-        for (ConnectedPlayer player : players) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.REGISTER, name, properties, entries));
-        }
+    public void sendRegister() {
+        scoreboard.getViewer().getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries));
     }
 
     private void sendUpdate() {
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(new TeamPacket(scoreboard.getPriority(), TeamPacket.TeamAction.UPDATE, name, properties, null));
-        }
+        scoreboard.getViewer().getConnection().write(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
     }
 
-    public void sendUnregister(@NotNull Collection<ConnectedPlayer> players) {
-        for (ConnectedPlayer player : players) {
-            player.getConnection().write(TeamPacket.unregister(scoreboard.getPriority(), name));
-        }
+    public void sendUnregister() {
+        scoreboard.getViewer().getConnection().write(TeamPacket.unregister(name));
     }
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
-        for (ConnectedPlayer player : scoreboard.getPlayers()) {
-            player.getConnection().write(TeamPacket.addOrRemovePlayer(scoreboard.getPriority(), name, entry, add));
-        }
+        scoreboard.getViewer().getConnection().write(TeamPacket.addOrRemovePlayer(name, entry, add));
     }
 
     public void unregister() {
         checkState();
         registered = false;
-        sendUnregister(scoreboard.getPlayers());
+        sendUnregister();
     }
 
     private void checkState() {

@@ -20,34 +20,32 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
  */
 public class VelocityScoreboardManager extends ScoreboardManager {
 
-    /** Reference to server */
-    private final ProxyServer server;
-
-    /**
-     * Constructs new instance with given server reference
-     *
-     * @param   server
-     *          Velocity server reference
-     */
-    public VelocityScoreboardManager(@NotNull ProxyServer server) {
-        this.server = server;
-    }
+    private final Map<ConnectedPlayer, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
+    private final Map<ConnectedPlayer, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
 
     @Override
     @NotNull
-    public Scoreboard getNewScoreboard(int priority, @NotNull Object plugin) {
-        if (priority < 0) throw new IllegalArgumentException("Priority cannot be negative");
-        if (priority == 0) throw new IllegalArgumentException("Priority 0 is reserved for downstream packets");
-        return new VelocityScoreboard(priority, server, plugin);
+    public Scoreboard getScoreboard(@NotNull Player player) {
+        return proxyScoreboards.computeIfAbsent((ConnectedPlayer) player, VelocityScoreboard::new);
+    }
+
+    @NotNull
+    public DownstreamScoreboard getDownstreamScoreboard(@NotNull Player player) {
+        return downstreamScoreboards.computeIfAbsent((ConnectedPlayer) player, DownstreamScoreboard::new);
     }
 }

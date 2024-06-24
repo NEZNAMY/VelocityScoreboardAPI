@@ -39,9 +39,6 @@ import java.util.HashSet;
  */
 public class TeamPacket implements MinecraftPacket {
 
-    /** Packet priority (higher value = higher priority) */
-    private final int packetPriority;
-
     /** Packet action */
     private TeamAction action;
 
@@ -58,24 +55,11 @@ public class TeamPacket implements MinecraftPacket {
      * Constructs new instance for packet decoding.
      */
     public TeamPacket() {
-        packetPriority = 0;
-    }
-
-    /**
-     * Constructs new instance with given priority.
-     *
-     * @param   packetPriority
-     *          Packet priority
-     */
-    public TeamPacket(int packetPriority) {
-        this.packetPriority = packetPriority;
     }
 
     /**
      * Constructs new instance with given parameters.
      *
-     * @param   packetPriority
-     *          Priority of the packet
      * @param   action
      *          Team action
      * @param   name
@@ -85,9 +69,8 @@ public class TeamPacket implements MinecraftPacket {
      * @param   entries
      *          Entries in the team
      */
-    public TeamPacket(int packetPriority, @NotNull TeamAction action, @NotNull String name,
+    public TeamPacket(@NotNull TeamAction action, @NotNull String name,
                       @Nullable TeamProperties properties, @Nullable Collection<String> entries) {
-        this.packetPriority = packetPriority;
         this.action = action;
         this.name = name;
         this.properties = properties;
@@ -97,14 +80,12 @@ public class TeamPacket implements MinecraftPacket {
     /**
      * Creates a packet for unregistering team.
      *
-     * @param   priority
-     *          Packet priority
      * @param   name
      *          Team name
      * @return  Unregister team packet
      */
-    public static TeamPacket unregister(int priority, @NotNull String name) {
-        TeamPacket packet = new TeamPacket(priority);
+    public static TeamPacket unregister(@NotNull String name) {
+        TeamPacket packet = new TeamPacket();
         packet.name = name;
         packet.action = TeamAction.UNREGISTER;
         return packet;
@@ -113,8 +94,6 @@ public class TeamPacket implements MinecraftPacket {
     /**
      * Creates a packet for adding or removing entry.
      *
-     * @param   priority
-     *          Packet priority
      * @param   name
      *          Team name
      * @param   entry
@@ -123,8 +102,8 @@ public class TeamPacket implements MinecraftPacket {
      *          {@code true} for adding, {@code false} for removing
      * @return  Packet with given parameters
      */
-    public static TeamPacket addOrRemovePlayer(int priority, @NotNull String name, @NotNull String entry, boolean add) {
-        TeamPacket packet = new TeamPacket(priority);
+    public static TeamPacket addOrRemovePlayer(@NotNull String name, @NotNull String entry, boolean add) {
+        TeamPacket packet = new TeamPacket();
         packet.name = name;
         packet.action = (add ? TeamAction.ADD_PLAYER : TeamAction.REMOVE_PLAYER);
         packet.entries = Collections.singletonList(entry);
@@ -169,15 +148,6 @@ public class TeamPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns priority of this packet.
-     *
-     * @return  priority of this packet
-     */
-    public int getPacketPriority() {
-        return packetPriority;
     }
 
     /**

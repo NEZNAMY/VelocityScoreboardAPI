@@ -34,9 +34,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ScoreResetPacket implements MinecraftPacket {
 
-    /** Packet priority (higher value = higher priority) */
-    private final int packetPriority;
-
     /** Score holder who the score belongs to */
     private String scoreHolder;
 
@@ -47,21 +44,17 @@ public class ScoreResetPacket implements MinecraftPacket {
      * Constructs new instance for packet decoding.
      */
     public ScoreResetPacket() {
-        this.packetPriority = 0;
     }
 
     /**
      * Constructs new instance for packet sending.
      *
-     * @param   packetPriority
-     *          Priority of this packet
      * @param   scoreHolder
      *          Score holder
      * @param   objectiveName
      *          Objective name
      */
-    public ScoreResetPacket(int packetPriority, @NotNull String scoreHolder, @Nullable String objectiveName) {
-        this.packetPriority = packetPriority;
+    public ScoreResetPacket(@NotNull String scoreHolder, @Nullable String objectiveName) {
         this.scoreHolder = scoreHolder;
         this.objectiveName = objectiveName;
     }
@@ -82,15 +75,6 @@ public class ScoreResetPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns priority of this packet.
-     *
-     * @return  priority of this packet
-     */
-    public int getPacketPriority() {
-        return packetPriority;
     }
 
     /**

@@ -37,15 +37,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   priority
-     *          Scoreboard source priority
+     * @param   proxy
+     *          Scoreboard source
      * @param   team
      *          Team where entry was affected
      * @param   entry
      *          Affected entry
      */
-    public TeamEntryEvent(@NotNull Player player, int priority, @NotNull String team, @NotNull String entry) {
-        super(player, priority, team);
+    public TeamEntryEvent(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
+        super(player, proxy, team);
         this.entry = entry;
     }
 
@@ -69,15 +69,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   team
          *          Team where entry was added
          * @param   entry
          *          Added entry
          */
-        public Add(@NotNull Player player, int priority, @NotNull String team, @NotNull String entry) {
-            super(player, priority, team, entry);
+        public Add(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
+            super(player, proxy, team, entry);
         }
     }
 
@@ -91,15 +91,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   priority
-         *          Scoreboard source priority
+         * @param   proxy
+         *          Scoreboard source
          * @param   team
          *          Team where entry was removed
          * @param   entry
          *          Removed entry
          */
-        public Remove(@NotNull Player player, int priority, @NotNull String team, @NotNull String entry) {
-            super(player, priority, team, entry);
+        public Remove(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
+            super(player, proxy, team, entry);
         }
     }
 }
