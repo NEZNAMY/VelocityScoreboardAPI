@@ -22,6 +22,9 @@ package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
+import com.velocitypowered.api.scoreboard.Objective;
+import com.velocitypowered.api.scoreboard.ProxyObjective;
+import com.velocitypowered.api.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,22 +32,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
-    /** Objective name */
+    /** Objective name
+     * If proxy is true, the objective is a {@link ProxyObjective}, otherwise it is a backend {@link Objective}
+     * */
     @NotNull
-    private final String objective;
+    private final Objective objective;
 
     /**
      * Constructs new instance with given parameters.
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   proxy
+     * @param   scoreboard
      *          Scoreboard source
      * @param   objective
      *          Name of affected objective
      */
-    public ObjectiveEvent(@NotNull Player player, boolean proxy, @NotNull String objective) {
-        super(player, proxy);
+    public ObjectiveEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+        super(player, scoreboard);
         this.objective = objective;
     }
 
@@ -54,7 +59,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
      * @return  name of affected objective
      */
     @NotNull
-    public String getObjective() {
+    public Objective getObjective() {
         return objective;
     }
 
@@ -72,15 +77,15 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          * @param   newSlot
          *          New display slot
          */
-        public Display(@NotNull Player player, boolean proxy, @NotNull String objective, @NotNull DisplaySlot newSlot) {
-            super(player, proxy, objective);
+        public Display(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective, @NotNull DisplaySlot newSlot) {
+            super(player, scoreboard, objective);
             this.newSlot = newSlot;
         }
 
@@ -105,13 +110,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          */
-        public Register(@NotNull Player player, boolean proxy, @NotNull String objective) {
-            super(player, proxy, objective);
+        public Register(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+            super(player, scoreboard, objective);
         }
     }
 
@@ -125,13 +130,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   objective
          *          Name of affected objective
          */
-        public Unregister(@NotNull Player player, boolean proxy, @NotNull String objective) {
-            super(player, proxy, objective);
+        public Unregister(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+            super(player, scoreboard, objective);
         }
     }
 

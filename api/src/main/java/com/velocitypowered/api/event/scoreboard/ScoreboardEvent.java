@@ -21,6 +21,8 @@
 package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.ProxyScoreboard;
+import com.velocitypowered.api.scoreboard.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,20 +34,22 @@ public abstract class ScoreboardEvent {
     @NotNull
     private final Player player;
 
-    /** Scoreboard source, true = proxy, false = backend */
-    private final boolean proxy;
+    /** Scoreboard source
+     * If proxy is true, the scoreboard is a {@link ProxyScoreboard}, otherwise it is a backend {@link Scoreboard}
+     * */
+    private final Scoreboard scoreboard;
 
     /**
      * Constructs new instance with given player.
      *
      * @param   player
      *          Player who received the change
-     * @param   proxy
+     * @param   scoreboard
      *          Scoreboard source
      */
-    protected ScoreboardEvent(@NotNull Player player, boolean proxy) {
+    protected ScoreboardEvent(@NotNull Player player, @NotNull Scoreboard scoreboard) {
         this.player = player;
-        this.proxy = proxy;
+        this.scoreboard = scoreboard;
     }
 
     /**
@@ -59,11 +63,11 @@ public abstract class ScoreboardEvent {
     }
 
     /**
-     * Returns scoreboard source. {@code true} = proxy, {@code false} = backend.
+     * Returns if the scoreboard is a {@link ProxyScoreboard} or a backend {@link Scoreboard}.
      *
      * @return  Scoreboard source
      */
     public boolean isProxy() {
-        return proxy;
+        return scoreboard instanceof ProxyScoreboard;
     }
 }

@@ -21,6 +21,9 @@
 package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.ProxyTeam;
+import com.velocitypowered.api.scoreboard.Scoreboard;
+import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,22 +31,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class TeamEvent extends ScoreboardEvent{
 
-    /** Affected team */
+    /** Affected team
+     * If proxy is true, the team is a {@link ProxyTeam}, otherwise it is a backend {@link Team}
+     * */
     @NotNull
-    private final String team;
+    private final Team team;
 
     /**
      * Constructs new instance with given parameters.
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   proxy
+     * @param   scoreboard
      *          Scoreboard source
      * @param   team
      *          Name of affected team
      */
-    public TeamEvent(@NotNull Player player, boolean proxy, @NotNull String team) {
-        super(player, proxy);
+    public TeamEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+        super(player, scoreboard);
         this.team = team;
     }
 
@@ -53,7 +58,7 @@ public abstract class TeamEvent extends ScoreboardEvent{
      * @return  affected team
      */
     @NotNull
-    public String getTeam() {
+    public Team getTeam() {
         return team;
     }
 
@@ -67,13 +72,13 @@ public abstract class TeamEvent extends ScoreboardEvent{
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   team
          *          Name of affected team
          */
-        public Register(@NotNull Player player, boolean proxy, @NotNull String team) {
-            super(player, proxy, team);
+        public Register(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+            super(player, scoreboard, team);
         }
     }
 
@@ -87,13 +92,13 @@ public abstract class TeamEvent extends ScoreboardEvent{
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   team
          *          Name of affected team
          */
-        public Unregister(@NotNull Player player, boolean proxy, @NotNull String team) {
-            super(player, proxy, team);
+        public Unregister(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+            super(player, scoreboard, team);
         }
     }
 }

@@ -21,6 +21,8 @@
 package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.Scoreboard;
+import com.velocitypowered.api.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,15 +39,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   proxy
+     * @param   scoreboard
      *          Scoreboard source
      * @param   team
      *          Team where entry was affected
      * @param   entry
      *          Affected entry
      */
-    public TeamEntryEvent(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
-        super(player, proxy, team);
+    public TeamEntryEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+        super(player, scoreboard, team);
         this.entry = entry;
     }
 
@@ -69,15 +71,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   team
          *          Team where entry was added
          * @param   entry
          *          Added entry
          */
-        public Add(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
-            super(player, proxy, team, entry);
+        public Add(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+            super(player, scoreboard, team, entry);
         }
     }
 
@@ -91,15 +93,15 @@ public abstract class TeamEntryEvent extends TeamEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   proxy
+         * @param   scoreboard
          *          Scoreboard source
          * @param   team
          *          Team where entry was removed
          * @param   entry
          *          Removed entry
          */
-        public Remove(@NotNull Player player, boolean proxy, @NotNull String team, @NotNull String entry) {
-            super(player, proxy, team, entry);
+        public Remove(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+            super(player, scoreboard, team, entry);
         }
     }
 }

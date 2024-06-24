@@ -43,6 +43,15 @@ public interface ProxyScoreboard extends Scoreboard {
     ProxyObjective getObjective(@NotNull String name);
 
     /**
+     * Retrieves the proxy objective displayed in the specified display slot.
+     *
+     * @param displaySlot The display slot where the objective is shown
+     * @return The proxy objective displayed in the specified display slot, or {@code null} if no objective is present
+     */
+    @Nullable
+    ProxyObjective getObjective(@NotNull DisplaySlot displaySlot);
+
+    /**
      * Retrieves the set of objectives in the scoreboard.
      *
      * @return a set of objectives in the scoreboard
