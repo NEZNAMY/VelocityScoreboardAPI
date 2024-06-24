@@ -155,6 +155,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
     }
 
+    @Override
     @Nullable
     public ProxyObjective getObjective(@NotNull DisplaySlot displaySlot) {
         return displaySlots.get(displaySlot);

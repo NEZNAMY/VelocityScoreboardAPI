@@ -248,6 +248,7 @@ public class DownstreamScoreboard implements Scoreboard {
         return false;
     }
 
+    @Override
     @Nullable
     public DownstreamObjective getObjective(@NotNull DisplaySlot displaySlot) {
         return displaySlots.get(displaySlot);
