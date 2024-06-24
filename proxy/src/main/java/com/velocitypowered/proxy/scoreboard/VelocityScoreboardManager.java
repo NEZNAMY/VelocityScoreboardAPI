@@ -27,9 +27,9 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
@@ -37,8 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VelocityScoreboardManager extends ScoreboardManager {
 
     private final ProxyServer server;
-    private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
-    private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+    private final Map<Player, DownstreamScoreboard> downstreamScoreboards = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<ConnectedPlayer, VelocityScoreboard> proxyScoreboards = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * Constructs new instance with given parameter.
@@ -53,11 +53,11 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     @Override
     @NotNull
     public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(server, (ConnectedPlayer) player, getBackendScoreboard(player)));
+        return proxyScoreboards.computeIfAbsent((ConnectedPlayer) player, p -> new VelocityScoreboard(server, p, getBackendScoreboard(p)));
     }
 
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(server, player));
+        return downstreamScoreboards.computeIfAbsent(player, p -> new DownstreamScoreboard(server, p));
     }
 }
