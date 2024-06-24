@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
+import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
@@ -97,6 +98,7 @@ public class VelocityObjective implements ProxyObjective {
         scoreboard.setDisplaySlot(displaySlot, this);
         this.displaySlot = displaySlot;
         scoreboard.sendPacket(new DisplayObjectivePacket(displaySlot, name));
+        scoreboard.getServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(scoreboard.getViewer(), scoreboard, this, displaySlot));
     }
 
     @Override
@@ -171,13 +173,10 @@ public class VelocityObjective implements ProxyObjective {
         scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
     }
 
-    public void sendUnregister() {
-        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
-    }
-
     public void unregister() {
         checkState();
-        sendUnregister();
+        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
+        scoreboard.getServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
     }
 

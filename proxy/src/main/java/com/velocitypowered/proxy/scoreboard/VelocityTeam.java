@@ -24,6 +24,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.velocitypowered.api.TextHolder;
+import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
+import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.NotNull;
@@ -194,6 +196,7 @@ public class VelocityTeam implements ProxyTeam {
         }
         entries.add(entry);
         scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true));
+        scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Add(scoreboard.getViewer(), scoreboard, this, entry));
     }
 
     @Override
@@ -201,6 +204,7 @@ public class VelocityTeam implements ProxyTeam {
         checkState();
         if (entries.remove(entry)) {
             scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false));
+            scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
         } else {
             throw new IllegalArgumentException("This entry is not in the team");
         }
@@ -221,6 +225,7 @@ public class VelocityTeam implements ProxyTeam {
     public void unregister() {
         checkState();
         scoreboard.sendPacket(TeamPacket.unregister(name));
+        scoreboard.getServer().getEventManager().fireAndForget(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
     }
 

@@ -20,7 +20,10 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
+import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
@@ -42,13 +45,18 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21;
 
     @NotNull
+    private final ProxyServer server;
+
+    @NotNull
     private final ConnectedPlayer viewer;
+
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
 
-    public VelocityScoreboard(@NotNull ConnectedPlayer viewer, @NotNull DownstreamScoreboard downstream) {
+    public VelocityScoreboard(@NotNull ProxyServer server, @NotNull ConnectedPlayer viewer, @NotNull DownstreamScoreboard downstream) {
+        this.server = server;
         this.viewer = viewer;
         this.downstream = downstream;
     }
@@ -79,13 +87,15 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @Override
     @NotNull
     public VelocityObjective registerObjective(@NotNull ProxyObjective.Builder builder) {
-        final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
+        VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalStateException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
+        objective.sendRegister();
+        server.getEventManager().fireAndForget(new ObjectiveEvent.Register(viewer, this, objective));
         if (objective.getDisplaySlot() != null) {
             displaySlots.put(objective.getDisplaySlot(), objective);
+            server.getEventManager().fireAndForget(new ObjectiveEvent.Display(viewer, this, objective, objective.getDisplaySlot()));
         }
-        objective.sendRegister();
         return objective;
     }
 
@@ -117,6 +127,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
         teams.put(team.getName(), team);
         team.sendRegister();
+        server.getEventManager().fireAndForget(new TeamEvent.Register(viewer, this, team));
         return team;
     }
 
@@ -159,6 +170,15 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @Nullable
     public ProxyObjective getObjective(@NotNull DisplaySlot displaySlot) {
         return displaySlots.get(displaySlot);
+    }
+
+    /**
+     * Returns server.
+     * @return  Server
+     */
+    @NotNull
+    public ProxyServer getServer() {
+        return server;
     }
 
     public void sendPacket(@NotNull DisplayObjectivePacket packet) {

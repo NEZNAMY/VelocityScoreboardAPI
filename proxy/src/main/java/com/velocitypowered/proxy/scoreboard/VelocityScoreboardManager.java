@@ -53,7 +53,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     @Override
     @NotNull
     public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard((ConnectedPlayer) player, getBackendScoreboard(player)));
+        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(server, (ConnectedPlayer) player, getBackendScoreboard(player)));
     }
 
     @NotNull
