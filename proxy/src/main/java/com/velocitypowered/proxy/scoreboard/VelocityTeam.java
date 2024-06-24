@@ -218,17 +218,13 @@ public class VelocityTeam implements ProxyTeam {
         scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
     }
 
-    public void sendUnregister() {
-        scoreboard.sendPacket(TeamPacket.unregister(name));
-    }
-
     private void sendModifyEntry(@NotNull String entry, boolean add) {
         scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, add));
     }
 
     public void unregister() {
         checkState();
-        sendUnregister();
+        scoreboard.sendPacket(TeamPacket.unregister(name));
         registered = false;
     }
 
