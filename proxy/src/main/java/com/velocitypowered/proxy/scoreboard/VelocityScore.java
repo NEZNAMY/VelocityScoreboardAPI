@@ -23,7 +23,6 @@ package com.velocitypowered.proxy.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.api.scoreboard.Score;
-import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
@@ -102,21 +101,19 @@ public class VelocityScore implements Score {
     }
 
     public void sendUpdate() {
-        ConnectedPlayer viewer = objective.getScoreboard().getViewer();
-        if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(viewer.getProtocolVersion(), displayName);
-            viewer.getConnection().write(new ScoreSetPacket(holder, objective.getName(), score, cHolder, numberFormat));
+        if (objective.getScoreboard().getViewer().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+            ComponentHolder cHolder = displayName == null ? null : new ComponentHolder(objective.getScoreboard().getViewer().getProtocolVersion(), displayName);
+            objective.getScoreboard().sendPacket(new ScoreSetPacket(holder, objective.getName(), score, cHolder, numberFormat));
         } else {
-            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, holder, objective.getName(), score));
+            objective.getScoreboard().sendPacket(new ScorePacket(ScorePacket.ScoreAction.SET, holder, objective.getName(), score));
         }
     }
 
     public void sendRemove() {
-        ConnectedPlayer viewer = objective.getScoreboard().getViewer();
-        if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-            viewer.getConnection().write(new ScoreResetPacket(holder, objective.getName()));
+        if (objective.getScoreboard().getViewer().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+            objective.getScoreboard().sendPacket(new ScoreResetPacket(holder, objective.getName()));
         } else {
-            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.RESET, holder, objective.getName(), 0));
+            objective.getScoreboard().sendPacket(new ScorePacket(ScorePacket.ScoreAction.RESET, holder, objective.getName(), 0));
         }
     }
 

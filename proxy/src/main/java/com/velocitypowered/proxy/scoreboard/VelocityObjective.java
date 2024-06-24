@@ -95,7 +95,7 @@ public class VelocityObjective implements Objective {
         if (this.displaySlot == displaySlot) return;
         scoreboard.setDisplaySlot(displaySlot, this);
         this.displaySlot = displaySlot;
-        scoreboard.getViewer().getConnection().write(new DisplayObjectivePacket(displaySlot, name));
+        scoreboard.sendPacket(new DisplayObjectivePacket(displaySlot, name));
     }
 
     @Override
@@ -155,18 +155,18 @@ public class VelocityObjective implements Objective {
     }
 
     public void sendRegister() {
-        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
+        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.REGISTER, name, title, healthDisplay, numberFormat));
         if (displaySlot != null) {
-            scoreboard.getViewer().getConnection().write(new DisplayObjectivePacket(displaySlot, name));
+            scoreboard.sendPacket(new DisplayObjectivePacket(displaySlot, name));
         }
     }
 
     private void sendUpdate() {
-        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
+        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
     }
 
     public void sendUnregister() {
-        scoreboard.getViewer().getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
+        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
     }
 
     public void unregister() {

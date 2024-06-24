@@ -26,6 +26,7 @@ import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,5 +135,10 @@ public class VelocityScoreboard implements Scoreboard {
                 score.sendUpdate();
             }
         }
+    }
+
+    public void sendPacket(@NotNull MinecraftPacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        viewer.getConnection().write(packet);
     }
 }

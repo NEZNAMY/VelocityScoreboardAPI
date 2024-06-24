@@ -212,19 +212,19 @@ public class VelocityTeam implements Team {
     }
 
     public void sendRegister() {
-        scoreboard.getViewer().getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries));
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries));
     }
 
     private void sendUpdate() {
-        scoreboard.getViewer().getConnection().write(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
     }
 
     public void sendUnregister() {
-        scoreboard.getViewer().getConnection().write(TeamPacket.unregister(name));
+        scoreboard.sendPacket(TeamPacket.unregister(name));
     }
 
     private void sendModifyEntry(@NotNull String entry, boolean add) {
-        scoreboard.getViewer().getConnection().write(TeamPacket.addOrRemovePlayer(name, entry, add));
+        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, add));
     }
 
     public void unregister() {
