@@ -123,4 +123,16 @@ public class VelocityScoreboard implements Scoreboard {
     public Collection<VelocityTeam> getAllTeams() {
         return teams.values();
     }
+
+    public void resend() {
+        for (VelocityTeam team : teams.values()) {
+            team.sendRegister();
+        }
+        for (VelocityObjective objective : objectives.values()) {
+            objective.sendRegister();
+            for (VelocityScore score : objective.getScores()) {
+                score.sendUpdate();
+            }
+        }
+    }
 }

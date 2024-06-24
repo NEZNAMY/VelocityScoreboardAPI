@@ -21,7 +21,6 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
@@ -40,7 +39,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
 
     @Override
     @NotNull
-    public Scoreboard getScoreboard(@NotNull Player player) {
+    public VelocityScoreboard getScoreboard(@NotNull Player player) {
         return proxyScoreboards.computeIfAbsent((ConnectedPlayer) player, VelocityScoreboard::new);
     }
 
