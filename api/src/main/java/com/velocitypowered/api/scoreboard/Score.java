@@ -41,88 +41,22 @@ public interface Score {
      * Returns score value.
      *
      * @return  score value
-     * @see     #setScore(int)
      */
     int getScore();
-
-    /**
-     * Sets score to new value.
-     *
-     * @param   score
-     *          New score value
-     * @see     #getScore()
-     */
-    void setScore(int score);
 
     /**
      * Returns custom display name for holder (1.20.3+). Only visible in sidebar.
      *
      * @return  Custom display name for holder
-     * @see     #setDisplayName(Component)
      */
     @Nullable
     Component getDisplayName();
 
     /**
-     * Sets custom display name of the holder to new value (1.20.3+). Only visible in sidebar.
-     *
-     * @param   displayName
-     *          New display name to use
-     * @see     #getDisplayName()
-     */
-    void setDisplayName(@Nullable Component displayName);
-
-    /**
      * Returns number format applied to score (1.20.3+).
      *
      * @return  Number format applied to score
-     * @see     #setNumberFormat(NumberFormat)
      */
     @Nullable
     NumberFormat getNumberFormat();
-
-    /**
-     * Sets number formatting to apply to score (1.20.3+).
-     *
-     * @param   numberFormat
-     *          New number format to use
-     * @see     #getNumberFormat()
-     */
-    void setNumberFormat(@Nullable NumberFormat numberFormat);
-
-    /**
-     * Interface for building a new score entry.
-     */
-    interface Builder {
-
-        /**
-         * Sets score to specified value.
-         *
-         * @param   score
-         *          Score value to display
-         * @return  this, for chaining
-         */
-        @NotNull
-        Builder score(int score);
-
-        /**
-         * Sets holder's display name to specified value.
-         *
-         * @param   displayName
-         *          Text to display instead of holder's name
-         * @return  this, for chaining
-         */
-        @NotNull
-        Builder displayName(@Nullable Component displayName);
-
-        /**
-         * Sets number format to specified value.
-         *
-         * @param   format
-         *          Number formatting to apply to score
-         * @return  this, for chaining
-         */
-        @NotNull
-        Builder numberFormat(@Nullable NumberFormat format);
-    }
 }

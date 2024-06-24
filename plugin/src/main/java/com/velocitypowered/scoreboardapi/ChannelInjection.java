@@ -53,8 +53,8 @@ public class ChannelInjection extends ChannelDuplexHandler {
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         super.write(context, packet, channelPromise);
         if (packet instanceof JoinGamePacket) {
-            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getDownstreamScoreboard(player).clear();
-            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getScoreboard(player).resend(); // TODO async?
+            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player).clear();
+            ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player).resend(); // TODO async?
         }
     }
 

@@ -30,9 +30,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class VelocityObjective implements Objective {
+public class VelocityObjective implements ProxyObjective {
 
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
@@ -124,13 +125,13 @@ public class VelocityObjective implements Objective {
 
     @Override
     @NotNull
-    public Score.Builder scoreBuilder(@NotNull String holder) {
+    public ProxyScore.Builder scoreBuilder(@NotNull String holder) {
         return new VelocityScore.Builder(holder);
     }
 
     @Override
     @NotNull
-    public Score registerScore(@NotNull Score.Builder builder) {
+    public ProxyScore registerScore(@NotNull ProxyScore.Builder builder) {
         checkState();
         VelocityScore score = ((VelocityScore.Builder)builder).build(this);
         scores.put(score.getHolder(), score);
@@ -140,9 +141,14 @@ public class VelocityObjective implements Objective {
 
     @Override
     @Nullable
-    public Score getScore(@NotNull String holder) {
+    public ProxyScore getScore(@NotNull String holder) {
         checkState();
         return scores.get(holder);
+    }
+
+    @Override
+    public @NotNull Set<ProxyScore> getAllScores() {
+        return Set.copyOf(scores.values());
     }
 
     @Override
@@ -188,7 +194,7 @@ public class VelocityObjective implements Objective {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
     }
 
-    public static class Builder implements Objective.Builder {
+    public static class Builder implements ProxyObjective.Builder {
 
         @NotNull private final String name;
         @NotNull private TextHolder title;
@@ -218,14 +224,14 @@ public class VelocityObjective implements Objective {
 
         @Override
         @NotNull
-        public Objective.Builder displaySlot(@NotNull DisplaySlot displaySlot) {
+        public ProxyObjective.Builder displaySlot(@NotNull DisplaySlot displaySlot) {
             this.displaySlot = displaySlot;
             return this;
         }
 
         @Override
         @NotNull
-        public Objective.Builder numberFormat(@Nullable NumberFormat numberFormat) {
+        public ProxyObjective.Builder numberFormat(@Nullable NumberFormat numberFormat) {
             this.numberFormat = numberFormat;
             return this;
         }

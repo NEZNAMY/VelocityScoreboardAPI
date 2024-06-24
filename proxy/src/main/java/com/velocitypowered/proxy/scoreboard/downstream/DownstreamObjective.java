@@ -21,23 +21,20 @@
 package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.scoreboard.DisplaySlot;
-import com.velocitypowered.api.scoreboard.HealthDisplay;
-import com.velocitypowered.api.scoreboard.NumberFormat;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An objective coming from a downstream scoreboard.
  */
-public class DownstreamObjective {
+public class DownstreamObjective implements Objective {
 
     /** Name of the objective */
     @NotNull
@@ -108,14 +105,19 @@ public class DownstreamObjective {
         return numberFormat;
     }
 
+    @Override
+    public @Nullable Score getScore(@NotNull String holder) {
+        return scores.get(holder);
+    }
+
     @Nullable
     public DisplaySlot getDisplaySlot() {
         return displaySlot;
     }
 
     @NotNull
-    public Collection<DownstreamScore> getAllScores() {
-        return scores.values();
+    public Set<DownstreamScore> getAllScores() {
+        return Set.copyOf(scores.values());
     }
 
     /**

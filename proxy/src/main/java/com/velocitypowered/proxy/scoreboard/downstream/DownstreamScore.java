@@ -21,7 +21,7 @@
 package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.scoreboard.NumberFormat;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.api.scoreboard.Score;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A score that comes from a backend scoreboard.
  */
-public class DownstreamScore {
+public class DownstreamScore implements Score {
 
     /** Score holder */
     @NotNull

@@ -74,11 +74,11 @@ public class PacketHandler {
     }
     
     private static DownstreamScoreboard getDownstream(@NotNull MinecraftSessionHandler handler) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getDownstreamScoreboard(getPlayer(handler));
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getBackendScoreboard(getPlayer(handler));
     }
 
     private static VelocityScoreboard getProxy(@NotNull MinecraftSessionHandler handler) {
-        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getScoreboard(getPlayer(handler));
+        return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getProxyScoreboard(getPlayer(handler));
     }
 
     /**

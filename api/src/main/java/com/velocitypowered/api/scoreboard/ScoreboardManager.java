@@ -65,7 +65,16 @@ public abstract class ScoreboardManager {
      * @return  Player's proxy scoreboard
      */
     @NotNull
-    public abstract Scoreboard getScoreboard(@NotNull Player player);
+    public abstract ProxyScoreboard getProxyScoreboard(@NotNull Player player);
+
+    /**
+     * Retrieves the backend scoreboard for the specified player.
+     *
+     * @param player the player for which to retrieve the backend scoreboard
+     * @return the backend scoreboard for the specified player
+     */
+    @NotNull
+    public abstract Scoreboard getBackendScoreboard(@NotNull Player player);
 
     /**
      * An exception indicating the plugin has been accessed before it has been registered.

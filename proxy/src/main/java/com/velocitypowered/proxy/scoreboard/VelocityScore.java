@@ -22,7 +22,7 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
-import com.velocitypowered.api.scoreboard.Score;
+import com.velocitypowered.api.scoreboard.ProxyScore;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
@@ -31,7 +31,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class VelocityScore implements Score {
+public class VelocityScore implements ProxyScore {
 
     @NotNull private final VelocityObjective objective;
     @NotNull private final String holder;
@@ -123,7 +123,7 @@ public class VelocityScore implements Score {
         sendRemove();
     }
 
-    public static class Builder implements Score.Builder {
+    public static class Builder implements ProxyScore.Builder {
 
         @NotNull private final String holder;
         private int score;
@@ -136,21 +136,21 @@ public class VelocityScore implements Score {
 
         @Override
         @NotNull
-        public Score.Builder score(int score) {
+        public ProxyScore.Builder score(int score) {
             this.score = score;
             return this;
         }
 
         @Override
         @NotNull
-        public Score.Builder displayName(@Nullable Component displayName) {
+        public ProxyScore.Builder displayName(@Nullable Component displayName) {
             this.displayName = displayName;
             return this;
         }
 
         @Override
         @NotNull
-        public Score.Builder numberFormat(@Nullable NumberFormat numberFormat) {
+        public ProxyScore.Builder numberFormat(@Nullable NumberFormat numberFormat) {
             this.numberFormat = numberFormat;
             return this;
         }

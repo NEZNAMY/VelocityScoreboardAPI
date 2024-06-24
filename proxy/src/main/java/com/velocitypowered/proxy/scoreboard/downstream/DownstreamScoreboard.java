@@ -21,10 +21,8 @@
 package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scoreboard.DisplaySlot;
-import com.velocitypowered.api.scoreboard.NumberFormat;
+import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.data.LoggerManager;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +30,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is a downstream tracker that reflects on what the backend tried to display to the player.
  */
-public class DownstreamScoreboard {
+public class DownstreamScoreboard implements Scoreboard {
 
     /** Registered objectives on the backend */
     private final Map<String, DownstreamObjective> objectives = new ConcurrentHashMap<>();
@@ -259,9 +258,19 @@ public class DownstreamScoreboard {
         return objectives.get(objectiveName);
     }
 
+    @Override
+    public @NotNull Set<? extends Objective> getObjectives() {
+        return Set.copyOf(objectives.values());
+    }
+
     @Nullable
     public DownstreamTeam getTeam(@NotNull String teamName) {
         return teams.get(teamName);
+    }
+
+    @Override
+    public @NotNull Set<? extends Team> getTeams() {
+        return Set.copyOf(teams.values());
     }
 
     @NotNull

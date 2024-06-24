@@ -21,6 +21,11 @@
 package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.google.common.collect.ImmutableSet;
+import com.velocitypowered.api.TextHolder;
+import com.velocitypowered.api.scoreboard.CollisionRule;
+import com.velocitypowered.api.scoreboard.NameVisibility;
+import com.velocitypowered.api.scoreboard.Team;
+import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
@@ -30,29 +35,32 @@ import java.util.Collection;
 /**
  * A scoreboard team that comes from the backend.
  */
-public class DownstreamTeam {
+public class DownstreamTeam implements Team {
 
-    /** Team name */
+    /**
+     * Team name
+     */
     @NotNull
     private final String name;
 
-    /** Team properties */
+    /**
+     * Team properties
+     */
     @NotNull
     private TeamProperties properties;
 
-    /** Entries in the team */
+    /**
+     * Entries in the team
+     */
     @NotNull
     private final Collection<String> entries;
 
     /**
      * Constructs new instance with given parameters.
      *
-     * @param   name
-     *          Team name
-     * @param   properties
-     *          Team properties
-     * @param   entries
-     *          Entries in the team
+     * @param name       Team name
+     * @param properties Team properties
+     * @param entries    Entries in the team
      */
     public DownstreamTeam(@NotNull String name, @NotNull TeamProperties properties, @NotNull Collection<String> entries) {
         this.name = name;
@@ -63,8 +71,7 @@ public class DownstreamTeam {
     /**
      * Updates team properties.
      *
-     * @param   properties
-     *          New team properties
+     * @param properties New team properties
      */
     public void setProperties(@NotNull TeamProperties properties) {
         this.properties = properties;
@@ -73,8 +80,7 @@ public class DownstreamTeam {
     /**
      * Adds entries to the team.
      *
-     * @param   entries
-     *          Entries to add
+     * @param entries Entries to add
      */
     public void addEntries(@NotNull Collection<String> entries) {
         this.entries.addAll(entries);
@@ -83,8 +89,7 @@ public class DownstreamTeam {
     /**
      * Removes entries from team. If they are not present, prints a warning.
      *
-     * @param   entries
-     *          Entries to remove
+     * @param entries Entries to remove
      */
     public void removeEntries(@NotNull Collection<String> entries) {
         for (String entry : entries) {
@@ -98,6 +103,52 @@ public class DownstreamTeam {
     @NotNull
     public String getName() {
         return name;
+    }
+
+    @Override
+    @NotNull
+    public TextHolder getDisplayName() {
+        return properties.getDisplayName();
+    }
+
+    @Override
+    @NotNull
+    public TextHolder getPrefix() {
+        return properties.getPrefix();
+    }
+
+    @Override
+    @NotNull
+    public TextHolder getSuffix() {
+        return properties.getSuffix();
+    }
+
+    @Override
+    @NotNull
+    public NameVisibility getNameVisibility() {
+        return properties.getNameTagVisibility();
+    }
+
+    @Override
+    @NotNull
+    public CollisionRule getCollisionRule() {
+        return properties.getCollisionRule();
+    }
+
+    @Override
+    @NotNull
+    public TeamColor getColor() {
+        return properties.getColor();
+    }
+
+    @Override
+    public boolean isAllowFriendlyFire() {
+        return false;
+    }
+
+    @Override
+    public boolean isCanSeeFriendlyInvisibles() {
+        return false;
     }
 
     /**
@@ -118,8 +169,7 @@ public class DownstreamTeam {
     /**
      * Removes entries from team.
      *
-     * @param   entries
-     *          Entries to remove
+     * @param entries Entries to remove
      */
     public void removeEntriesIfPresent(@NotNull Collection<String> entries) {
         this.entries.removeAll(entries);

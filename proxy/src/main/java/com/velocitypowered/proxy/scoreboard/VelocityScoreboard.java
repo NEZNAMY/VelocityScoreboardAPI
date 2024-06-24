@@ -21,12 +21,8 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
-import com.velocitypowered.api.scoreboard.DisplaySlot;
-import com.velocitypowered.api.scoreboard.Objective;
-import com.velocitypowered.api.scoreboard.Scoreboard;
-import com.velocitypowered.api.scoreboard.Team;
+import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
@@ -37,11 +33,11 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class VelocityScoreboard implements Scoreboard {
+public class VelocityScoreboard implements ProxyScoreboard {
 
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21;
 
@@ -82,7 +78,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public VelocityObjective registerObjective(@NotNull Objective.Builder builder) {
+    public VelocityObjective registerObjective(@NotNull ProxyObjective.Builder builder) {
         final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalStateException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
@@ -100,6 +96,11 @@ public class VelocityScoreboard implements Scoreboard {
     }
 
     @Override
+    public @NotNull Set<ProxyObjective> getObjectives() {
+        return Set.copyOf(objectives.values());
+    }
+
+    @Override
     public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
@@ -108,7 +109,7 @@ public class VelocityScoreboard implements Scoreboard {
 
     @NotNull
     @Override
-    public VelocityTeam registerTeam(@NotNull Team.Builder builder) {
+    public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("Team with this name already exists");
         teams.put(team.getName(), team);
@@ -123,6 +124,11 @@ public class VelocityScoreboard implements Scoreboard {
     }
 
     @Override
+    public @NotNull Set<ProxyTeam> getTeams() {
+        return Set.copyOf(teams.values());
+    }
+
+    @Override
     public void unregisterTeam(@NotNull String teamName) {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         teams.remove(teamName).sendUnregister();
@@ -133,8 +139,8 @@ public class VelocityScoreboard implements Scoreboard {
         if (previous != null) previous.clearDisplaySlot();
     }
 
-    public Collection<VelocityTeam> getAllTeams() {
-        return teams.values();
+    public Set<VelocityTeam> getAllTeams() {
+        return Set.copyOf(teams.values());
     }
 
     public void resend() {

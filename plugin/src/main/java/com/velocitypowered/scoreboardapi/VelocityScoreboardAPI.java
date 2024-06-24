@@ -103,7 +103,7 @@ public class VelocityScoreboardAPI {
     }
 
     private void sendTestScoreboard(Player player) {
-        Scoreboard scoreboard = ScoreboardManager.getInstance().getScoreboard(player);
+        ProxyScoreboard scoreboard = ScoreboardManager.getInstance().getProxyScoreboard(player);
         scoreboard.createObjective("test", (b) -> {
             b.numberFormat(NumberFormat.styled(MiniMessage.miniMessage().deserialize("<red>").style()));
             b.title(new TextHolder(Component.text("Test")));

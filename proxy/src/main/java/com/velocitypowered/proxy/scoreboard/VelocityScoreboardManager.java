@@ -27,6 +27,7 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -34,17 +35,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VelocityScoreboardManager extends ScoreboardManager {
 
-    private final Map<ConnectedPlayer, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
-    private final Map<ConnectedPlayer, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+    private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
+    private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
 
     @Override
     @NotNull
-    public VelocityScoreboard getScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent((ConnectedPlayer) player, p -> new VelocityScoreboard(p, getDownstreamScoreboard(p)));
+    public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
+        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard((ConnectedPlayer) player, getBackendScoreboard(player)));
     }
 
     @NotNull
-    public DownstreamScoreboard getDownstreamScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent((ConnectedPlayer) player, DownstreamScoreboard::new);
+    public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
+        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(player));
     }
 }

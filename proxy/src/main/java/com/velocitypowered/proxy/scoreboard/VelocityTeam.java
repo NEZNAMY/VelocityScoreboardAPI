@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
-public class VelocityTeam implements Team {
+public class VelocityTeam implements ProxyTeam {
 
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
@@ -169,7 +169,7 @@ public class VelocityTeam implements Team {
         }
     }
 
-    public void updateProperties(@NotNull Team.PropertyBuilder builder) {
+    public void updateProperties(@NotNull ProxyTeam.PropertyBuilder builder) {
         checkState();
         PropertyBuilder teamBuilder = (PropertyBuilder) builder;
         if (teamBuilder.displayName != null) properties.setDisplayName(teamBuilder.displayName);
@@ -184,7 +184,7 @@ public class VelocityTeam implements Team {
     }
 
     @Override
-    public void updateProperties(@NotNull Consumer<Team.PropertyBuilder> builderConsumer) {
+    public void updateProperties(@NotNull Consumer<ProxyTeam.PropertyBuilder> builderConsumer) {
         PropertyBuilder builder = new PropertyBuilder();
         builderConsumer.accept(builder);
         updateProperties(builder);
@@ -237,7 +237,7 @@ public class VelocityTeam implements Team {
         if (!registered) throw new IllegalStateException("This team was unregistered");
     }
 
-    public static class PropertyBuilder implements Team.PropertyBuilder {
+    public static class PropertyBuilder implements ProxyTeam.PropertyBuilder {
 
         @Nullable protected TextHolder displayName;
         @Nullable protected TextHolder prefix;
@@ -305,7 +305,7 @@ public class VelocityTeam implements Team {
         }
     }
 
-    public static class Builder extends PropertyBuilder implements Team.Builder {
+    public static class Builder extends PropertyBuilder implements ProxyTeam.Builder {
 
         @NotNull private final String name;
         @NotNull private Collection<String> entries = Lists.newArrayList();
