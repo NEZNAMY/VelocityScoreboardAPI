@@ -24,11 +24,13 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
 /**
@@ -39,10 +41,13 @@ import org.slf4j.event.Level;
 public class VelocityScoreboardAPI {
 
     /**
-     * Constructs new instance.
+     * Constructs new instance with given parameter, injects packets and enables API.
+     *
+     * @param   server
+     *          Proxy server
      */
     @Inject
-    public VelocityScoreboardAPI() {
+    public VelocityScoreboardAPI(@NotNull ProxyServer server) {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
@@ -67,7 +72,7 @@ public class VelocityScoreboardAPI {
             return;
         }
 
-        ScoreboardManager.setInstance(new VelocityScoreboardManager());
+        ScoreboardManager.setInstance(new VelocityScoreboardManager(server));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
     }
 

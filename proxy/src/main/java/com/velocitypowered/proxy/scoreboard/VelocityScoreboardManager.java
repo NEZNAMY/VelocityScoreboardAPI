@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
@@ -35,8 +36,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VelocityScoreboardManager extends ScoreboardManager {
 
+    private final ProxyServer server;
     private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+
+    /**
+     * Constructs new instance with given parameter.
+     *
+     * @param   server
+     *          Server to call events to
+     */
+    public VelocityScoreboardManager(@NotNull ProxyServer server) {
+        this.server = server;
+    }
 
     @Override
     @NotNull
@@ -46,6 +58,6 @@ public class VelocityScoreboardManager extends ScoreboardManager {
 
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(player));
+        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(server, player));
     }
 }

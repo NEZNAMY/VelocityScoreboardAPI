@@ -20,7 +20,11 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
+import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
+import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
@@ -37,6 +41,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DownstreamScoreboard implements Scoreboard {
 
+    /** Server to call events to */
+    private final ProxyServer server;
+
     /** Registered objectives on the backend */
     private final Map<String, DownstreamObjective> objectives = new ConcurrentHashMap<>();
 
@@ -51,12 +58,15 @@ public class DownstreamScoreboard implements Scoreboard {
     private final Player viewer;
 
     /**
-     * Constructs new instance with given parameter.
+     * Constructs new instance with given parameters.
      *
+     * @param   server
+     *          Server to call events to
      * @param   viewer
      *          Player who this view will belong to
      */
-    public DownstreamScoreboard(@NotNull Player viewer) {
+    public DownstreamScoreboard(@NotNull ProxyServer server, @NotNull Player viewer) {
+        this.server = server;
         this.viewer = viewer;
     }
 
@@ -74,20 +84,24 @@ public class DownstreamScoreboard implements Scoreboard {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains objective called " + packet.getObjectiveName());
                     return true;
                 } else {
-                    objectives.put(packet.getObjectiveName(), new DownstreamObjective(
+                    DownstreamObjective obj = new DownstreamObjective(
                             packet.getObjectiveName(),
                             packet.getTitle(),
                             packet.getHealthDisplay(),
                             packet.getNumberFormat()
-                    ));
+                    );
+                    objectives.put(packet.getObjectiveName(), obj);
+                    server.getEventManager().fireAndForget(new ObjectiveEvent.Register(viewer, this, obj));
                 }
             }
             case UNREGISTER -> {
-                if (objectives.remove(packet.getObjectiveName()) == null) {
+                DownstreamObjective removed = objectives.remove(packet.getObjectiveName());
+                if (removed == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain objective called " + packet.getObjectiveName() + ", cannot unregister");
                     return true;
                 }
                 displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(packet.getObjectiveName()));
+                server.getEventManager().fireAndForget(new ObjectiveEvent.Unregister(viewer, this, removed));
             }
             case UPDATE -> {
                 DownstreamObjective objective = objectives.get(packet.getObjectiveName());
@@ -118,6 +132,7 @@ public class DownstreamScoreboard implements Scoreboard {
             DownstreamObjective previous = displaySlots.put(packet.getPosition(), objective);
             if (previous != null) previous.setDisplaySlot(null);
             objective.setDisplaySlot(packet.getPosition());
+            server.getEventManager().fireAndForget(new ObjectiveEvent.Display(viewer, this, objective, packet.getPosition()));
             return false;
         }
     }
@@ -203,14 +218,18 @@ public class DownstreamScoreboard implements Scoreboard {
                     LoggerManager.invalidDownstreamPacket("This scoreboard already contains team called " + packet.getName());
                     return true;
                 } else {
-                    teams.put(packet.getName(), new DownstreamTeam(packet.getName(), packet.getProperties(), packet.getEntries()));
+                    DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), packet.getEntries());
+                    teams.put(packet.getName(), team);
+                    server.getEventManager().fireAndForget(new TeamEvent.Register(viewer, this, team));
                 }
             }
             case UNREGISTER -> {
-                if (teams.remove(packet.getName()) == null) {
+                DownstreamTeam removed = teams.remove(packet.getName());
+                if (removed == null) {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot unregister");
                     return true;
                 }
+                server.getEventManager().fireAndForget(new TeamEvent.Unregister(viewer, this, removed));
             }
             case UPDATE -> {
                 DownstreamTeam team = teams.get(packet.getName());
@@ -227,11 +246,13 @@ public class DownstreamScoreboard implements Scoreboard {
                     LoggerManager.invalidDownstreamPacket("This scoreboard does not contain team called " + packet.getName() + ", cannot add entries");
                     return true;
                 } else {
+                    for (DownstreamTeam allTeams : teams.values()) {
+                        allTeams.removeEntriesIfPresent(packet.getEntries());
+                    }
                     team.addEntries(packet.getEntries());
-                }
-                for (DownstreamTeam allTeams : teams.values()) {
-                    if (allTeams == team) continue; // Current team, do not remove from that one
-                    allTeams.removeEntriesIfPresent(packet.getEntries());
+                    for (String entry : packet.getEntries()) {
+                        server.getEventManager().fireAndForget(new TeamEntryEvent.Add(viewer, this, team, entry));
+                    }
                 }
             }
             case REMOVE_PLAYER -> {
@@ -241,6 +262,9 @@ public class DownstreamScoreboard implements Scoreboard {
                     return true;
                 } else {
                     team.removeEntries(packet.getEntries());
+                    for (String entry : packet.getEntries()) {
+                        server.getEventManager().fireAndForget(new TeamEntryEvent.Remove(viewer, this, team, entry));
+                    }
                 }
             }
         }
