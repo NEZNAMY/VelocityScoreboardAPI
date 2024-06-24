@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Abstract class for team-related events.
  */
-public abstract class TeamEvent extends ScoreboardEvent{
+public abstract class TeamEvent extends ScoreboardEvent {
 
     /** Affected team
      * If proxy is true, the team is a {@link ProxyTeam}, otherwise it is a backend {@link Team}

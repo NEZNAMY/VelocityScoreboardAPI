@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
-    /** Objective name
+    /** Objective
      * If proxy is true, the objective is a {@link ProxyObjective}, otherwise it is a backend {@link Objective}
      * */
     @NotNull
@@ -54,9 +54,9 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
     }
 
     /**
-     * Returns name of affected objective.
+     * Returns effected objective.
      *
-     * @return  name of affected objective
+     * @return  Effected objective
      */
     @NotNull
     public Objective getObjective() {
