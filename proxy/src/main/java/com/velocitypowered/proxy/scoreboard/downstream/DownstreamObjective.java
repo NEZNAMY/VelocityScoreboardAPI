@@ -26,9 +26,11 @@ import com.velocitypowered.api.scoreboard.HealthDisplay;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,11 +44,11 @@ public class DownstreamObjective {
     private final String objectiveName;
 
     /** Objective title */
-    @Nullable
+    @NotNull
     private TextHolder title;
 
     /** Health display (1.8+) */
-    @Nullable
+    @NotNull
     private HealthDisplay healthDisplay;
 
     /** Default number format for all scores (1.20.3+) */
@@ -74,7 +76,7 @@ public class DownstreamObjective {
      *          Default number format for all scores (1.20.3+)
      */
     public DownstreamObjective(@NotNull String objectiveName, @NotNull TextHolder title,
-                               @Nullable HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
+                               @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
         this.objectiveName = objectiveName;
         this.title = title;
         this.healthDisplay = healthDisplay;
@@ -89,6 +91,31 @@ public class DownstreamObjective {
     @NotNull
     public String getName() {
         return objectiveName;
+    }
+
+    @NotNull
+    public TextHolder getTitle() {
+        return title;
+    }
+
+    @NotNull
+    public HealthDisplay getHealthDisplay() {
+        return healthDisplay;
+    }
+
+    @Nullable
+    public NumberFormat getNumberFormat() {
+        return numberFormat;
+    }
+
+    @Nullable
+    public DisplaySlot getDisplaySlot() {
+        return displaySlot;
+    }
+
+    @NotNull
+    public Collection<DownstreamScore> getAllScores() {
+        return scores.values();
     }
 
     /**
@@ -125,7 +152,7 @@ public class DownstreamObjective {
      * @param   numberFormat
      *          Number formatter for score (1.20.3+)
      */
-    public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+    public void setScore(@NotNull String holder, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
         scores.computeIfAbsent(holder, DownstreamScore::new).update(value, displayName, numberFormat);
     }
 

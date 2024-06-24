@@ -27,6 +27,13 @@ import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScore;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamTeam;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,9 +50,11 @@ public class VelocityScoreboard implements Scoreboard {
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
+    private final DownstreamScoreboard downstream;
 
-    public VelocityScoreboard(@NotNull ConnectedPlayer viewer) {
+    public VelocityScoreboard(@NotNull ConnectedPlayer viewer, @NotNull DownstreamScoreboard downstream) {
         this.viewer = viewer;
+        this.downstream = downstream;
     }
 
     @NotNull
@@ -77,6 +86,9 @@ public class VelocityScoreboard implements Scoreboard {
         final VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.containsKey(objective.getName())) throw new IllegalStateException("Objective with this name already exists");
         objectives.put(objective.getName(), objective);
+        if (objective.getDisplaySlot() != null) {
+            displaySlots.put(objective.getDisplaySlot(), objective);
+        }
         objective.sendRegister();
         return objective;
     }
@@ -90,8 +102,8 @@ public class VelocityScoreboard implements Scoreboard {
     @Override
     public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
         if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
-        objectives.remove(objectiveName).sendUnregister();
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
+        objectives.remove(objectiveName).sendUnregister();
     }
 
     @NotNull
@@ -137,13 +149,118 @@ public class VelocityScoreboard implements Scoreboard {
         }
     }
 
-    public void sendPacket(@NotNull MinecraftPacket packet) {
+    @Nullable
+    public Objective getObjective(@NotNull DisplaySlot displaySlot) {
+        return displaySlots.get(displaySlot);
+    }
+
+    public void sendPacket(@NotNull DisplayObjectivePacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        viewer.getConnection().write(packet);
+
+        // Check if a slot was freed
+        for (DisplaySlot slot : DisplaySlot.values()) {
+            if (!displaySlots.containsKey(slot)) {
+                // Slot is free, check if backend wants to display something
+                DownstreamObjective objective = downstream.getObjective(packet.getPosition());
+                if (objective != null) {
+                    // Backend tried to display something in this slot, allow it now
+                    viewer.getConnection().write(new DisplayObjectivePacket(slot, objective.getName()));
+                }
+            }
+        }
+    }
+
+    public void sendPacket(@NotNull ObjectivePacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        switch (packet.getAction()) {
+            case REGISTER -> {
+                DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
+                if (objective != null) {
+                    // Backend is using this scoreboard, unregister it to allow this
+                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
+                }
+                viewer.getConnection().write(packet);
+            }
+            case UNREGISTER -> {
+                viewer.getConnection().write(packet);
+                // Check if backend wanted to display an objective with this name
+                DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
+                if (objective != null) {
+                    // Backend wants this too, send the objective and scores
+                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
+                    for (DownstreamScore score : objective.getAllScores()) {
+                        if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+                            ComponentHolder cHolder = score.getDisplayName() == null ? null : new ComponentHolder(viewer.getProtocolVersion(), score.getDisplayName());
+                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat()));
+                        } else {
+                            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
+                        }
+                    }
+                    // Send display slot if free
+                    if (objective.getDisplaySlot() != null && !displaySlots.containsKey(objective.getDisplaySlot())) {
+                        viewer.getConnection().write(new DisplayObjectivePacket(objective.getDisplaySlot(), objective.getName()));
+                    }
+                }
+            }
+            case UPDATE -> {
+                // Nothing should be needed here
+                viewer.getConnection().write(packet);
+            }
+        }
+    }
+
+    public void sendPacket(@NotNull ScorePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         viewer.getConnection().write(packet);
     }
 
-    @Nullable
-    public Objective getObjective(@NotNull DisplaySlot displaySlot) {
-        return displaySlots.get(displaySlot);
+    public void sendPacket(@NotNull ScoreSetPacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        viewer.getConnection().write(packet);
+    }
+
+    public void sendPacket(@NotNull ScoreResetPacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        viewer.getConnection().write(packet);
+    }
+
+    public void sendPacket(@NotNull TeamPacket packet) {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        switch (packet.getAction()) {
+            case REGISTER -> {
+                DownstreamTeam team = downstream.getTeam(packet.getName());
+                if (team != null) {
+                    // Backend is using this team, unregister it to allow this
+                    viewer.getConnection().write(TeamPacket.unregister(packet.getName()));
+                }
+                viewer.getConnection().write(packet);
+            }
+            case UNREGISTER -> {
+                viewer.getConnection().write(packet);
+                // Check if backend wanted to display a team with this name
+                DownstreamTeam team = downstream.getTeam(packet.getName());
+                if (team != null) {
+                    // Backend wants this too, send it
+                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries()));
+                }
+            }
+            case UPDATE, ADD_PLAYER -> {
+                // Nothing should be needed here
+                viewer.getConnection().write(packet);
+            }
+            case REMOVE_PLAYER -> {
+                viewer.getConnection().write(packet);
+                // Check if backend wanted to display this player
+                for (DownstreamTeam team : downstream.getAllTeams()) {
+                    for (String removedEntry : packet.getEntries()) {
+                        if (team.getEntries().contains(removedEntry)) {
+                            // Backend team has this player, add back
+                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
+                        }
+                    }
+                }
+            }
+        }
     }
 }

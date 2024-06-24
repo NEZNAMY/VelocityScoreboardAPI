@@ -43,9 +43,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * TODO:
- *  - Implement packet handler to properly distribute packets based on priorities
  *  - Easier setScore API function
  *  - Finish Javadocs
+ *  - Call events
  */
 public class VelocityScoreboardAPI {
 

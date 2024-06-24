@@ -26,9 +26,11 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -145,7 +147,8 @@ public class DownstreamScoreboard {
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
     public boolean handle(@NotNull ScoreSetPacket packet) {
-        return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), packet.getDisplayName(), packet.getNumberFormat());
+        return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(),
+                packet.getDisplayName() == null ? null : packet.getDisplayName().getComponent(), packet.getNumberFormat());
     }
 
     /**
@@ -160,7 +163,7 @@ public class DownstreamScoreboard {
     }
 
     private boolean handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
-                           @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+                              @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
             LoggerManager.invalidDownstreamPacket("Cannot set score for unknown objective " + objectiveName);
@@ -244,6 +247,26 @@ public class DownstreamScoreboard {
             }
         }
         return false;
+    }
+
+    @Nullable
+    public DownstreamObjective getObjective(@NotNull DisplaySlot displaySlot) {
+        return displaySlots.get(displaySlot);
+    }
+
+    @Nullable
+    public DownstreamObjective getObjective(@NotNull String objectiveName) {
+        return objectives.get(objectiveName);
+    }
+
+    @Nullable
+    public DownstreamTeam getTeam(@NotNull String teamName) {
+        return teams.get(teamName);
+    }
+
+    @NotNull
+    public Collection<DownstreamTeam> getAllTeams() {
+        return teams.values();
     }
 
     /**

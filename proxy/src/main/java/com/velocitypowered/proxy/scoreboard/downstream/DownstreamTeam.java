@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.google.common.collect.ImmutableSet;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
@@ -94,6 +95,11 @@ public class DownstreamTeam {
         this.entries.removeAll(entries);
     }
 
+    @NotNull
+    public String getName() {
+        return name;
+    }
+
     /**
      * Retrieves the properties of the team.
      *
@@ -102,6 +108,11 @@ public class DownstreamTeam {
     @NotNull
     public TeamProperties getProperties() {
         return properties;
+    }
+
+    @NotNull
+    public Collection<String> getEntries() {
+        return ImmutableSet.copyOf(entries);
     }
 
     /**
