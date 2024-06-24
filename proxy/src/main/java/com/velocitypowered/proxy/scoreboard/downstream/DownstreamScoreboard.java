@@ -253,23 +253,27 @@ public class DownstreamScoreboard implements Scoreboard {
         return displaySlots.get(displaySlot);
     }
 
+    @Override
     @Nullable
     public DownstreamObjective getObjective(@NotNull String objectiveName) {
         return objectives.get(objectiveName);
     }
 
     @Override
-    public @NotNull Set<? extends Objective> getObjectives() {
+    @NotNull
+    public Set<? extends Objective> getObjectives() {
         return Set.copyOf(objectives.values());
     }
 
+    @Override
     @Nullable
     public DownstreamTeam getTeam(@NotNull String teamName) {
         return teams.get(teamName);
     }
 
     @Override
-    public @NotNull Set<? extends Team> getTeams() {
+    @NotNull
+    public Set<? extends Team> getTeams() {
         return Set.copyOf(teams.values());
     }
 

@@ -72,20 +72,24 @@ public class DownstreamScore implements Score {
         this.numberFormat = numberFormat;
     }
 
+    @Override
     @NotNull
     public String getHolder() {
         return holder;
     }
 
+    @Override
     public int getScore() {
         return score;
     }
 
+    @Override
     @Nullable
     public Component getDisplayName() {
         return displayName;
     }
 
+    @Override
     @Nullable
     public NumberFormat getNumberFormat() {
         return numberFormat;

@@ -80,26 +80,25 @@ public class DownstreamObjective implements Objective {
         this.numberFormat = numberFormat;
     }
 
-    /**
-     * Returns name of the objective.
-     *
-     * @return  Name of the objective
-     */
+    @Override
     @NotNull
     public String getName() {
         return objectiveName;
     }
 
+    @Override
     @NotNull
     public TextHolder getTitle() {
         return title;
     }
 
+    @Override
     @NotNull
     public HealthDisplay getHealthDisplay() {
         return healthDisplay;
     }
 
+    @Override
     @Nullable
     public NumberFormat getNumberFormat() {
         return numberFormat;
@@ -110,11 +109,13 @@ public class DownstreamObjective implements Objective {
         return scores.get(holder);
     }
 
+    @Override
     @Nullable
     public DisplaySlot getDisplaySlot() {
         return displaySlot;
     }
 
+    @Override
     @NotNull
     public Set<DownstreamScore> getAllScores() {
         return Set.copyOf(scores.values());

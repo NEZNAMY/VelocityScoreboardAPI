@@ -161,6 +161,7 @@ public class DownstreamTeam implements Team {
         return properties;
     }
 
+    @Override
     @NotNull
     public Collection<String> getEntries() {
         return ImmutableSet.copyOf(entries);
