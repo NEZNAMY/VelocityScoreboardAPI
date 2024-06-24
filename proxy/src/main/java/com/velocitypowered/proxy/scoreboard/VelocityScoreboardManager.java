@@ -20,6 +20,8 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
@@ -27,9 +29,9 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
@@ -37,27 +39,45 @@ import java.util.WeakHashMap;
 public class VelocityScoreboardManager extends ScoreboardManager {
 
     private final ProxyServer server;
-    private final Map<Player, DownstreamScoreboard> downstreamScoreboards = Collections.synchronizedMap(new WeakHashMap<>());
-    private final Map<ConnectedPlayer, VelocityScoreboard> proxyScoreboards = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Object plugin;
+    private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
+    private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
 
     /**
      * Constructs new instance with given parameter.
      *
-     * @param   server
-     *          Server to call events to
+     * @param server Server to call events to
      */
-    public VelocityScoreboardManager(@NotNull ProxyServer server) {
+    public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull Object plugin) {
         this.server = server;
+        this.plugin = plugin;
+        this.registerEvents();
+    }
+
+    /**
+     * Registers the event listeners for connecting and disconnecting players.
+     */
+    private void registerEvents() {
+        server.getEventManager().register(plugin, PostLoginEvent.class, event -> {
+            ConnectedPlayer player = (ConnectedPlayer) event.getPlayer();
+            DownstreamScoreboard scoreboard = new DownstreamScoreboard(server, player);
+            downstreamScoreboards.put(player.getUniqueId(), scoreboard);
+            proxyScoreboards.put(player.getUniqueId(), new VelocityScoreboard(server, player, scoreboard));
+        });
+        server.getEventManager().register(plugin, DisconnectEvent.class, event -> {
+            downstreamScoreboards.remove(event.getPlayer().getUniqueId());
+            proxyScoreboards.remove(event.getPlayer().getUniqueId());
+        });
     }
 
     @Override
     @NotNull
     public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent((ConnectedPlayer) player, p -> new VelocityScoreboard(server, p, getBackendScoreboard(p)));
+        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(server, (ConnectedPlayer) player, getBackendScoreboard(player)));
     }
 
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent(player, p -> new DownstreamScoreboard(server, p));
+        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(server, player));
     }
 }

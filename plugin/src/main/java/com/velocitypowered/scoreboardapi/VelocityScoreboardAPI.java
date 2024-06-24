@@ -23,6 +23,7 @@ package com.velocitypowered.scoreboardapi;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
@@ -38,14 +39,27 @@ import org.slf4j.event.Level;
  */
 public class VelocityScoreboardAPI {
 
+    private final ProxyServer server;
+
     /**
-     * Constructs new instance with given parameter, injects packets and enables API.
+     * Constructs new instance with given parameter
      *
      * @param   server
      *          Proxy server
      */
     @Inject
     public VelocityScoreboardAPI(@NotNull ProxyServer server) {
+        this.server = server;
+    }
+
+    /**
+     * Method called when the proxy server is being initialized.
+     * It checks if the Velocity build version is compatible with the plugin and performs necessary setup steps.
+     *
+     * @param event The proxy initialization event
+     */
+    @Subscribe
+    public void onProxyInitialization(ProxyInitializeEvent event) {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
@@ -70,7 +84,7 @@ public class VelocityScoreboardAPI {
             return;
         }
 
-        ScoreboardManager.setInstance(new VelocityScoreboardManager(server));
+        ScoreboardManager.setInstance(new VelocityScoreboardManager(server, this));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
     }
 
