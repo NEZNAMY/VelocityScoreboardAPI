@@ -185,11 +185,6 @@ public class VelocityObjective implements ProxyObjective {
         this.displaySlot = null;
     }
 
-    @NotNull
-    public Collection<VelocityScore> getScores() {
-        return scores.values();
-    }
-
     private void checkState() {
         if (!registered) throw new IllegalStateException("This objective was unregistered");
     }

@@ -149,8 +149,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
         for (VelocityObjective objective : objectives.values()) {
             objective.sendRegister();
-            for (VelocityScore score : objective.getScores()) {
-                score.sendUpdate();
+            for (ProxyScore score : objective.getAllScores()) {
+                ((VelocityScore)score).sendUpdate();
             }
         }
     }
