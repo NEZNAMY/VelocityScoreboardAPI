@@ -58,12 +58,6 @@ public class VelocityScoreboardManager extends ScoreboardManager {
      * Registers the event listeners for connecting and disconnecting players.
      */
     private void registerEvents() {
-        server.getEventManager().register(plugin, PostLoginEvent.class, event -> {
-            ConnectedPlayer player = (ConnectedPlayer) event.getPlayer();
-            DownstreamScoreboard scoreboard = new DownstreamScoreboard(server, player);
-            downstreamScoreboards.put(player.getUniqueId(), scoreboard);
-            proxyScoreboards.put(player.getUniqueId(), new VelocityScoreboard(server, player, scoreboard));
-        });
         server.getEventManager().register(plugin, DisconnectEvent.class, event -> {
             downstreamScoreboards.remove(event.getPlayer().getUniqueId());
             proxyScoreboards.remove(event.getPlayer().getUniqueId());
