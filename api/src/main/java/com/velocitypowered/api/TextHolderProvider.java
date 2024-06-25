@@ -57,7 +57,7 @@ public abstract class TextHolderProvider {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public abstract TextHolder of(@NotNull String legacyText);
+    public abstract TextHolder ofLegacy(@NotNull String legacyText);
 
     /**
      * Constructs a TextHolder object with the given Component modern text
@@ -67,7 +67,7 @@ public abstract class TextHolderProvider {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public abstract TextHolder of(@NotNull Component modernText);
+    public abstract TextHolder ofComponent(@NotNull Component modernText);
 
     /**
      * Constructs a TextHolder object with both legacy and modern texts
@@ -78,5 +78,5 @@ public abstract class TextHolderProvider {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public abstract TextHolder of(@NotNull String legacyText, @NotNull Component modernText);
+    public abstract TextHolder ofCombined(@NotNull String legacyText, @NotNull Component modernText);
 }

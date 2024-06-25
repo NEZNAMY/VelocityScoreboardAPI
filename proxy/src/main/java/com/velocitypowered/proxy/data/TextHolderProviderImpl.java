@@ -49,7 +49,12 @@ public class TextHolderProviderImpl extends TextHolderProvider {
             .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
             .build();
 
-    private static final Cache<Pair, TextHolder> pairCache = CacheBuilder.newBuilder()
+//    private static final Cache<Pair, TextHolder> pairCache = CacheBuilder.newBuilder()
+//            .maximumSize(5000)
+//            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
+//            .build();
+
+    private static final Cache<Integer, TextHolder> pairCache = CacheBuilder.newBuilder()
             .maximumSize(5000)
             .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
             .build();
@@ -66,7 +71,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     @Override
     @NotNull
-    public TextHolder of(@NotNull String legacyText) {
+    public TextHolder ofLegacy(@NotNull String legacyText) {
         try {
             return legacyCache.get(legacyText, () -> new TextHolderImpl(legacyText));
         } catch (ExecutionException e) {
@@ -76,7 +81,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     @Override
     @NotNull
-    public TextHolder of(@NotNull Component modernText) {
+    public TextHolder ofComponent(@NotNull Component modernText) {
         try {
             return modernCache.get(modernText, () -> new TextHolderImpl(modernText));
         } catch (ExecutionException e) {
@@ -86,13 +91,18 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     @Override
     @NotNull
-    public TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
-        return new TextHolderImpl(legacyText, modernText);
+    public TextHolder ofCombined(@NotNull String legacyText, @NotNull Component modernText) {
+//        return new TextHolderImpl(legacyText, modernText);
         /*try {
             return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }*/
+        try {
+            return pairCache.get(Objects.hash(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {
