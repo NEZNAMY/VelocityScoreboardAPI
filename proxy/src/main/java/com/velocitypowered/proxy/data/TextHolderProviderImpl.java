@@ -86,7 +86,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {
 
-        public static Pair of(String legacy, Component modern) {
+        public static Pair of(@NotNull String legacy, @NotNull Component modern) {
             return new Pair(legacy, modern);
         }
 
