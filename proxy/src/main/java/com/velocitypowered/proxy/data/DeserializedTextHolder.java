@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.data;
 
-import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * Keeping the component holder without having to convert it to component saves resources,
  * which has lately been an active topic on BungeeCord GitHub.
  */
-public class DeserializedTextHolder extends TextHolder {
+public class DeserializedTextHolder extends TextHolderImpl {
 
     /** Deserialized component holder */
     @NotNull

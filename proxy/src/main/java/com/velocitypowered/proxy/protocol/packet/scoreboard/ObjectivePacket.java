@@ -85,7 +85,7 @@ public class ObjectivePacket implements MinecraftPacket {
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         objectiveName = ProtocolUtils.readString(buf);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            title = new TextHolder(ProtocolUtils.readString(buf));
+            title =  TextHolder.of(ProtocolUtils.readString(buf));
         }
         action = ObjectiveAction.byId(buf.readByte());
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) return;
@@ -94,7 +94,7 @@ public class ObjectivePacket implements MinecraftPacket {
                 title = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
                 healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
             } else {
-                title = new TextHolder(ProtocolUtils.readString(buf));
+                title = TextHolder.of(ProtocolUtils.readString(buf));
                 healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {

@@ -308,7 +308,7 @@ public class VelocityTeam implements ProxyTeam {
 
         public Builder(@NotNull String name) {
             this.name = name;
-            this.displayName = new TextHolder(name);
+            this.displayName = TextHolder.of(name);
         }
 
         @NotNull
@@ -383,7 +383,7 @@ public class VelocityTeam implements ProxyTeam {
          */
         @NotNull
         public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
-            if (displayName == null) displayName = new TextHolder(name);
+            if (displayName == null) displayName = TextHolder.of(name);
             if (prefix == null) prefix = TextHolder.EMPTY;
             if (suffix == null) suffix = TextHolder.EMPTY;
             if (nameVisibility == null) nameVisibility = NameVisibility.ALWAYS;

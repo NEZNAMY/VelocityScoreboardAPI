@@ -21,9 +21,7 @@
 package com.velocitypowered.api;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for holding displayable text. Minecraft 1.12 and lower uses legacy String,
@@ -32,53 +30,31 @@ import org.jetbrains.annotations.Nullable;
  * needed, it will be computed automatically. Manually defining both legacy and modern
  * text can be used to override automatic computation if one wants to display something else.
  */
-public class TextHolder {
+public abstract class TextHolder {
 
     /** Text holder with empty value */
-    public static final TextHolder EMPTY = new TextHolder("", Component.empty());
-
-    /** Raw text for 1.12- players */
-    @Nullable
-    protected String legacyText;
-
-    /** Component for 1.13+ players */
-    @Nullable
-    protected Component modernText;
+    public static TextHolder EMPTY = TextHolderProvider.getProvider().empty();
 
     /**
-     * Constructs new instance with given legacy text for 1.12- players.
-     * If used for 1.13+, display component will be computed automatically.
+     * Constructs a TextHolder object with the given legacy text
+     * or returns a cached instance if previously constructed with the same text.
      *
-     * @param   legacyText
-     *          Legacy text to display
+     * @param legacyText The legacy text to be used in the TextHolder
+     * @return The constructed TextHolder object
      */
-    public TextHolder(@NotNull String legacyText) {
-        this.legacyText = legacyText;
+    public static TextHolder of(String legacyText) {
+        return TextHolderProvider.getProvider().of(legacyText);
     }
 
     /**
-     * Constructs new instance with given modern text for 1.13+ players.
-     * If displayed on 1.12-, legacy value will be computed automatically from component
-     * and cut to character limit of the feature displaying it.
+     * Constructs a TextHolder object with the given Component modern text
+     * or returns a cached instance if previously constructed with the same text.
      *
-     * @param   modernText
-     *          Modern text to display
+     * @param modernText The Component modern text to be used in the TextHolder
+     * @return The constructed TextHolder object
      */
-    public TextHolder(@NotNull Component modernText) {
-        this.modernText = modernText;
-    }
-
-    /**
-     * Constructs new instance with given texts for both 1.12- and 1.13+.
-     *
-     * @param   legacyText
-     *          Text to display for 1.12- players
-     * @param   modernText
-     *          Text to display for 1.13+ players
-     */
-    public TextHolder(@NotNull String legacyText, @NotNull Component modernText) {
-        this.legacyText = legacyText;
-        this.modernText = modernText;
+    public static TextHolder of(Component modernText) {
+        return TextHolderProvider.getProvider().of(modernText);
     }
 
     /**
@@ -87,10 +63,7 @@ public class TextHolder {
      * @return  Legacy text for 1.12- players
      */
     @NotNull
-    public String getLegacyText() {
-        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(getModernText());
-        return legacyText;
-    }
+    public abstract String getLegacyText();
 
     /**
      * Returns legacy text for 1.12- players. If not set, it is computed. If it exceeds the maximum
@@ -101,13 +74,7 @@ public class TextHolder {
      * @return  Legacy text for 1.12- players cut down to limit
      */
     @NotNull
-    public String getLegacyText(int charLimit) {
-        if (legacyText == null) legacyText = LegacyComponentSerializer.legacySection().serialize(getModernText());
-        if (legacyText.length() > charLimit) {
-            return legacyText.substring(0, charLimit);
-        }
-        return legacyText;
-    }
+    public abstract String getLegacyText(int charLimit);
 
     /**
      * Returns modern text for 1.13+ players. If not set, it is computed and returned.
@@ -115,8 +82,5 @@ public class TextHolder {
      * @return  Modern text for 1.13+ players
      */
     @NotNull
-    public Component getModernText() {
-        if (modernText == null) modernText = Component.text(getLegacyText());
-        return modernText;
-    }
+    public abstract Component getModernText();
 }

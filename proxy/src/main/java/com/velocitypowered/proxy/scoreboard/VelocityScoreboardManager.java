@@ -25,6 +25,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.data.TextHolderProviderImpl;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +42,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     private final Object plugin;
     private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+    private final TextHolderProviderImpl textHolderProvider = new TextHolderProviderImpl();
 
     /**
      * Constructs new instance with given parameters.

@@ -200,7 +200,7 @@ public class VelocityObjective implements ProxyObjective {
         public Builder(@NotNull String name) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
             this.name = name;
-            this.title = new TextHolder(name);
+            this.title = TextHolder.of(name);
         }
 
         @Override

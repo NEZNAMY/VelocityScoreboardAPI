@@ -109,9 +109,9 @@ public class TeamProperties {
      */
     public TeamProperties(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
-            displayName = new TextHolder(ProtocolUtils.readString(buf));
-            prefix = new TextHolder(ProtocolUtils.readString(buf));
-            suffix = new TextHolder(ProtocolUtils.readString(buf));
+            displayName = TextHolder.of(ProtocolUtils.readString(buf));
+            prefix = TextHolder.of((ProtocolUtils.readString(buf)));
+            suffix = TextHolder.of((ProtocolUtils.readString(buf)));
         } else {
             displayName = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
         }
