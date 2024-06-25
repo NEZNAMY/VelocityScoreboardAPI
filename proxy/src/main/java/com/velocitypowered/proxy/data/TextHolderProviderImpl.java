@@ -20,8 +20,6 @@
 
 package com.velocitypowered.proxy.data;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.TextHolderProvider;
 import com.velocitypowered.api.network.ProtocolVersion;
@@ -32,35 +30,39 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TextHolderProviderImpl extends TextHolderProvider {
 
-    private static final Cache<String, TextHolder> legacyCache = CacheBuilder.newBuilder()
-            .maximumSize(5000)
-            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
-            .build();
-
-    private static final Cache<Component, TextHolder> modernCache = CacheBuilder.newBuilder()
-            .maximumSize(5000)
-            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
-            .build();
+//    private static final Cache<String, TextHolder> legacyCache = CacheBuilder.newBuilder()
+//            .maximumSize(5000)
+//            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
+//            .build();
+//
+//    private static final Cache<Component, TextHolder> modernCache = CacheBuilder.newBuilder()
+//            .maximumSize(5000)
+//            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
+//            .build();
 
 //    private static final Cache<Pair, TextHolder> pairCache = CacheBuilder.newBuilder()
 //            .maximumSize(5000)
 //            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
 //            .build();
 
-    private static final Cache<Integer, TextHolder> pairCache = CacheBuilder.newBuilder()
-            .maximumSize(5000)
-            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
-            .build();
+    private static final Map<String, TextHolder> legacyCache = new ConcurrentHashMap<>();
+    private static final Map<Component, TextHolder> modernCache = new ConcurrentHashMap<>();
+    private static final Map<Integer, TextHolder> pairCache = new ConcurrentHashMap<>();
 
     public TextHolderProviderImpl() {
         super();
+    }
+
+    public void clearCache() {
+        legacyCache.clear();
+        modernCache.clear();
+        pairCache.clear();
     }
 
     @Override
@@ -72,27 +74,29 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     @Override
     @NotNull
     public TextHolder ofLegacy(@NotNull String legacyText) {
-        try {
-            return legacyCache.get(legacyText, () -> new TextHolderImpl(legacyText));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            return legacyCache.get(legacyText, () -> new TextHolderImpl(legacyText));
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+        return legacyCache.computeIfAbsent(legacyText, TextHolderImpl::new);
     }
 
     @Override
     @NotNull
     public TextHolder ofComponent(@NotNull Component modernText) {
-        try {
-            return modernCache.get(modernText, () -> new TextHolderImpl(modernText));
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            return modernCache.get(modernText, () -> new TextHolderImpl(modernText));
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
+        return modernCache.computeIfAbsent(modernText, TextHolderImpl::new);
     }
 
     @Override
     @NotNull
     public TextHolder ofCombined(@NotNull String legacyText, @NotNull Component modernText) {
-        return new TextHolderImpl(legacyText, modernText);
+//        return new TextHolderImpl(legacyText, modernText);
         /*try {
             return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
         } catch (ExecutionException e) {
@@ -103,6 +107,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }*/
+        return pairCache.computeIfAbsent(Objects.hash(legacyText, modernText), i -> new TextHolderImpl(legacyText, modernText));
     }
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {

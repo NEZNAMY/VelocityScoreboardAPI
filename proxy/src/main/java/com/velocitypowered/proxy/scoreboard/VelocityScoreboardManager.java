@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
@@ -64,6 +65,9 @@ public class VelocityScoreboardManager extends ScoreboardManager {
             downstreamScoreboards.remove(event.getPlayer().getUniqueId());
             proxyScoreboards.remove(event.getPlayer().getUniqueId());
         });
+        server.getScheduler().buildTask(plugin, textHolderProvider::clearCache)
+                .repeat(30, TimeUnit.SECONDS)
+                .schedule();
     }
 
     @Override
