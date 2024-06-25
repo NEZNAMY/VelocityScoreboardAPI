@@ -21,6 +21,8 @@
 package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.TextHolder;
+import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -37,11 +39,15 @@ public class TextHolderImpl extends TextHolder {
 
     /** Raw text for 1.12- players */
     @Nullable
-    protected String legacyText;
+    private String legacyText;
 
     /** Component for 1.13+ players */
     @Nullable
-    protected Component modernText;
+    private Component modernText;
+
+    /** Component holder for serializing */
+    @Nullable
+    private ComponentHolder holder;
 
     /**
      * Constructs new instance with given legacy text for 1.12- players.
@@ -64,6 +70,16 @@ public class TextHolderImpl extends TextHolder {
      */
     public TextHolderImpl(@NotNull Component modernText) {
         this.modernText = modernText;
+    }
+
+    /**
+     * Constructs new instance using deserialized component holder.
+     *
+     * @param   holder
+     *          Component holder for serialization
+     */
+    public TextHolderImpl(@NotNull ComponentHolder holder) {
+        this.holder = holder;
     }
 
     /**
@@ -118,7 +134,27 @@ public class TextHolderImpl extends TextHolder {
      */
     @NotNull
     public Component getModernText() {
-        if (modernText == null) modernText = Component.text(getLegacyText());
+        if (modernText == null) {
+            if (holder != null) {
+                modernText = holder.getComponent();
+            } else {
+                modernText = Component.text(getLegacyText());
+            }
+        }
         return modernText;
+    }
+
+    /**
+     * Returns component holder of this text. If not present, a new component
+     * holder for given version is returned.
+     *
+     * @param   version
+     *          Version to create component holder for if not present
+     * @return  Component holder
+     */
+    @NotNull
+    public ComponentHolder getHolder(@NotNull ProtocolVersion version) {
+        if (holder == null) return new ComponentHolder(version, getModernText()); // Cannot save because of potential different versions
+        return holder;
     }
 }

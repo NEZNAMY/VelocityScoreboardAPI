@@ -21,6 +21,7 @@
 package com.velocitypowered.api;
 
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class TextHolderProvider {
 
@@ -54,7 +55,7 @@ public abstract class TextHolderProvider {
      * @param legacyText The legacy text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
-    public abstract TextHolder of(String legacyText);
+    public abstract TextHolder of(@NotNull String legacyText);
 
     /**
      * Constructs a TextHolder object with the given Component modern text
@@ -63,5 +64,14 @@ public abstract class TextHolderProvider {
      * @param modernText The Component modern text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
-    public abstract TextHolder of(Component modernText);
+    public abstract TextHolder of(@NotNull Component modernText);
+
+    /**
+     * Constructs a TextHolder object with both legacy and modern texts.
+     *
+     * @param legacyText Text for 1.12- players
+     * @param modernText Text for 1.13+ players
+     * @return The constructed TextHolder object
+     */
+    public abstract TextHolder of(@NotNull String legacyText, @NotNull Component modernText);
 }

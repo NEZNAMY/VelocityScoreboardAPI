@@ -25,10 +25,10 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.HealthDisplay;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.proxy.data.TextHolderImpl;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.data.DeserializedTextHolder;
 import com.velocitypowered.proxy.data.NumberFormatEncoder;
 import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -91,7 +91,7 @@ public class ObjectivePacket implements MinecraftPacket {
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) return;
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                title = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
+                title = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
                 healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
             } else {
                 title = TextHolder.of(ProtocolUtils.readString(buf));
@@ -116,7 +116,7 @@ public class ObjectivePacket implements MinecraftPacket {
         buf.writeByte(action.ordinal());
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-                getComponentHolder(title, protocolVersion).write(buf);
+                ((TextHolderImpl)title).getHolder(protocolVersion).write(buf);
                 ProtocolUtils.writeVarInt(buf, healthDisplay.ordinal());
             } else {
                 ProtocolUtils.writeString(buf, title.getLegacyText(32));
@@ -129,12 +129,6 @@ public class ObjectivePacket implements MinecraftPacket {
                 }
             }
         }
-    }
-
-    @NotNull
-    private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
-        if (textHolder instanceof DeserializedTextHolder) return ((DeserializedTextHolder) textHolder).getHolder();
-        return new ComponentHolder(version, textHolder.getModernText());
     }
 
     @Override

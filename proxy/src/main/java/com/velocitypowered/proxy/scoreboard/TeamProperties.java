@@ -25,7 +25,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.TeamColor;
-import com.velocitypowered.proxy.data.DeserializedTextHolder;
+import com.velocitypowered.proxy.data.TextHolderImpl;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
@@ -113,7 +113,7 @@ public class TeamProperties {
             prefix = TextHolder.of((ProtocolUtils.readString(buf)));
             suffix = TextHolder.of((ProtocolUtils.readString(buf)));
         } else {
-            displayName = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
+            displayName = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
         }
         byte flags = buf.readByte();
         allowFriendlyFire = (flags & 0x01) > 0;
@@ -126,8 +126,8 @@ public class TeamProperties {
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
             color = TeamColor.values()[ProtocolUtils.readVarInt(buf)];
-            prefix = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
-            suffix = new DeserializedTextHolder(ComponentHolder.read(buf, protocolVersion));
+            prefix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
+            suffix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             color = TeamColor.values()[buf.readByte()];
         }
@@ -147,7 +147,7 @@ public class TeamProperties {
             ProtocolUtils.writeString(buf, prefix.getLegacyText(16));
             ProtocolUtils.writeString(buf, suffix.getLegacyText(16));
         } else {
-            getComponentHolder(displayName, protocolVersion).write(buf);
+            ((TextHolderImpl)displayName).getHolder(protocolVersion).write(buf);
         }
         byte flags = 0;
         if (allowFriendlyFire) flags += 0x01;
@@ -161,18 +161,12 @@ public class TeamProperties {
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
             ProtocolUtils.writeVarInt(buf, color.ordinal());
-            getComponentHolder(prefix, protocolVersion).write(buf);
-            getComponentHolder(suffix, protocolVersion).write(buf);
+            ((TextHolderImpl)prefix).getHolder(protocolVersion).write(buf);
+            ((TextHolderImpl)suffix).getHolder(protocolVersion).write(buf);
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
             // buf.writeByte(color.ordinal());
         }
-    }
-
-    @NotNull
-    private ComponentHolder getComponentHolder(@NotNull TextHolder textHolder, @NotNull ProtocolVersion version) {
-        if (textHolder instanceof DeserializedTextHolder) return ((DeserializedTextHolder) textHolder).getHolder();
-        return new ComponentHolder(version, textHolder.getModernText());
     }
 
     /**

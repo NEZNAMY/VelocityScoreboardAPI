@@ -25,6 +25,7 @@ import com.google.common.cache.CacheBuilder;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.TextHolderProvider;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -52,7 +53,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     }
 
     @Override
-    public TextHolder of(String legacyText) {
+    public TextHolder of(@NotNull String legacyText) {
         try {
             return legacyCache.get(legacyText, () -> new TextHolderImpl(legacyText));
         } catch (ExecutionException e) {
@@ -61,12 +62,17 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     }
 
     @Override
-    public TextHolder of(Component modernText) {
+    public TextHolder of(@NotNull Component modernText) {
         try {
             return modernCache.get(modernText, () -> new TextHolderImpl(modernText));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
+        return new TextHolderImpl(legacyText, modernText); // TODO cache
     }
 
 }
