@@ -42,7 +42,7 @@ public abstract class TextHolder {
      * @param legacyText The legacy text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
-    public static TextHolder of(String legacyText) {
+    public static TextHolder of(@NotNull String legacyText) {
         return TextHolderProvider.getProvider().of(legacyText);
     }
 
@@ -53,8 +53,20 @@ public abstract class TextHolder {
      * @param modernText The Component modern text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
-    public static TextHolder of(Component modernText) {
+    public static TextHolder of(@NotNull Component modernText) {
         return TextHolderProvider.getProvider().of(modernText);
+    }
+
+    /**
+     * Constructs a TextHolder object with both legacy and modern texts
+     * or returns a cached instance if previously constructed with the same texts.
+     *
+     * @param legacyText Text for 1.12- players
+     * @param modernText Text for 1.13+ players
+     * @return The constructed TextHolder object
+     */
+    public static TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
+        return TextHolderProvider.getProvider().of(legacyText, modernText);
     }
 
     /**

@@ -53,11 +53,13 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     }
 
     @Override
+    @NotNull
     public TextHolder empty() {
         return new TextHolderImpl("");
     }
 
     @Override
+    @NotNull
     public TextHolder of(@NotNull String legacyText) {
         try {
             return legacyCache.get(legacyText, () -> new TextHolderImpl(legacyText));
@@ -67,6 +69,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     }
 
     @Override
+    @NotNull
     public TextHolder of(@NotNull Component modernText) {
         try {
             return modernCache.get(modernText, () -> new TextHolderImpl(modernText));
@@ -76,6 +79,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     }
 
     @Override
+    @NotNull
     public TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
         try {
             return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));

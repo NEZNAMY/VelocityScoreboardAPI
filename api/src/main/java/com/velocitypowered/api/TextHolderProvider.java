@@ -46,6 +46,7 @@ public abstract class TextHolderProvider {
      *
      * @return An empty TextHolder object
      */
+    @NotNull
     public abstract TextHolder empty();
 
     /**
@@ -55,6 +56,7 @@ public abstract class TextHolderProvider {
      * @param legacyText The legacy text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
+    @NotNull
     public abstract TextHolder of(@NotNull String legacyText);
 
     /**
@@ -64,14 +66,17 @@ public abstract class TextHolderProvider {
      * @param modernText The Component modern text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
+    @NotNull
     public abstract TextHolder of(@NotNull Component modernText);
 
     /**
-     * Constructs a TextHolder object with both legacy and modern texts.
+     * Constructs a TextHolder object with both legacy and modern texts
+     * or returns a cached instance if previously constructed with the same texts.
      *
      * @param legacyText Text for 1.12- players
      * @param modernText Text for 1.13+ players
      * @return The constructed TextHolder object
      */
+    @NotNull
     public abstract TextHolder of(@NotNull String legacyText, @NotNull Component modernText);
 }
