@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.data;
 
+import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -39,10 +40,11 @@ public class LoggerManager {
     /**
      * Logs an error message indicating an invalid downstream packet.
      *
+     * @param player Player who received invalid packet
      * @param message the error message
      */
-    public static void invalidDownstreamPacket(@NotNull String message) {
-        log(Level.ERROR, "Invalid downstream packet: " + message);
+    public static void invalidDownstreamPacket(@NotNull Player player, @NotNull String message) {
+        log(Level.ERROR, "Received invalid downstream packet for player " + player.getUsername() + ": " + message);
     }
 
     /**

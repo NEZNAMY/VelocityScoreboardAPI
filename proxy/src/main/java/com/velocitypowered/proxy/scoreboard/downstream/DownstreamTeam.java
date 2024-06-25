@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.google.common.collect.ImmutableSet;
 import com.velocitypowered.api.TextHolder;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.Team;
@@ -89,12 +90,13 @@ public class DownstreamTeam implements Team {
     /**
      * Removes entries from team. If they are not present, prints a warning.
      *
+     * @param viewer Player who received the packet
      * @param entries Entries to remove
      */
-    public void removeEntries(@NotNull Collection<String> entries) {
+    public void removeEntries(@NotNull Player viewer, @NotNull Collection<String> entries) {
         for (String entry : entries) {
             if (!this.entries.contains(entry)) {
-                LoggerManager.invalidDownstreamPacket("Team " + name + " does not contain entry " + entry);
+                LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entry);
             }
         }
         this.entries.removeAll(entries);
