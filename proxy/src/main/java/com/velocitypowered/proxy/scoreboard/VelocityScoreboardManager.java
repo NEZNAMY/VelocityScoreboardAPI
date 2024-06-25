@@ -21,7 +21,6 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
@@ -44,9 +43,10 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
 
     /**
-     * Constructs new instance with given parameter.
+     * Constructs new instance with given parameters.
      *
      * @param server Server to call events to
+     * @param plugin Scoreboard API plugin
      */
     public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull Object plugin) {
         this.server = server;
