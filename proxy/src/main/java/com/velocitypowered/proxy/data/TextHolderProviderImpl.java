@@ -53,7 +53,7 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     private static final Map<String, TextHolder> legacyCache = new ConcurrentHashMap<>();
     private static final Map<Component, TextHolder> modernCache = new ConcurrentHashMap<>();
-    private static final Map<Integer, TextHolder> pairCache = new ConcurrentHashMap<>();
+    private static final Map<Long, TextHolder> pairCache = new ConcurrentHashMap<>();
 
     public TextHolderProviderImpl() {
         super();
@@ -107,7 +107,10 @@ public class TextHolderProviderImpl extends TextHolderProvider {
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }*/
-        return pairCache.computeIfAbsent(Objects.hash(legacyText, modernText), i -> new TextHolderImpl(legacyText, modernText));
+        int hash1 = legacyText.hashCode();
+        int hash2 = modernText.hashCode();
+        long hash = ((long) hash1 << 32) | (hash2 & 0xFFFFFFFFL);
+        return pairCache.computeIfAbsent(hash, i -> new TextHolderImpl(legacyText, modernText));
     }
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {

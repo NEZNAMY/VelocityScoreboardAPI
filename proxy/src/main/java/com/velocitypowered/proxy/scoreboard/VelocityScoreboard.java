@@ -39,14 +39,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class VelocityScoreboard implements ProxyScoreboard {
 
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21;
-
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(15);
 
     @NotNull
     private final ProxyServer server;
@@ -187,8 +183,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     public void sendPacket(@NotNull DisplayObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-//        viewer.getConnection().write(packet);
-        EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+        viewer.getConnection().write(packet);
 
         // Check if a slot was freed
         for (DisplaySlot slot : DisplaySlot.values()) {
@@ -197,8 +192,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamObjective objective = downstream.getObjective(packet.getPosition());
                 if (objective != null) {
                     // Backend tried to display something in this slot, allow it now
-//                    viewer.getConnection().write(new DisplayObjectivePacket(slot, objective.getName()));
-                    EXECUTOR.submit(() -> viewer.getConnection().write(new DisplayObjectivePacket(slot, objective.getName())));
+                    viewer.getConnection().write(new DisplayObjectivePacket(slot, objective.getName()));
                 }
             }
         }
@@ -211,30 +205,24 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend is using this scoreboard, unregister it to allow this
-//                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
-                    EXECUTOR.submit(() -> viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null)));
+                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
                 }
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
             }
             case UNREGISTER -> {
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
 
                 // Check if backend wanted to display an objective with this name
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend wants this too, send the objective and scores
-//                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
-                    EXECUTOR.submit(() -> viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat())));
+                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
                     for (DownstreamScore score : objective.getAllScores()) {
                         if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                             ComponentHolder cHolder = score.getDisplayName() == null ? null : new ComponentHolder(viewer.getProtocolVersion(), score.getDisplayName());
-//                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat()));
-                            EXECUTOR.submit(() -> viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat())));
+                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat()));
                         } else {
-//                            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
-                            EXECUTOR.submit(() -> viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore())));
+                            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
                         }
                     }
                 }
@@ -245,35 +233,30 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     DownstreamObjective obj = downstream.getObjective(slot);
                     if (obj != null) {
                         // This slot is only used by backend, display it (may send unnecessary packets)
-//                        viewer.getConnection().write(new DisplayObjectivePacket(slot, obj.getName()));
-                        EXECUTOR.submit(() -> viewer.getConnection().write(new DisplayObjectivePacket(slot, obj.getName())));
+                        viewer.getConnection().write(new DisplayObjectivePacket(slot, obj.getName()));
                     }
                 }
             }
             case UPDATE -> {
                 // Nothing should be needed here
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
             }
         }
     }
 
     public void sendPacket(@NotNull ScorePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-//        viewer.getConnection().write(packet);
-        EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+        viewer.getConnection().write(packet);
     }
 
     public void sendPacket(@NotNull ScoreSetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-//        viewer.getConnection().write(packet);
-        EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+        viewer.getConnection().write(packet);
     }
 
     public void sendPacket(@NotNull ScoreResetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-//        viewer.getConnection().write(packet);
-        EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+        viewer.getConnection().write(packet);
     }
 
     public void sendPacket(@NotNull TeamPacket packet) {
@@ -283,11 +266,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend is using this team, unregister it to allow this
-//                    viewer.getConnection().write(TeamPacket.unregister(packet.getName()));
-                    EXECUTOR.submit(() -> viewer.getConnection().write(TeamPacket.unregister(packet.getName())));
+                    viewer.getConnection().write(TeamPacket.unregister(packet.getName()));
                 }
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
             }
             case UNREGISTER -> {
                 viewer.getConnection().write(packet);
@@ -295,25 +276,21 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-//                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries()));
-                    EXECUTOR.submit(() -> viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries())));
+                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries()));
                 }
             }
             case UPDATE, ADD_PLAYER -> {
                 // Nothing should be needed here
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
             }
             case REMOVE_PLAYER -> {
-//                viewer.getConnection().write(packet);
-                EXECUTOR.submit(() -> viewer.getConnection().write(packet));
+                viewer.getConnection().write(packet);
                 // Check if backend wanted to display this player
                 for (Team team : downstream.getTeams()) {
                     for (String removedEntry : packet.getEntries()) {
                         if (team.getEntries().contains(removedEntry)) {
                             // Backend team has this player, add back
-//                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
-                            EXECUTOR.submit(() -> viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true)));
+                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
                         }
                     }
                 }
