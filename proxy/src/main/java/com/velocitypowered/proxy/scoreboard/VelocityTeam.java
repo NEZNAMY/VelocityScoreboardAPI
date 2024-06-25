@@ -206,7 +206,7 @@ public class VelocityTeam implements ProxyTeam {
             scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false));
             scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
         } else {
-            throw new IllegalArgumentException("This entry is not in the team");
+            throw new IllegalArgumentException("Entry " + entry + " is not in team " + name + ", cannot remove");
         }
     }
 
@@ -230,7 +230,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     private void checkState() {
-        if (!registered) throw new IllegalStateException("This team was unregistered");
+        if (!registered) throw new IllegalStateException("This team (" + name + ") was unregistered");
     }
 
     public static class PropertyBuilder implements ProxyTeam.PropertyBuilder {

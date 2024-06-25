@@ -158,7 +158,7 @@ public class VelocityObjective implements ProxyObjective {
     public void removeScore(@NotNull String holder) {
         checkState();
         VelocityScore score = scores.get(holder);
-        if (score == null) throw new IllegalArgumentException("Score \"" + holder + "\" is not in this objective");
+        if (score == null) throw new IllegalArgumentException("Score \"" + holder + "\" is not in this objective (" + name + ")");
         score.remove();
         scores.remove(holder);
     }
@@ -186,7 +186,7 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     private void checkState() {
-        if (!registered) throw new IllegalStateException("This objective was unregistered");
+        if (!registered) throw new IllegalStateException("This objective (" + name + ") was unregistered");
     }
 
     public static class Builder implements ProxyObjective.Builder {
