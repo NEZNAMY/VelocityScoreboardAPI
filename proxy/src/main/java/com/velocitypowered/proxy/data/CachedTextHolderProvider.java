@@ -23,6 +23,7 @@ package com.velocitypowered.proxy.data;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.TextHolderProvider;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.text.Component;
@@ -33,8 +34,9 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
-public class TextHolderProviderImpl extends TextHolderProvider {
+public class CachedTextHolderProvider extends TextHolderProvider {
 
 //    private static final Cache<String, TextHolder> legacyCache = CacheBuilder.newBuilder()
 //            .maximumSize(5000)
@@ -55,8 +57,10 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     private static final Map<Component, TextHolder> modernCache = new ConcurrentHashMap<>();
     private static final Map<Long, TextHolder> pairCache = new ConcurrentHashMap<>();
 
-    public TextHolderProviderImpl() {
-        super();
+    public CachedTextHolderProvider(Object plugin, ProxyServer server) {
+        server.getScheduler().buildTask(plugin, this::clearCache)
+                .repeat(30, TimeUnit.SECONDS)
+                .schedule();
     }
 
     public void clearCache() {

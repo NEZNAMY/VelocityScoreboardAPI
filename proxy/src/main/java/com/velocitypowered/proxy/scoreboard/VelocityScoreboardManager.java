@@ -20,19 +20,19 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.TextHolderProvider;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.data.TextHolderProviderImpl;
+import com.velocitypowered.proxy.data.RawTextHolderProvider;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
@@ -43,7 +43,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     private final Object plugin;
     private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
-    private final TextHolderProviderImpl textHolderProvider = new TextHolderProviderImpl();
+    private final TextHolderProvider textHolderProvider = new RawTextHolderProvider();
 
     /**
      * Constructs new instance with given parameters.
@@ -65,9 +65,6 @@ public class VelocityScoreboardManager extends ScoreboardManager {
             downstreamScoreboards.remove(event.getPlayer().getUniqueId());
             proxyScoreboards.remove(event.getPlayer().getUniqueId());
         });
-        server.getScheduler().buildTask(plugin, textHolderProvider::clearCache)
-                .repeat(30, TimeUnit.SECONDS)
-                .schedule();
     }
 
     @Override
