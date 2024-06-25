@@ -43,6 +43,11 @@ public class TextHolderProviderImpl extends TextHolderProvider {
             .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
             .build();
 
+    private static final Cache<Pair, TextHolder> pairCache = CacheBuilder.newBuilder()
+            .maximumSize(5000)
+            .expireAfterWrite(Duration.of(5, ChronoUnit.MINUTES))
+            .build();
+
     public TextHolderProviderImpl() {
         super();
     }
@@ -72,7 +77,31 @@ public class TextHolderProviderImpl extends TextHolderProvider {
 
     @Override
     public TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
-        return new TextHolderImpl(legacyText, modernText); // TODO cache
+        try {
+            return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private record Pair(String legacy, Component modern) {
+
+        public static Pair of(String legacy, Component modern) {
+            return new Pair(legacy, modern);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            Pair pair = (Pair) obj;
+            return legacy.equals(pair.legacy) && modern.equals(pair.modern);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * legacy.hashCode() + modern.hashCode();
+        }
     }
 
 }
