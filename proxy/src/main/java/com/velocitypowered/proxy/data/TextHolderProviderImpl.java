@@ -24,11 +24,17 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.TextHolderProvider;
+import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import net.kyori.adventure.nbt.BinaryTag;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class TextHolderProviderImpl extends TextHolderProvider {
@@ -106,6 +112,73 @@ public class TextHolderProviderImpl extends TextHolderProvider {
         public int hashCode() {
             return 31 * legacy.hashCode() + modern.hashCode();
         }
+    }
+
+    private record ComponentHolderWrapper(@NotNull ComponentHolder componentHolder) {
+
+        public static ComponentHolderWrapper of(@NotNull ComponentHolder componentHolder) {
+            return new ComponentHolderWrapper(componentHolder);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            ComponentHolderWrapper wrapper = (ComponentHolderWrapper) obj;
+            return componentHolder.equals(wrapper.componentHolder);
+        }
+
+        @Nullable
+        private Component getRawComponent() {
+            try {
+                Field field = componentHolder.getClass().getDeclaredField("component");
+                field.setAccessible(true);
+                return (Component) field.get(componentHolder);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return null;
+            }
+        }
+
+        @Nullable
+        private String getRawLegacy() {
+            try {
+                Field field = componentHolder.getClass().getDeclaredField("json");
+                field.setAccessible(true);
+                return (String) field.get(componentHolder);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return null;
+            }
+        }
+
+        @Nullable
+        private BinaryTag getRawNbt() {
+            try {
+                Field field = componentHolder.getClass().getDeclaredField("binaryTag");
+                field.setAccessible(true);
+                return (BinaryTag) field.get(componentHolder);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                return null;
+            }
+        }
+
+        @NotNull
+        private ProtocolVersion getProtocolVersion() {
+            try {
+                Field field = componentHolder.getClass().getDeclaredField("version");
+                field.setAccessible(true);
+                return (ProtocolVersion) field.get(componentHolder);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            int partialHashCode = Objects.hash(getRawComponent(), getRawLegacy(), getRawNbt());
+            boolean isAfter1_16 = getProtocolVersion().compareTo(ProtocolVersion.MINECRAFT_1_16) >= 0;
+            return 31 * partialHashCode + (isAfter1_16 ? 1 : 0);
+        }
+
     }
 
 }
