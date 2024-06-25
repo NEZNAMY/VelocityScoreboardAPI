@@ -87,11 +87,12 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     @Override
     @NotNull
     public TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
-        try {
+        return new TextHolderImpl(legacyText, modernText);
+        /*try {
             return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {
