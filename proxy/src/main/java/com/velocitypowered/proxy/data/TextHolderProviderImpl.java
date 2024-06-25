@@ -92,17 +92,17 @@ public class TextHolderProviderImpl extends TextHolderProvider {
     @Override
     @NotNull
     public TextHolder ofCombined(@NotNull String legacyText, @NotNull Component modernText) {
-//        return new TextHolderImpl(legacyText, modernText);
+        return new TextHolderImpl(legacyText, modernText);
         /*try {
             return pairCache.get(Pair.of(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }*/
-        try {
+        /*try {
             return pairCache.get(Objects.hash(legacyText, modernText), () -> new TextHolderImpl(legacyText, modernText));
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     private record Pair(@NotNull String legacy, @NotNull Component modern) {
