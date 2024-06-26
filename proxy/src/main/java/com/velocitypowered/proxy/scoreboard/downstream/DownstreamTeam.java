@@ -170,6 +170,11 @@ public class DownstreamTeam implements Team {
         return ImmutableSet.copyOf(entries);
     }
 
+    @NotNull
+    public Collection<String> getEntriesRaw() {
+        return entries;
+    }
+
     /**
      * Removes entries from team.
      *

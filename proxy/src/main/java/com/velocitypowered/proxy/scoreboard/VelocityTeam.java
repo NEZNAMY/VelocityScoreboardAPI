@@ -107,6 +107,11 @@ public class VelocityTeam implements ProxyTeam {
         return ImmutableSet.copyOf(entries);
     }
 
+    @NotNull
+    public Collection<String> getEntriesRaw() {
+        return entries;
+    }
+
     @Override
     public void setDisplayName(@NotNull TextHolder displayName) {
         checkState();

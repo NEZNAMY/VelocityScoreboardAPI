@@ -230,7 +230,7 @@ public class PacketHandler {
                 Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
                 for (ProxyTeam proxyTeam : getProxy(handler).getTeams()) {
                     for (String addedEntry : packet.getEntries()) {
-                        if (proxyTeam.getEntries().contains(addedEntry)) {
+                        if (((VelocityTeam)proxyTeam).getEntriesRaw().contains(addedEntry)) {
                             // Proxy team has this player assigned, cancel action
                             modifiedEntries.remove(addedEntry);
                         }
