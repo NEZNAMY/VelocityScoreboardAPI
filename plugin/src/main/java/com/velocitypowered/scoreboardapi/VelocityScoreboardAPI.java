@@ -40,6 +40,7 @@ import org.slf4j.event.Level;
 public class VelocityScoreboardAPI {
 
     private final ProxyServer server;
+    private boolean enabled;
 
     /**
      * Constructs new instance with given parameter
@@ -86,6 +87,7 @@ public class VelocityScoreboardAPI {
 
         ScoreboardManager.setInstance(new VelocityScoreboardManager(server, this));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
+        enabled = true;
     }
 
     /**
@@ -95,6 +97,7 @@ public class VelocityScoreboardAPI {
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
+        if (!enabled) return;
         ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
     }
 }
