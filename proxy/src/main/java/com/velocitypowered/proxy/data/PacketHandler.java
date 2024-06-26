@@ -21,16 +21,14 @@
 package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.ProxyObjective;
 import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler;
 import com.velocitypowered.proxy.connection.backend.VelocityServerConnection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import com.velocitypowered.proxy.scoreboard.VelocityObjective;
-import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
-import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
-import com.velocitypowered.proxy.scoreboard.VelocityTeam;
+import com.velocitypowered.proxy.scoreboard.*;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,14 +137,18 @@ public class PacketHandler {
         if (getDownstream(handler).handle(packet)) return true;
 
         if (packet.getObjectiveName() == null) {
-            // Remove from all objectives, cancel for now //TODO
-            return true;
-        }
-
-        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName()); // TODO Nullable on remove on 1.7.x, fix
-        if (objective != null) {
-            // Proxy is occupying this objective, cancel packet
-            return true;
+            // Null objective removes from all objectives, add back what was set by proxy
+            for (ProxyObjective objective : getProxy(handler).getObjectives()) {
+                VelocityScore score = (VelocityScore) objective.getScore(packet.getScoreHolder());
+                if (score != null) score.sendUpdate();
+            }
+            return false;
+        } else {
+            VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
+            if (objective != null) {
+                // Proxy is occupying this objective, cancel packet
+                return true;
+            }
         }
 
         return false;
@@ -166,13 +168,18 @@ public class PacketHandler {
         if (getDownstream(handler).handle(packet)) return true;
 
         if (packet.getObjectiveName() == null) {
-            // Remove from all objectives, cancel for now //TODO
-            return true;
-        }
-        VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
-        if (objective != null) {
-            // Proxy is occupying this objective, cancel packet
-            return true;
+            // Null objective removes from all objectives, add back what was set by proxy
+            for (ProxyObjective objective : getProxy(handler).getObjectives()) {
+                VelocityScore score = (VelocityScore) objective.getScore(packet.getScoreHolder());
+                if (score != null) score.sendUpdate();
+            }
+            return false;
+        } else {
+            VelocityObjective objective = getProxy(handler).getObjective(packet.getObjectiveName());
+            if (objective != null) {
+                // Proxy is occupying this objective, cancel packet
+                return true;
+            }
         }
 
         return false;
