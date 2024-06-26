@@ -350,4 +350,18 @@ public class TeamProperties {
         this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "TeamProperties{" +
+                "displayName=" + displayName +
+                ", prefix=" + prefix +
+                ", suffix=" + suffix +
+                ", nameVisibility=" + nameVisibility +
+                ", collisionRule=" + collisionRule +
+                ", color=" + color +
+                ", allowFriendlyFire=" + allowFriendlyFire +
+                ", canSeeFriendlyInvisibles=" + canSeeFriendlyInvisibles +
+                '}';
+    }
 }

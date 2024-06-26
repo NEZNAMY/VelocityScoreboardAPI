@@ -144,6 +144,12 @@ public class ScorePacket implements MinecraftPacket {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "ScorePacket{action=" + action + ", holder=" + scoreHolder + ", objective=" + objectiveName +
+                ", value=" + value + "}";
+    }
+
     /**
      * Enum for score packet action.
      */

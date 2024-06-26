@@ -157,4 +157,9 @@ public class TextHolderImpl extends TextHolder {
         if (holder == null) return new ComponentHolder(version, getModernText()); // Cannot save because of potential different versions
         return holder;
     }
+
+    @Override
+    public String toString() {
+        return "TextHolderImpl{legacyText=" + legacyText + ", modernText=" + modernText + ", holder=" + holder + "}";
+    }
 }

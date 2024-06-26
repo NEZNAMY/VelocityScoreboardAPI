@@ -186,6 +186,12 @@ public class ObjectivePacket implements MinecraftPacket {
         return numberFormat;
     }
 
+    @Override
+    public String toString() {
+        return "ObjectivePacket{action=" + action + ", objective=" + objectiveName + ", title=" + title +
+                ", healthDisplay=" + healthDisplay + ", numberFormat=" + numberFormat + "}";
+    }
+
     /**
      * Enum for objective packet action.
      */

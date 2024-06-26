@@ -96,4 +96,9 @@ public class ScoreResetPacket implements MinecraftPacket {
     public String getObjectiveName() {
         return objectiveName;
     }
+
+    @Override
+    public String toString() {
+        return "ScoreResetPacket{holder=" + scoreHolder + ", objective=" + objectiveName + "}";
+    }
 }

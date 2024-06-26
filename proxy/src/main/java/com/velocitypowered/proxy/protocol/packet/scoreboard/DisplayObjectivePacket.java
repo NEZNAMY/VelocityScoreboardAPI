@@ -103,4 +103,9 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     public String getObjectiveName() {
         return objectiveName;
     }
+
+    @Override
+    public String toString() {
+        return "DisplayObjectivePacket{position=" + position + ", objective=" + objectiveName + "}";
+    }
 }

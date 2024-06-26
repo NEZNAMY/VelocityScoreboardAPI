@@ -200,6 +200,11 @@ public class TeamPacket implements MinecraftPacket {
         this.entries = entries;
     }
 
+    @Override
+    public String toString() {
+        return "TeamPacket{action=" + action + ", name=" + name + ", properties=" + properties + ", entries=" + entries + "}";
+    }
+
     /**
      * Enum for objective packet action.
      */

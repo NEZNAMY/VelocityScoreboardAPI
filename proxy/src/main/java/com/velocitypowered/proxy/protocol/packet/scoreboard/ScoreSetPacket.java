@@ -156,4 +156,10 @@ public class ScoreSetPacket implements MinecraftPacket {
     public NumberFormat getNumberFormat() {
         return numberFormat;
     }
+
+    @Override
+    public String toString() {
+        return "ScoreSetPacket{holder=" + scoreHolder + ", objective=" + objectiveName + ", value=" + value +
+                ", displayName=" + displayName + ", numberFormat=" + numberFormat + "}";
+    }
 }
