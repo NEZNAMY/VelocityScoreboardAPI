@@ -200,7 +200,7 @@ public class VelocityTeam implements ProxyTeam {
             ((VelocityTeam)allTeams).entries.remove(entry);
         }
         entries.add(entry);
-        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true));
+        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true), this);
         scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Add(scoreboard.getViewer(), scoreboard, this, entry));
     }
 
@@ -208,7 +208,7 @@ public class VelocityTeam implements ProxyTeam {
     public void removeEntry(@NotNull String entry) throws IllegalArgumentException {
         checkState();
         if (entries.remove(entry)) {
-            scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false));
+            scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false), this);
             scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
         } else {
             throw new IllegalArgumentException("Entry " + entry + " is not in team " + name + ", cannot remove");
@@ -220,16 +220,16 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     public void sendRegister() {
-        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries));
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries), this);
     }
 
     private void sendUpdate() {
-        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null));
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.UPDATE, name, properties, null), this);
     }
 
     public void unregister() {
         checkState();
-        scoreboard.sendPacket(TeamPacket.unregister(name));
+        scoreboard.sendPacket(TeamPacket.unregister(name), this);
         scoreboard.getServer().getEventManager().fireAndForget(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
     }

@@ -260,7 +260,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         viewer.getConnection().write(packet);
     }
 
-    public void sendPacket(@NotNull TeamPacket packet) {
+    public void sendPacket(@NotNull TeamPacket packet, @NotNull VelocityTeam affectedTeam) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         switch (packet.getAction()) {
             case REGISTER -> {
@@ -279,6 +279,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     // Backend wants this too, send it
                     viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntriesRaw()));
                 }
+
+                // Check if removed players belonged to backend teams
+                for (Team dTeam : downstream.getTeams()) {
+                    Collection<String> teamEntries = ((DownstreamTeam)dTeam).getEntriesRaw();
+                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
+                        if (teamEntries.contains(removedEntry)) {
+                            // Backend team has this player, add back
+                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
+                        }
+                    }
+                }
             }
             case UPDATE, ADD_PLAYER -> {
                 // Nothing should be needed here
@@ -286,10 +297,11 @@ public class VelocityScoreboard implements ProxyScoreboard {
             }
             case REMOVE_PLAYER -> {
                 viewer.getConnection().write(packet);
+
                 // Check if backend wanted to display this player
                 for (Team team : downstream.getTeams()) {
                     Collection<String> teamEntries = ((DownstreamTeam)team).getEntriesRaw();
-                    for (String removedEntry : packet.getEntries()) {
+                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
