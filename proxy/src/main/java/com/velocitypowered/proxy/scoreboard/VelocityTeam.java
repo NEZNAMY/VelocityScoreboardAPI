@@ -403,8 +403,7 @@ public class VelocityTeam implements ProxyTeam {
             if (allowFriendlyFire == null) allowFriendlyFire = false;
             if (canSeeFriendlyInvisibles == null) canSeeFriendlyInvisibles = false;
             return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles), Sets.newConcurrentHashSet(entries)
-            );
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles), Sets.newCopyOnWriteArraySet(entries));
         }
     }
 }
