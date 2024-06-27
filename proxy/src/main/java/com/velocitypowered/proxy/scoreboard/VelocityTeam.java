@@ -196,8 +196,11 @@ public class VelocityTeam implements ProxyTeam {
     public void addEntry(@NotNull String entry) {
         checkState();
         if (entries.contains(entry)) return;
-        for (ProxyTeam allTeams : scoreboard.getTeams()) {
-            ((VelocityTeam)allTeams).entries.remove(entry);
+        for (String iteratedEntry : getEntriesRaw()) {
+            scoreboard.getTeamFromEntry(entry).ifPresent(existingTeam -> {
+                throw new IllegalStateException("An entry with named (" + entry + ") already exists in team " + existingTeam.getName());
+            });
+            scoreboard.addEntryToTeam(iteratedEntry, this);
         }
         entries.add(entry);
         scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true), this);
@@ -208,6 +211,7 @@ public class VelocityTeam implements ProxyTeam {
     public void removeEntry(@NotNull String entry) throws IllegalArgumentException {
         checkState();
         if (entries.remove(entry)) {
+            scoreboard.removeEntryFromTeam(entry, this);
             scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false), this);
             scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
         } else {
@@ -217,6 +221,7 @@ public class VelocityTeam implements ProxyTeam {
 
     public void removeEntriesRaw(@NotNull Collection<String> entries) {
         this.entries.removeAll(entries);
+        entries.forEach(entry -> scoreboard.removeEntryFromTeam(entry, this));
     }
 
     public void sendRegister() {

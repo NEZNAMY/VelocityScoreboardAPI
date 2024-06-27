@@ -156,6 +156,16 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return Optional.ofNullable(teamEntries.get(entry));
     }
 
+    @ApiStatus.Internal
+    public void addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {
+        teamEntries.put(entry, team);
+    }
+
+    @ApiStatus.Internal
+    public void removeEntryFromTeam(@NotNull String entry, @NotNull VelocityTeam team) {
+        teamEntries.remove(entry, team);
+    }
+
     @Override
     public void unregisterTeam(@NotNull String teamName) {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
