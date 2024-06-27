@@ -307,8 +307,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 }
 
                 // Check if removed players belonged to backend teams
-                for (Team dTeam : downstream.getTeams()) {
-                    Collection<String> teamEntries = ((DownstreamTeam)dTeam).getEntriesRaw();
+                for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
+                    Collection<String> teamEntries = dTeam.getEntriesRaw();
                     for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
@@ -325,8 +325,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 viewer.getConnection().write(packet);
 
                 // Check if backend wanted to display this player
-                for (Team team : downstream.getTeams()) {
-                    Collection<String> teamEntries = ((DownstreamTeam)team).getEntriesRaw();
+                for (DownstreamTeam team : downstream.getDownstreamTeams()) {
+                    Collection<String> teamEntries = team.getEntriesRaw();
                     for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
