@@ -31,8 +31,6 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-
 public class VelocityScore implements ProxyScore {
 
     @NotNull private final VelocityObjective objective;
