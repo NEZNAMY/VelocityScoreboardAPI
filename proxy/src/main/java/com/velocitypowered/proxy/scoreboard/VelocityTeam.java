@@ -197,9 +197,10 @@ public class VelocityTeam implements ProxyTeam {
         checkState();
         if (entries.contains(entry)) return;
         for (String iteratedEntry : getEntriesRaw()) {
-            scoreboard.getTeamFromEntry(entry).ifPresent(existingTeam -> {
-                throw new IllegalStateException("An entry with named (" + entry + ") already exists in team " + existingTeam.getName());
-            });
+            VelocityTeam entryTeam = scoreboard.getTeamFromEntry(entry);
+            if (entryTeam != null) {
+                throw new IllegalStateException("An entry with named (" + entry + ") already exists in team " + entryTeam.getName());
+            }
             scoreboard.addEntryToTeam(iteratedEntry, this);
         }
         entries.add(entry);
