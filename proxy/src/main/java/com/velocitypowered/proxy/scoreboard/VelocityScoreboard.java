@@ -33,11 +33,13 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScore;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamTeam;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,6 +56,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teams = new ConcurrentHashMap<>();
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
+    private final Map<String, VelocityTeam> teamEntries = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
 
     public VelocityScoreboard(@NotNull ProxyServer server, @NotNull ConnectedPlayer viewer, @NotNull DownstreamScoreboard downstream) {
@@ -123,9 +126,13 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
-        for (VelocityTeam allTeams : teams.values()) {
-            allTeams.removeEntriesRaw(team.getEntriesRaw());
+        for (String entry : team.getEntriesRaw()) {
+            getTeamFromEntry(entry).ifPresent(existingTeam -> {
+                throw new IllegalStateException("An entry with named (" + entry + ") already exists in team " + existingTeam.getName());
+            });
+            teamEntries.put(entry, team);
         }
+
         teams.put(team.getName(), team);
         team.sendRegister();
         server.getEventManager().fireAndForget(new TeamEvent.Register(viewer, this, team));
@@ -144,10 +151,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return Set.copyOf(teams.values());
     }
 
+    @ApiStatus.Internal
+    public Optional<VelocityTeam> getTeamFromEntry(String entry) {
+        return Optional.ofNullable(teamEntries.get(entry));
+    }
+
     @Override
     public void unregisterTeam(@NotNull String teamName) {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
-        teams.remove(teamName).unregister();
+        VelocityTeam team = teams.remove(teamName);
+        team.unregister();
+        team.getEntriesRaw().forEach(teamEntries::remove);
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
