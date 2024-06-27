@@ -226,7 +226,7 @@ public class PacketHandler {
             // Proxy is occupying this team, cancel packet
             return true;
         } else {
-            if (packet.getAction() == TeamPacket.TeamAction.ADD_PLAYER || packet.getAction() == TeamPacket.TeamAction.REMOVE_PLAYER) {
+            if (packet.getEntries() != null) { // Any player action
                 Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
                 for (ProxyTeam proxyTeam : getProxy(handler).getTeams()) {
                     for (String addedEntry : packet.getEntries()) {
