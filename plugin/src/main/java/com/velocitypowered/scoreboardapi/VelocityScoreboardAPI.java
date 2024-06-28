@@ -31,6 +31,7 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
@@ -40,17 +41,22 @@ import org.slf4j.event.Level;
 public class VelocityScoreboardAPI {
 
     private final ProxyServer server;
+    private final Metrics.Factory metricsFactory;
     private boolean enabled;
 
     /**
-     * Constructs new instance with given parameter
+     * Constructs new instance with given parameters.
      *
      * @param   server
      *          Proxy server
+     * @param   metricsFactory
+     *          Metrics for bStats
      */
     @Inject
-    public VelocityScoreboardAPI(@NotNull ProxyServer server) {
+    public VelocityScoreboardAPI(@NotNull ProxyServer server, @NotNull Metrics.Factory metricsFactory) {
         this.server = server;
+        this.metricsFactory = metricsFactory;
+
     }
 
     /**
@@ -88,6 +94,7 @@ public class VelocityScoreboardAPI {
         ScoreboardManager.setInstance(new VelocityScoreboardManager(server, this));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
         enabled = true;
+        metricsFactory.make(this, 22437);
     }
 
     /**
