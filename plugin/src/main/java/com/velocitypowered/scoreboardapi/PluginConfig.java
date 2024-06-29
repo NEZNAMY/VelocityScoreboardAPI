@@ -54,6 +54,9 @@ public class PluginConfig {
     @Comment("Whether to log invalid packets received from downstream servers")
     private boolean printInvalidDownstreamPacketWarnings = true;
 
+    private PluginConfig() {
+    }
+
     @NotNull
     public static PluginConfig load(@NotNull Path directory) {
         return YamlConfigurations.update(
