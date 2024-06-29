@@ -8,6 +8,7 @@ dependencies {
     compileOnly project(':api')
 
     implementation 'org.bstats:bstats-velocity:3.0.1'
+    implementation 'de.exlll:configlib-yaml:4.5.0'
     compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
     compileOnly 'com.velocitypowered:velocity-proxy:3.3.0-SNAPSHOT'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
@@ -17,7 +18,9 @@ shadowJar {
     dependencies {
         exclude dependency(':slf4j-api')
     }
+
     relocate("org.bstats", "com.velocitypowered.scoreboardapi.libs.org.bstats")
+    relocate("de.exlll.configlib", "com.velocitypowered.scoreboardapi.libs.de.exlll.configlib")
 }
 
 tasks {

@@ -25,6 +25,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
@@ -35,6 +36,8 @@ import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
+import java.nio.file.Path;
+
 /**
  * Entrypoint for Velocity Scoreboard API.
  */
@@ -42,6 +45,7 @@ public class VelocityScoreboardAPI {
 
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
+    private final PluginConfig pluginConfig;
     private boolean enabled;
 
     /**
@@ -51,12 +55,15 @@ public class VelocityScoreboardAPI {
      *          Proxy server
      * @param   metricsFactory
      *          Metrics for bStats
+     * @param   configDirectory
+     *          Configuration directory
      */
     @Inject
-    public VelocityScoreboardAPI(@NotNull ProxyServer server, @NotNull Metrics.Factory metricsFactory) {
+    public VelocityScoreboardAPI(@NotNull ProxyServer server, @NotNull Metrics.Factory metricsFactory,
+                                 @DataDirectory Path configDirectory) {
         this.server = server;
         this.metricsFactory = metricsFactory;
-
+        this.pluginConfig = PluginConfig.load(configDirectory);
     }
 
     /**
@@ -105,6 +112,8 @@ public class VelocityScoreboardAPI {
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         if (!enabled) return;
-        ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore("handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer()));
+        ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
+                "handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer())
+        );
     }
 }
