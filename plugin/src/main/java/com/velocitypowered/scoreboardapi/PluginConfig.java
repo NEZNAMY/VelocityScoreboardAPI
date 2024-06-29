@@ -20,16 +20,14 @@
 
 package com.velocitypowered.scoreboardapi;
 
-import de.exlll.configlib.Comment;
-import de.exlll.configlib.NameFormatters;
-import de.exlll.configlib.YamlConfigurationProperties;
-import de.exlll.configlib.YamlConfigurations;
+import de.exlll.configlib.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 @SuppressWarnings("FieldCanBeLocal")
+@Configuration
 public class PluginConfig {
 
     @NotNull

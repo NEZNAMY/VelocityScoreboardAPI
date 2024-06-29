@@ -43,7 +43,6 @@ import java.nio.file.Path;
 /**
  * Entrypoint for Velocity Scoreboard API.
  */
-@Configuration
 public class VelocityScoreboardAPI implements ScoreboardEventSource {
 
     private final ProxyServer server;
