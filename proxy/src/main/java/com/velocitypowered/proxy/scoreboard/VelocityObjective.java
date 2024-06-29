@@ -98,7 +98,7 @@ public class VelocityObjective implements ProxyObjective {
         scoreboard.setDisplaySlot(displaySlot, this);
         this.displaySlot = displaySlot;
         scoreboard.sendPacket(new DisplayObjectivePacket(displaySlot, name));
-        scoreboard.getServer().getEventManager().fireAndForget(new ObjectiveEvent.Display(scoreboard.getViewer(), scoreboard, this, displaySlot));
+        scoreboard.getEventSource().fireEvent(new ObjectiveEvent.Display(scoreboard.getViewer(), scoreboard, this, displaySlot));
     }
 
     @Override
@@ -177,7 +177,7 @@ public class VelocityObjective implements ProxyObjective {
     public void unregister() {
         checkState();
         scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
-        scoreboard.getServer().getEventManager().fireAndForget(new ObjectiveEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
+        scoreboard.getEventSource().fireEvent(new ObjectiveEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
     }
 

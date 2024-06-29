@@ -21,6 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
+import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -39,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,7 +48,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21;
 
     @NotNull
-    private final ProxyServer server;
+    private final ScoreboardEventSource eventSource;
 
     @NotNull
     private final ConnectedPlayer viewer;
@@ -59,8 +59,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private final Map<String, VelocityTeam> teamEntries = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
 
-    public VelocityScoreboard(@NotNull ProxyServer server, @NotNull ConnectedPlayer viewer, @NotNull DownstreamScoreboard downstream) {
-        this.server = server;
+    public VelocityScoreboard(@NotNull ScoreboardEventSource eventSource, @NotNull ConnectedPlayer viewer,
+                              @NotNull DownstreamScoreboard downstream) {
+        this.eventSource = eventSource;
         this.viewer = viewer;
         this.downstream = downstream;
     }
@@ -95,10 +96,10 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (objectives.containsKey(objective.getName())) throw new IllegalStateException("An objective with this name (" + objective.getName() + ") already exists in this scoreboard");
         objectives.put(objective.getName(), objective);
         objective.sendRegister();
-        server.getEventManager().fireAndForget(new ObjectiveEvent.Register(viewer, this, objective));
+        eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, objective));
         if (objective.getDisplaySlot() != null) {
             displaySlots.put(objective.getDisplaySlot(), objective);
-            server.getEventManager().fireAndForget(new ObjectiveEvent.Display(viewer, this, objective, objective.getDisplaySlot()));
+            eventSource.fireEvent(new ObjectiveEvent.Display(viewer, this, objective, objective.getDisplaySlot()));
         }
         return objective;
     }
@@ -136,7 +137,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
         teams.put(team.getName(), team);
         team.sendRegister();
-        server.getEventManager().fireAndForget(new TeamEvent.Register(viewer, this, team));
+        eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
         return team;
     }
 
@@ -204,8 +205,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
      * @return  Server
      */
     @NotNull
-    public ProxyServer getServer() {
-        return server;
+    public ScoreboardEventSource getEventSource() {
+        return eventSource;
     }
 
     public void sendPacket(@NotNull DisplayObjectivePacket packet) {

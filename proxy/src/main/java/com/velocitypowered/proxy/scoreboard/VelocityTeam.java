@@ -205,7 +205,7 @@ public class VelocityTeam implements ProxyTeam {
         }
         entries.add(entry);
         scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true), this);
-        scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Add(scoreboard.getViewer(), scoreboard, this, entry));
+        scoreboard.getEventSource().fireEvent(new TeamEntryEvent.Add(scoreboard.getViewer(), scoreboard, this, entry));
     }
 
     @Override
@@ -214,7 +214,7 @@ public class VelocityTeam implements ProxyTeam {
         if (entries.remove(entry)) {
             scoreboard.removeEntryFromTeam(entry, this);
             scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false), this);
-            scoreboard.getServer().getEventManager().fireAndForget(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
+            scoreboard.getEventSource().fireEvent(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
         } else {
             throw new IllegalArgumentException("Entry " + entry + " is not in team " + name + ", cannot remove");
         }
@@ -236,7 +236,7 @@ public class VelocityTeam implements ProxyTeam {
     public void unregister() {
         checkState();
         scoreboard.sendPacket(TeamPacket.unregister(name), this);
-        scoreboard.getServer().getEventManager().fireAndForget(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
+        scoreboard.getEventSource().fireEvent(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
     }
 

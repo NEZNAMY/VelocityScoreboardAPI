@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolderProvider;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class VelocityScoreboardManager extends ScoreboardManager {
 
     private final ProxyServer server;
-    private final Object plugin;
+    private final ScoreboardEventSource plugin;
     private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
     private final TextHolderProvider textHolderProvider = new RawTextHolderProvider();
@@ -51,7 +52,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
      * @param server Server to call events to
      * @param plugin Scoreboard API plugin
      */
-    public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull Object plugin) {
+    public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull ScoreboardEventSource plugin) {
         this.server = server;
         this.plugin = plugin;
         this.registerEvents();
@@ -70,11 +71,16 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     @Override
     @NotNull
     public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(server, (ConnectedPlayer) player, getBackendScoreboard(player)));
+        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(
+                plugin, (ConnectedPlayer) player, getBackendScoreboard(player)
+        ));
     }
 
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(server, player));
+        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(
+                plugin, player
+        ));
     }
+
 }

@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -41,7 +42,7 @@ import java.nio.file.Path;
 /**
  * Entrypoint for Velocity Scoreboard API.
  */
-public class VelocityScoreboardAPI {
+public class VelocityScoreboardAPI implements ScoreboardEventSource {
 
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
@@ -116,4 +117,11 @@ public class VelocityScoreboardAPI {
                 "handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer())
         );
     }
+
+    @Override
+    public void fireEvent(@NotNull Object event) {
+        if (!pluginConfig.isCallScoreboardEvents()) return;
+        server.getEventManager().fire(event);
+    }
+
 }
