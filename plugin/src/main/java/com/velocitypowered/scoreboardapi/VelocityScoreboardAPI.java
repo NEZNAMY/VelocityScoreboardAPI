@@ -65,6 +65,8 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
         this.server = server;
         this.metricsFactory = metricsFactory;
         this.pluginConfig = PluginConfig.load(configDirectory);
+
+        LoggerManager.setLogInvalidPackets(pluginConfig.isPrintInvalidDownstreamPacketWarnings());
     }
 
     /**

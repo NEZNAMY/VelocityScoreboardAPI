@@ -38,12 +38,26 @@ public class LoggerManager {
     private final static ComponentLogger logger = ComponentLogger.logger("VelocityScoreboardAPI");
 
     /**
+     * Whether to log invalid packets.
+     */
+    private static boolean logInvalidPackets;
+
+    /**
+     * Sets whether to log invalid packets.
+     * @param logInvalidPackets whether to log invalid packets
+     */
+    public static void setLogInvalidPackets(boolean logInvalidPackets) {
+        LoggerManager.logInvalidPackets = logInvalidPackets;
+    }
+
+    /**
      * Logs an error message indicating an invalid downstream packet.
      *
      * @param player Player who received invalid packet
      * @param message the error message
      */
     public static void invalidDownstreamPacket(@NotNull Player player, @NotNull String message) {
+        if (!logInvalidPackets) return;
         log(Level.ERROR, "Received invalid downstream packet for player " + player.getUsername() + ": " + message);
     }
 
