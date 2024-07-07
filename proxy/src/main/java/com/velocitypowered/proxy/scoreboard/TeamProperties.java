@@ -129,7 +129,8 @@ public class TeamProperties {
             prefix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
             suffix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-            color = TeamColor.values()[buf.readByte()];
+            int value = buf.readByte();
+            color = value == -1 ? TeamColor.RESET : TeamColor.values()[buf.readByte()];
         }
     }
 
