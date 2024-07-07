@@ -19,6 +19,8 @@ shadowJar {
         exclude dependency(':slf4j-api')
     }
 
+    exclude 'org/snakeyaml/**'
+
     relocate("org.bstats", "com.velocitypowered.scoreboardapi.libs.org.bstats")
     relocate("de.exlll.configlib", "com.velocitypowered.scoreboardapi.libs.de.exlll.configlib")
 }
