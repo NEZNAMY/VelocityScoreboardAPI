@@ -127,11 +127,10 @@ public class VelocityScoreboard implements ProxyScoreboard {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
         for (String entry : team.getEntriesRaw()) {
-            VelocityTeam entryTeam = getTeamFromEntry(entry);
-            if (entryTeam != null) {
-                throw new IllegalStateException("An entry with named (" + entry + ") already exists in team " + entryTeam.getName());
+            VelocityTeam oldTeam = teamEntries.put(entry, team);
+            if (oldTeam != null) {
+                oldTeam.getEntriesRaw().remove(entry);
             }
-            teamEntries.put(entry, team);
         }
 
         teams.put(team.getName(), team);
@@ -154,13 +153,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @ApiStatus.Internal
     @Nullable
-    public VelocityTeam getTeamFromEntry(String entry) {
-        return teamEntries.get(entry);
-    }
-
-    @ApiStatus.Internal
-    public void addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {
-        teamEntries.put(entry, team);
+    public VelocityTeam addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {
+        return teamEntries.put(entry, team);
     }
 
     @ApiStatus.Internal
