@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class TextHolder {
 
     /** Text holder with empty value */
-    public static TextHolder EMPTY = TextHolderProvider.getProvider().empty();
+    public static final TextHolder EMPTY = TextHolderProvider.getProvider().empty();
 
     /**
      * Constructs a TextHolder object with the given legacy text
