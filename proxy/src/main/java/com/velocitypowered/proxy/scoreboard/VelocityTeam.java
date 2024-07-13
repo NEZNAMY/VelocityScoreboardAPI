@@ -387,8 +387,8 @@ public class VelocityTeam implements ProxyTeam {
         @NotNull
         public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
             if (displayName == null) displayName = TextHolder.of(name);
-            if (prefix == null) prefix = TextHolder.EMPTY;
-            if (suffix == null) suffix = TextHolder.EMPTY;
+            if (prefix == null) prefix = TextHolder.empty();
+            if (suffix == null) suffix = TextHolder.empty();
             if (nameVisibility == null) nameVisibility = NameVisibility.ALWAYS;
             if (collisionRule == null) collisionRule = CollisionRule.ALWAYS;
             if (color == null) color = TeamColor.RESET;

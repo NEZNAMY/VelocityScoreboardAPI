@@ -32,8 +32,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class TextHolder {
 
-    /** Text holder with empty value */
-    public static final TextHolder EMPTY = TextHolderProvider.getProvider().empty();
+    /**
+     * Returns holder with empty text.
+     *
+     * @return  Holder with empty text
+     */
+    @NotNull
+    public static TextHolder empty() {
+        return TextHolderProvider.getProvider().empty();
+    }
 
     /**
      * Constructs a TextHolder object with the given legacy text
@@ -42,6 +49,7 @@ public abstract class TextHolder {
      * @param legacyText The legacy text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
+    @NotNull
     public static TextHolder of(@NotNull String legacyText) {
         return TextHolderProvider.getProvider().ofLegacy(legacyText);
     }
@@ -53,6 +61,7 @@ public abstract class TextHolder {
      * @param modernText The Component modern text to be used in the TextHolder
      * @return The constructed TextHolder object
      */
+    @NotNull
     public static TextHolder of(@NotNull Component modernText) {
         return TextHolderProvider.getProvider().ofComponent(modernText);
     }
@@ -65,6 +74,7 @@ public abstract class TextHolder {
      * @param modernText Text for 1.13+ players
      * @return The constructed TextHolder object
      */
+    @NotNull
     public static TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
         return TextHolderProvider.getProvider().ofCombined(legacyText, modernText);
     }
