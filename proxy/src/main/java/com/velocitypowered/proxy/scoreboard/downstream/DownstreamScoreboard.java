@@ -189,7 +189,7 @@ public class DownstreamScoreboard implements Scoreboard {
     }
 
     private boolean handleReset(@Nullable String objectiveName, @NotNull String holder) {
-        if (objectiveName == null) {
+        if (objectiveName == null || objectiveName.isEmpty()) {
             for (DownstreamObjective objective : objectives.values()) {
                 objective.removeScore(holder);
             }
