@@ -28,8 +28,8 @@ jobs:
         env:
           SNAPSHOTS_MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           SNAPSHOTS_MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-      - name: Upload build artifacts
+      - name: Upload JAR artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Package
-          path: target
+          name: JAR Files
+          path: build/libs/*.jar
