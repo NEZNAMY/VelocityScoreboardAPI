@@ -24,7 +24,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: 'Build with Gradle 🏗️'
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
         with:
           arguments: build publish
         env:
