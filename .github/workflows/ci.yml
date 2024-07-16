@@ -28,8 +28,13 @@ jobs:
         env:
           SNAPSHOTS_MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           SNAPSHOTS_MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-      - name: Upload JAR artifacts
+      - name: Upload VelocityScoreboardAPI jar
         uses: actions/upload-artifact@v4
         with:
-          name: JAR Files
-          path: target
+          name: VelocityScoreboardAPI
+          path: target/VelocityScoreboardAPI-*.jar
+      - name: Upload VelocityScoreboardAPI Javadocs
+        uses: actions/upload-artifact@v4
+        with:
+          name: VelocityScoreboardAPI
+          path: target/VelocityScoreboardAPI-*javadoc.jar
