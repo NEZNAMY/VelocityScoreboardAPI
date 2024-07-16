@@ -32,9 +32,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: VelocityScoreboardAPI
-          path: target/VelocityScoreboardAPI-*.jar
-      - name: Upload VelocityScoreboardAPI Javadocs
-        uses: actions/upload-artifact@v4
-        with:
-          name: VelocityScoreboardAPI
-          path: target/VelocityScoreboardAPI-*javadoc.jar
+          path: target/VelocityScoreboardAPI-*-${{ github.sha }}.jar
