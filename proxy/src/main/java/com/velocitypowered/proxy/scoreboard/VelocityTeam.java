@@ -227,6 +227,9 @@ public class VelocityTeam implements ProxyTeam {
 
     public void unregister() {
         checkState();
+        for (String entry : entries) {
+            scoreboard.removeEntryFromTeam(entry, this);
+        }
         scoreboard.sendPacket(TeamPacket.unregister(name), this);
         scoreboard.getEventSource().fireEvent(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
         registered = false;
