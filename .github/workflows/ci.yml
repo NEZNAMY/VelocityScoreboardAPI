@@ -30,8 +30,12 @@ jobs:
           SNAPSHOTS_MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
       - name: Set short SHA
         run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
-      - name: Upload VelocityScoreboardAPI jar
+      - name: Find first built VelocityScoreboardAPI jar
+        run: |
+          FIRST_BUILT_FILE=$(ls target/VelocityScoreboardAPI-*-${{ env.SHORT_SHA }}.jar | sort | head -n 1)
+          echo "FIRST_BUILT_FILE=$FIRST_BUILT_FILE" >> $GITHUB_ENV
+      - name: Upload first built VelocityScoreboardAPI jar
         uses: actions/upload-artifact@v4
         with:
           name: VelocityScoreboardAPI
-          path: target/VelocityScoreboardAPI-*-${{ env.SHORT_SHA }}.jar
+          path: ${{ env.FIRST_BUILT_FILE }}
