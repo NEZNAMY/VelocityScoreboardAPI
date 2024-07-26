@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,8 @@ public class LoggerManager {
      */
     public static void invalidDownstreamPacket(@NotNull Player player, @NotNull String message) {
         if (!logInvalidPackets) return;
-        log(Level.ERROR, "Received invalid downstream packet for player " + player.getUsername() + ": " + message);
+        Component component = Component.text("Received invalid downstream packet for player " + player.getUsername() + ": " + message, TextColor.fromHexString("#FF0000"));
+        log(Level.ERROR, component);
     }
 
     /**
