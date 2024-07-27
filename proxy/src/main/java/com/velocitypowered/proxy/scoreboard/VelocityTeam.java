@@ -217,6 +217,16 @@ public class VelocityTeam implements ProxyTeam {
         }
     }
 
+    /**
+     * Returns properties of this team.
+     *
+     * @return  properties of this team
+     */
+    @NotNull
+    public TeamProperties getProperties() {
+        return properties;
+    }
+
     public void sendRegister() {
         scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries), this);
     }

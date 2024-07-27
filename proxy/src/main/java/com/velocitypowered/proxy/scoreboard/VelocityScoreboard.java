@@ -175,14 +175,37 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (previous != null) previous.clearDisplaySlot();
     }
 
+    /**
+     * Resends the entire scoreboard. This function is called on server switch. It mostly performs a raw
+     * packet write instead of calling existing register functions to skip checks and avoid
+     * potentially incorrect behavior, such as when a team/objective name is on both proxy and backend.
+     */
     public void resend() {
+        if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         for (VelocityTeam team : teams.values()) {
-            team.sendRegister();
+            viewer.getConnection().write(new TeamPacket(
+                    TeamPacket.TeamAction.REGISTER,
+                    team.getName(),
+                    team.getProperties(),
+                    team.getEntriesRaw()
+            ));
         }
         for (VelocityObjective objective : objectives.values()) {
-            objective.sendRegister();
+            viewer.getConnection().write(new ObjectivePacket(
+                    ObjectiveAction.REGISTER,
+                    objective.getName(),
+                    objective.getTitle(),
+                    objective.getHealthDisplay(),
+                    objective.getNumberFormat()
+            ));
+            if (objective.getDisplaySlot() != null) {
+                viewer.getConnection().write(new DisplayObjectivePacket(
+                        objective.getDisplaySlot(),
+                        objective.getName()
+                ));
+            }
             for (ProxyScore score : objective.getAllScores()) {
-                ((VelocityScore)score).sendUpdate();
+                ((VelocityScore)score).sendUpdate(); // This one is safe
             }
         }
     }
