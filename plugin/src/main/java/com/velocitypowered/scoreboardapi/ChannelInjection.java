@@ -57,10 +57,8 @@ public class ChannelInjection extends ChannelDuplexHandler {
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         super.write(context, packet, channelPromise);
         if (packet instanceof JoinGamePacket) {
-            plugin.getServer().getScheduler().buildTask(plugin, () -> {
-                downstreamScoreboard.clear();
-                proxyScoreboard.resend();
-            }).schedule();
+            downstreamScoreboard.clear();
+            plugin.getServer().getScheduler().buildTask(plugin, proxyScoreboard::resend).schedule();
         }
     }
 
