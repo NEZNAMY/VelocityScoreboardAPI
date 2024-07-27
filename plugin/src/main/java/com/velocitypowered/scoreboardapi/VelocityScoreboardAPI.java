@@ -116,7 +116,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     public void onJoin(PostLoginEvent e) {
         if (!enabled) return;
         ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
-                "handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer())
+                "handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer(), this)
         );
     }
 
@@ -126,4 +126,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
         server.getEventManager().fire(event);
     }
 
+    public ProxyServer getServer() {
+        return server;
+    }
 }

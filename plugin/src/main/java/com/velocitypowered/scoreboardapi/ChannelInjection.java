@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ChannelInjection extends ChannelDuplexHandler {
 
+    private final VelocityScoreboardAPI plugin;
     private final DownstreamScoreboard downstreamScoreboard;
     private final VelocityScoreboard proxyScoreboard;
 
@@ -46,7 +47,8 @@ public class ChannelInjection extends ChannelDuplexHandler {
      * @param   player
      *          Player to inject
      */
-    public ChannelInjection(@NotNull Player player) {
+    public ChannelInjection(@NotNull Player player, @NotNull VelocityScoreboardAPI plugin) {
+        this.plugin = plugin;
         downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
         proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);
     }
@@ -55,8 +57,10 @@ public class ChannelInjection extends ChannelDuplexHandler {
     public void write(ChannelHandlerContext context, Object packet, ChannelPromise channelPromise) throws Exception {
         super.write(context, packet, channelPromise);
         if (packet instanceof JoinGamePacket) {
-            downstreamScoreboard.clear();
-            proxyScoreboard.resend(); // TODO async?
+            plugin.getServer().getScheduler().buildTask(plugin, () -> {
+                downstreamScoreboard.clear();
+                proxyScoreboard.resend();
+            }).schedule();
         }
     }
 
