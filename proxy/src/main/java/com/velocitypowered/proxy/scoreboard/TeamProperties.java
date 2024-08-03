@@ -36,6 +36,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TeamProperties {
 
+    /** Cached array to prevent new array instantiation on each .values() call */
+    private static final TeamColor[] COLORS = TeamColor.values();
+
     /** Display name of the team (used somewhere in spectator gamemode?) */
     @NotNull
     private TextHolder displayName;
@@ -125,12 +128,12 @@ public class TeamProperties {
             collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
-            color = TeamColor.values()[ProtocolUtils.readVarInt(buf)];
+            color = COLORS[ProtocolUtils.readVarInt(buf)];
             prefix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
             suffix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
         } else if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             int value = buf.readByte();
-            color = value == -1 ? TeamColor.RESET : TeamColor.values()[value];
+            color = value == -1 ? TeamColor.RESET : COLORS[value];
         }
     }
 

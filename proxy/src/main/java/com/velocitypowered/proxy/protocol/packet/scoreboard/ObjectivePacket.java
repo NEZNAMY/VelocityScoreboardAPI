@@ -42,6 +42,9 @@ import java.util.Locale;
  */
 public class ObjectivePacket implements MinecraftPacket {
 
+    /** Cached array to prevent new array instantiation on each .values() call */
+    private static final HealthDisplay[] DISPLAYS = HealthDisplay.values();
+
     /** Packet action */
     private ObjectiveAction action;
 
@@ -92,7 +95,7 @@ public class ObjectivePacket implements MinecraftPacket {
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 title = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
-                healthDisplay = HealthDisplay.values()[ProtocolUtils.readVarInt(buf)];
+                healthDisplay = DISPLAYS[ProtocolUtils.readVarInt(buf)];
             } else {
                 title = TextHolder.of(ProtocolUtils.readString(buf));
                 healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
