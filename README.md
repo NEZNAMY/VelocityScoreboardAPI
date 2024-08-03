@@ -13,7 +13,7 @@
 **VelocityScoreboardAPI** is an API plugin by NEZNAMY ([TAB](https://github.com/NEZNAMY/TAB)), William278 ([Velocitab](https://github.com/WiIIiam278/Velocitab)) and AlexDev_  ([Velocitab](https://github.com/WiIIiam278/Velocitab)), providing Velocity proxy servers with an API for interfacing with Scoreboard. This allows developers a standard way of performing scoreboard/team operations in lieu of an API provided by Velocity. This plugin does not provide any features on its own.
 
 ## Server owners
-Please add the plugin to your Velocity server's plugins folder. Make sure you are running the latest version of Velocity (check the requirements below). The VelocityScoreboardAPI plugin does not have a config file.
+Please add the plugin to your Velocity server's plugins folder. Make sure you are running the latest version of Velocity (check the requirements below).
 
 ### Requirements
 * Java 17+
