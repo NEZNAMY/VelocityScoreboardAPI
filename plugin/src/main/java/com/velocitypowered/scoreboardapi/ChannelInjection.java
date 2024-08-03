@@ -42,10 +42,12 @@ public class ChannelInjection extends ChannelDuplexHandler {
     private final VelocityScoreboard proxyScoreboard;
 
     /**
-     * Constructs new instance with given player.
+     * Constructs new instance with given parameters.
      *
      * @param   player
      *          Player to inject
+     * @param   plugin
+     *          Plugin instance
      */
     public ChannelInjection(@NotNull Player player, @NotNull VelocityScoreboardAPI plugin) {
         this.plugin = plugin;
@@ -60,10 +62,5 @@ public class ChannelInjection extends ChannelDuplexHandler {
             downstreamScoreboard.clear();
             plugin.getServer().getScheduler().buildTask(plugin, proxyScoreboard::resend).schedule();
         }
-    }
-
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        super.channelRead(ctx, msg);
     }
 }
