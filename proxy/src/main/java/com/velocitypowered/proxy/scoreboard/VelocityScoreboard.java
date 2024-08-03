@@ -151,6 +151,11 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return Set.copyOf(teams.values());
     }
 
+    @NotNull
+    public Collection<VelocityTeam> getTeamsRaw() {
+        return teams.values();
+    }
+
     @ApiStatus.Internal
     @Nullable
     public VelocityTeam addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {

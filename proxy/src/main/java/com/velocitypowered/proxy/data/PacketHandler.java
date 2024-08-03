@@ -228,9 +228,9 @@ public class PacketHandler {
         } else {
             if (packet.getEntries() != null) { // Any player action
                 Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
-                for (ProxyTeam proxyTeam : getProxy(handler).getTeams()) {
+                for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
                     for (String addedEntry : packet.getEntries()) {
-                        if (((VelocityTeam)proxyTeam).getEntriesRaw().contains(addedEntry)) {
+                        if (proxyTeam.getEntriesRaw().contains(addedEntry)) {
                             // Proxy team has this player assigned, cancel action
                             modifiedEntries.remove(addedEntry);
                         }
