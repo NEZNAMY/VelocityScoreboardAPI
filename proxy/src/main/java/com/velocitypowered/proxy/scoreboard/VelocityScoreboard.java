@@ -126,10 +126,10 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
-        for (String entry : team.getEntriesRaw()) {
+        for (String entry : team.getEntries()) {
             VelocityTeam oldTeam = teamEntries.put(entry, team);
             if (oldTeam != null) {
-                oldTeam.getEntriesRaw().remove(entry);
+                oldTeam.removeEntrySilent(entry);
             }
         }
 
@@ -151,11 +151,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return Collections.unmodifiableCollection(teams.values());
     }
 
-    @NotNull
-    public Collection<VelocityTeam> getTeamsRaw() {
-        return teams.values();
-    }
-
     @ApiStatus.Internal
     @Nullable
     public VelocityTeam addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {
@@ -172,7 +167,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         VelocityTeam team = teams.remove(teamName);
         team.unregister();
-        team.getEntriesRaw().forEach(teamEntries::remove);
+        team.getEntries().forEach(teamEntries::remove);
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
@@ -192,7 +187,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     TeamPacket.TeamAction.REGISTER,
                     team.getName(),
                     team.getProperties(),
-                    team.getEntriesRaw()
+                    team.getEntries()
             ));
         }
         for (VelocityObjective objective : objectives.values()) {
@@ -325,13 +320,13 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntriesRaw()));
+                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries()));
                 }
 
                 // Check if removed players belonged to backend teams
                 for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
-                    Collection<String> teamEntries = dTeam.getEntriesRaw();
-                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
+                    Collection<String> teamEntries = dTeam.getEntries();
+                    for (String removedEntry : affectedTeam.getEntries()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             viewer.getConnection().write(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
@@ -348,8 +343,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
                 // Check if backend wanted to display this player
                 for (DownstreamTeam team : downstream.getDownstreamTeams()) {
-                    Collection<String> teamEntries = team.getEntriesRaw();
-                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
+                    Collection<String> teamEntries = team.getEntries();
+                    for (String removedEntry : affectedTeam.getEntries()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));

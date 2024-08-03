@@ -27,6 +27,7 @@ import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
 import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,11 +106,6 @@ public class VelocityTeam implements ProxyTeam {
     @NotNull
     public Collection<String> getEntries() {
         return Collections.unmodifiableCollection(entries);
-    }
-
-    @NotNull
-    public Collection<String> getEntriesRaw() {
-        return entries;
     }
 
     @Override
@@ -215,6 +211,11 @@ public class VelocityTeam implements ProxyTeam {
         } else {
             throw new IllegalArgumentException("Entry " + entry + " is not in team " + name + ", cannot remove");
         }
+    }
+
+    @ApiStatus.Internal
+    public void removeEntrySilent(@NotNull String entry) {
+        entries.remove(entry);
     }
 
     /**

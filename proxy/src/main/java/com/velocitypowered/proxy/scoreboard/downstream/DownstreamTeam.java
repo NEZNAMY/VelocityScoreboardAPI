@@ -170,11 +170,6 @@ public class DownstreamTeam implements Team {
         return Collections.unmodifiableCollection(entries);
     }
 
-    @NotNull
-    public Collection<String> getEntriesRaw() {
-        return entries;
-    }
-
     /**
      * Removes entries from team.
      *
