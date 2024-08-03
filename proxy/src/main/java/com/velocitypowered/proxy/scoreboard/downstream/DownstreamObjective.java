@@ -27,8 +27,9 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -117,8 +118,8 @@ public class DownstreamObjective implements Objective {
 
     @Override
     @NotNull
-    public Set<DownstreamScore> getAllScores() {
-        return Set.copyOf(scores.values());
+    public Collection<DownstreamScore> getAllScores() {
+        return Collections.unmodifiableCollection(scores.values());
     }
 
     /**

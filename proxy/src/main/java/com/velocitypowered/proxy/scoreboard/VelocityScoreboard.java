@@ -38,8 +38,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements ProxyScoreboard {
@@ -110,8 +110,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
     }
 
     @Override
-    public @NotNull Set<ProxyObjective> getObjectives() {
-        return Set.copyOf(objectives.values());
+    public @NotNull Collection<ProxyObjective> getObjectives() {
+        return Collections.unmodifiableCollection(objectives.values());
     }
 
     @Override
@@ -147,8 +147,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @NotNull
-    public Set<ProxyTeam> getTeams() {
-        return Set.copyOf(teams.values());
+    public Collection<ProxyTeam> getTeams() {
+        return Collections.unmodifiableCollection(teams.values());
     }
 
     @NotNull

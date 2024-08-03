@@ -23,7 +23,7 @@ package com.velocitypowered.api.scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -57,7 +57,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return a set of objectives in the scoreboard
      */
     @NotNull
-    Set<ProxyObjective> getObjectives();
+    Collection<ProxyObjective> getObjectives();
 
     /**
      * Creates a new objective builder.
@@ -124,7 +124,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return a set of teams in the scoreboard
      */
     @NotNull
-    Set<ProxyTeam> getTeams();
+    Collection<ProxyTeam> getTeams();
 
     /**
      * Creates a new team builder.

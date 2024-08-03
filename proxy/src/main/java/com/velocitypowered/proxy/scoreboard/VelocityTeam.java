@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.velocitypowered.api.TextHolder;
@@ -32,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 public class VelocityTeam implements ProxyTeam {
@@ -104,7 +104,7 @@ public class VelocityTeam implements ProxyTeam {
     @Override
     @NotNull
     public Collection<String> getEntries() {
-        return ImmutableSet.copyOf(entries);
+        return Collections.unmodifiableCollection(entries);
     }
 
     @NotNull

@@ -24,7 +24,7 @@ import com.velocitypowered.api.TextHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -85,7 +85,7 @@ public interface ProxyObjective extends Objective {
      * @return A collection of ProxyScore objects representing all scores in this objective
      */
     @NotNull
-    Set<ProxyScore> getAllScores();
+    Collection<ProxyScore> getAllScores();
 
     /**
      * Creates or updates a score with the given holder and customization options.

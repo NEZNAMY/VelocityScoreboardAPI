@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.google.common.collect.ImmutableSet;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.CollisionRule;
@@ -32,6 +31,7 @@ import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * A scoreboard team that comes from the backend.
@@ -167,7 +167,7 @@ public class DownstreamTeam implements Team {
     @Override
     @NotNull
     public Collection<String> getEntries() {
-        return ImmutableSet.copyOf(entries);
+        return Collections.unmodifiableCollection(entries);
     }
 
     @NotNull

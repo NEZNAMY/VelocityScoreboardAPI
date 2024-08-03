@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -286,8 +287,8 @@ public class DownstreamScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public Set<? extends Objective> getObjectives() {
-        return Set.copyOf(objectives.values());
+    public Collection<? extends Objective> getObjectives() {
+        return Collections.unmodifiableCollection(objectives.values());
     }
 
     @Override
@@ -298,8 +299,8 @@ public class DownstreamScoreboard implements Scoreboard {
 
     @Override
     @NotNull
-    public Set<? extends Team> getTeams() {
-        return Set.copyOf(teams.values());
+    public Collection<? extends Team> getTeams() {
+        return Collections.unmodifiableCollection(teams.values());
     }
 
     @NotNull

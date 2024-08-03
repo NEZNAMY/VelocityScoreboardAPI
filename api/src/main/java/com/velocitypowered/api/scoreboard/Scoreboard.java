@@ -23,7 +23,7 @@ package com.velocitypowered.api.scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * A scoreboard with objectives and teams.
@@ -55,7 +55,7 @@ public interface Scoreboard {
      * @return a set of objectives in the scoreboard
      */
     @NotNull
-    Set<? extends Objective> getObjectives();
+    Collection<? extends Objective> getObjectives();
 
     /**
      * Returns team with give name. If no such team is present, returns {@code null}.
@@ -73,5 +73,5 @@ public interface Scoreboard {
      * @return a set of teams in the scoreboard
      */
     @NotNull
-    Set<? extends Team> getTeams();
+    Collection<? extends Team> getTeams();
 }

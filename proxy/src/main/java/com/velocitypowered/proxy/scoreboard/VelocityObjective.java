@@ -29,8 +29,9 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.Obje
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -150,8 +151,8 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     @Override
-    public @NotNull Set<ProxyScore> getAllScores() {
-        return Set.copyOf(scores.values());
+    public @NotNull Collection<ProxyScore> getAllScores() {
+        return Collections.unmodifiableCollection(scores.values());
     }
 
     @Override

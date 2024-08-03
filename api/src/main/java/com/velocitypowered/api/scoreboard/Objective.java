@@ -24,6 +24,7 @@ import com.velocitypowered.api.TextHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -87,5 +88,5 @@ public interface Objective {
      * @return A collection of Score objects representing all scores in this objective
      */
     @NotNull
-    Set<? extends Score> getAllScores();
+    Collection<? extends Score> getAllScores();
 }
