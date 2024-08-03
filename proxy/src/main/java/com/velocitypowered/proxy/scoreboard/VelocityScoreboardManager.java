@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.api.TextHolderProvider;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.proxy.Player;
@@ -44,7 +43,6 @@ public class VelocityScoreboardManager extends ScoreboardManager {
     private final ScoreboardEventSource plugin;
     private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
-    private final TextHolderProvider textHolderProvider = new RawTextHolderProvider();
 
     /**
      * Constructs new instance with given parameters.
@@ -56,6 +54,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
         this.server = server;
         this.plugin = plugin;
         this.registerEvents();
+        new RawTextHolderProvider();
     }
 
     /**
