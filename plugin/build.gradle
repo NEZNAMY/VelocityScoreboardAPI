@@ -21,6 +21,8 @@ shadowJar {
 
     relocate("org.bstats", "com.velocitypowered.scoreboardapi.libs.org.bstats")
     relocate("de.exlll.configlib", "com.velocitypowered.scoreboardapi.libs.de.exlll.configlib")
+    relocate('org.snakeyaml', 'com.velocitypowered.scoreboardapi.libs.org.snakeyaml')
+    relocate('net.kyori.adventure.text.serializer.nbt', 'com.velocitypowered.scoreboardapi.libs.net.kyori.adventure.text.serializer.nbt')
 }
 
 tasks {
