@@ -126,7 +126,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
-        for (String entry : team.getEntries()) {
+        for (String entry : team.getEntriesRaw()) {
             VelocityTeam oldTeam = teamEntries.put(entry, team);
             if (oldTeam != null) {
                 oldTeam.removeEntrySilent(entry);
@@ -167,7 +167,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         VelocityTeam team = teams.remove(teamName);
         team.unregister();
-        team.getEntries().forEach(teamEntries::remove);
+        team.getEntriesRaw().forEach(teamEntries::remove);
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
@@ -187,7 +187,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     TeamPacket.TeamAction.REGISTER,
                     team.getName(),
                     team.getProperties(),
-                    team.getEntries()
+                    team.getEntriesRaw()
             ));
         }
         for (VelocityObjective objective : objectives.values()) {
@@ -326,7 +326,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 // Check if removed players belonged to backend teams
                 for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
                     Collection<String> teamEntries = dTeam.getEntries();
-                    for (String removedEntry : affectedTeam.getEntries()) {
+                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             viewer.getConnection().write(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
@@ -344,7 +344,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 // Check if backend wanted to display this player
                 for (DownstreamTeam team : downstream.getDownstreamTeams()) {
                     Collection<String> teamEntries = team.getEntries();
-                    for (String removedEntry : affectedTeam.getEntries()) {
+                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
