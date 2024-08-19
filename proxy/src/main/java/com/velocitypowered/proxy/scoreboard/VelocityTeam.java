@@ -234,7 +234,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     public void sendRegister() {
-        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries), this);
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries.toArray(String[]::new)), this);
     }
 
     private void sendUpdate() {

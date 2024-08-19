@@ -187,7 +187,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     TeamPacket.TeamAction.REGISTER,
                     team.getName(),
                     team.getProperties(),
-                    team.getEntriesRaw()
+                    team.getEntriesRaw().toArray(String[]::new)
             ));
         }
         for (VelocityObjective objective : objectives.values()) {
@@ -320,7 +320,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries()));
+                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries().toArray(String[]::new)));
                 }
 
                 // Check if removed players belonged to backend teams

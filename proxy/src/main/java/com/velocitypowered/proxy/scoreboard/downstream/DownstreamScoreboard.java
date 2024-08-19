@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.google.common.collect.Lists;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -220,7 +220,7 @@ public class DownstreamScoreboard implements Scoreboard {
                     LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard already contains team \"" + packet.getName() + "\"");
                     return true;
                 } else {
-                    DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), packet.getEntries());
+                    DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), Lists.newArrayList(packet.getEntries()));
                     teams.put(packet.getName(), team);
                     eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
                 }

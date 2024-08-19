@@ -83,8 +83,10 @@ public class DownstreamTeam implements Team {
      *
      * @param entries Entries to add
      */
-    public void addEntries(@NotNull Collection<String> entries) {
-        this.entries.addAll(entries);
+    public void addEntries(@NotNull String[] entries) {
+        for (String entry : entries) {
+            this.entries.add(entry);
+        }
     }
 
     /**
@@ -93,13 +95,13 @@ public class DownstreamTeam implements Team {
      * @param viewer Player who received the packet
      * @param entries Entries to remove
      */
-    public void removeEntries(@NotNull Player viewer, @NotNull Collection<String> entries) {
+    public void removeEntries(@NotNull Player viewer, @NotNull String[] entries) {
         for (String entry : entries) {
             if (!this.entries.contains(entry)) {
                 LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entry);
             }
         }
-        this.entries.removeAll(entries);
+        removeEntriesIfPresent(entries);
     }
 
     @Override
@@ -175,7 +177,9 @@ public class DownstreamTeam implements Team {
      *
      * @param entries Entries to remove
      */
-    public void removeEntriesIfPresent(@NotNull Collection<String> entries) {
-        this.entries.removeAll(entries);
+    public void removeEntriesIfPresent(@NotNull String[] entries) {
+        for (String entry : entries) {
+            this.entries.remove(entry);
+        }
     }
 }

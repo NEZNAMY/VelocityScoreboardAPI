@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.data;
 
+import com.google.common.collect.Lists;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.ProxyObjective;
 import com.velocitypowered.api.scoreboard.ProxyTeam;
@@ -227,7 +228,7 @@ public class PacketHandler {
             return true;
         } else {
             if (packet.getEntries() != null) { // Any player action
-                Collection<String> modifiedEntries = new HashSet<>(packet.getEntries());
+                Collection<String> modifiedEntries = Lists.newArrayList(packet.getEntries());
                 for (ProxyTeam proxyTeam : getProxy(handler).getTeams()) {
                     for (String addedEntry : packet.getEntries()) {
                         if (((VelocityTeam)proxyTeam).getEntriesRaw().contains(addedEntry)) {
@@ -236,7 +237,7 @@ public class PacketHandler {
                         }
                     }
                 }
-                packet.setEntries(modifiedEntries);
+                packet.setEntries(modifiedEntries.toArray(String[]::new));
             }
         }
 
