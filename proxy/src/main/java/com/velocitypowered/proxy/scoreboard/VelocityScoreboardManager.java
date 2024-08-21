@@ -31,8 +31,8 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * Implementation of ScoreboardManager, an entry point for Scoreboard API.
@@ -41,8 +41,10 @@ public class VelocityScoreboardManager extends ScoreboardManager {
 
     private final ProxyServer server;
     private final ScoreboardEventSource plugin;
-    private final Map<UUID, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
-    private final Map<UUID, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+    private final Map<Player, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
+    private final Map<Player, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
+    private final Function<Player, DownstreamScoreboard> downstreamFunction;
+    private final Function<Player, VelocityScoreboard> proxyFunction;
 
     /**
      * Constructs new instance with given parameters.
@@ -55,6 +57,8 @@ public class VelocityScoreboardManager extends ScoreboardManager {
         this.plugin = plugin;
         this.registerEvents();
         new RawTextHolderProvider();
+        downstreamFunction = p -> new DownstreamScoreboard(plugin, p);
+        proxyFunction = p -> new VelocityScoreboard(plugin, (ConnectedPlayer) p, getBackendScoreboard(p));
     }
 
     /**
@@ -62,24 +66,20 @@ public class VelocityScoreboardManager extends ScoreboardManager {
      */
     private void registerEvents() {
         server.getEventManager().register(plugin, DisconnectEvent.class, event -> {
-            downstreamScoreboards.remove(event.getPlayer().getUniqueId());
-            proxyScoreboards.remove(event.getPlayer().getUniqueId());
+            downstreamScoreboards.remove(event.getPlayer());
+            proxyScoreboards.remove(event.getPlayer());
         });
     }
 
     @Override
     @NotNull
     public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
-        return proxyScoreboards.computeIfAbsent(player.getUniqueId(), p -> new VelocityScoreboard(
-                plugin, (ConnectedPlayer) player, getBackendScoreboard(player)
-        ));
+        return proxyScoreboards.computeIfAbsent(player, proxyFunction);
     }
 
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
-        return downstreamScoreboards.computeIfAbsent(player.getUniqueId(), p -> new DownstreamScoreboard(
-                plugin, player
-        ));
+        return downstreamScoreboards.computeIfAbsent(player, downstreamFunction);
     }
 
 }
