@@ -22,8 +22,8 @@ package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,7 +156,7 @@ public class DownstreamObjective implements Objective {
      * @param   numberFormat
      *          Number formatter for score (1.20.3+)
      */
-    public void setScore(@NotNull String holder, int value, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+    public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         scores.computeIfAbsent(holder, DownstreamScore::new).update(value, displayName, numberFormat);
     }
 

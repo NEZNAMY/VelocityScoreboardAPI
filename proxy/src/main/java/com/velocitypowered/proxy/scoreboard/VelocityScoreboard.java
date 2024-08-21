@@ -26,7 +26,6 @@ import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
-import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
@@ -263,8 +262,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
                     for (DownstreamScore score : objective.getAllScores()) {
                         if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-                            ComponentHolder cHolder = score.getDisplayName() == null ? null : new ComponentHolder(viewer.getProtocolVersion(), score.getDisplayName());
-                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat()));
+                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), score.getDisplayNameHolder(), score.getNumberFormat()));
                         } else {
                             viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
                         }

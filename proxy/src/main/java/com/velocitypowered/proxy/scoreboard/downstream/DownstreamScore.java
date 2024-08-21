@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.scoreboard.downstream;
 
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.api.scoreboard.Score;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,7 @@ public class DownstreamScore implements Score {
 
     /** Holder's display name */
     @Nullable
-    private Component displayName;
+    private ComponentHolder displayName;
 
     /** Number format for score */
     @Nullable
@@ -66,7 +67,7 @@ public class DownstreamScore implements Score {
      * @param   numberFormat
      *          Number format for score
      */
-    public void update(int score, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+    public void update(int score, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         this.score = score;
         this.displayName = displayName;
         this.numberFormat = numberFormat;
@@ -86,6 +87,11 @@ public class DownstreamScore implements Score {
     @Override
     @Nullable
     public Component getDisplayName() {
+        return displayName == null ? null : displayName.getComponent();
+    }
+
+    @Nullable
+    public ComponentHolder getDisplayNameHolder() {
         return displayName;
     }
 

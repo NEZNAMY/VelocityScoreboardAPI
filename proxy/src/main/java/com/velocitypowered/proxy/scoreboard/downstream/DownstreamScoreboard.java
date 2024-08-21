@@ -28,8 +28,8 @@ import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.data.LoggerManager;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -163,7 +163,7 @@ public class DownstreamScoreboard implements Scoreboard {
      */
     public boolean handle(@NotNull ScoreSetPacket packet) {
         return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(),
-                packet.getDisplayName() == null ? null : packet.getDisplayName().getComponent(), packet.getNumberFormat());
+                packet.getDisplayName(), packet.getNumberFormat());
     }
 
     /**
@@ -178,7 +178,7 @@ public class DownstreamScoreboard implements Scoreboard {
     }
 
     private boolean handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
-                              @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
+                              @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
             LoggerManager.invalidDownstreamPacket(viewer, "Cannot set score \"" + holder + "\" for unknown objective \"" + objectiveName + "\"");
