@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * This class handles outgoing scoreboard packets, allowing to cancel them.
