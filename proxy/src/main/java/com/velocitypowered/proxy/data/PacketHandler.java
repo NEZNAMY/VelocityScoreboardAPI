@@ -227,16 +227,19 @@ public class PacketHandler {
             return true;
         } else {
             if (packet.getEntries() != null) { // Any player action
-                Collection<String> modifiedEntries = Lists.newArrayList(packet.getEntries());
+                Collection<String> modifiedEntries = null;
                 for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
                     for (String addedEntry : packet.getEntries()) {
                         if (proxyTeam.getEntriesRaw().contains(addedEntry)) {
                             // Proxy team has this player assigned, cancel action
+                            if (modifiedEntries == null) modifiedEntries = Lists.newArrayList(packet.getEntries()); // Do not initialize if not needed
                             modifiedEntries.remove(addedEntry);
                         }
                     }
                 }
-                packet.setEntries(modifiedEntries.toArray(String[]::new));
+                if (modifiedEntries != null) {
+                    packet.setEntries(modifiedEntries.toArray(String[]::new));
+                }
             }
         }
 
