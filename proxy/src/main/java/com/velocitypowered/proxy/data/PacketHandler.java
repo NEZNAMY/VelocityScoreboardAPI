@@ -23,7 +23,6 @@ package com.velocitypowered.proxy.data;
 import com.google.common.collect.Lists;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.ProxyObjective;
-import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler;
