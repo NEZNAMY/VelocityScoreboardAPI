@@ -26,6 +26,7 @@ import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
@@ -56,6 +57,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teamEntries = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
+
+    /** Flag tracking if this scoreboard is frozen. While frozen, no packets will get through. */
+    private boolean frozen;
 
     public VelocityScoreboard(@NotNull ScoreboardEventSource eventSource, @NotNull ConnectedPlayer viewer,
                               @NotNull DownstreamScoreboard downstream) {
@@ -184,7 +188,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
      * packet write instead of calling existing register functions to skip checks and avoid
      * potentially incorrect behavior, such as when a team/objective name is on both proxy and backend.
      */
-    public void resend() {
+    public synchronized void resend() {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         for (VelocityTeam team : teams.values()) {
             viewer.getConnection().write(new TeamPacket(
@@ -212,6 +216,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 ((VelocityScore)score).sendUpdate(); // This one is safe
             }
         }
+        processQueue();
     }
 
     @Override
@@ -229,9 +234,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return eventSource;
     }
 
-    public void sendPacket(@NotNull DisplayObjectivePacket packet) {
+    public synchronized void sendPacket(@NotNull DisplayObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        viewer.getConnection().write(packet);
+        queuePacket(packet);
 
         // Check if a slot was freed
         for (DisplaySlot slot : DisplaySlot.values()) {
@@ -240,36 +245,36 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamObjective objective = downstream.getObjective(packet.getPosition());
                 if (objective != null) {
                     // Backend tried to display something in this slot, allow it now
-                    viewer.getConnection().write(new DisplayObjectivePacket(slot, objective.getName()));
+                    queuePacket(new DisplayObjectivePacket(slot, objective.getName()));
                 }
             }
         }
     }
 
-    public void sendPacket(@NotNull ObjectivePacket packet) {
+    public synchronized void sendPacket(@NotNull ObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         switch (packet.getAction()) {
             case REGISTER -> {
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend is using this scoreboard, unregister it to allow this
-                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
+                    queuePacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
                 }
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
             }
             case UNREGISTER -> {
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
 
                 // Check if backend wanted to display an objective with this name
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend wants this too, send the objective and scores
-                    viewer.getConnection().write(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
+                    queuePacket(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
                     for (DownstreamScore score : objective.getAllScores()) {
                         if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-                            viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), score.getDisplayNameHolder(), score.getNumberFormat()));
+                            queuePacket(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), score.getDisplayNameHolder(), score.getNumberFormat()));
                         } else {
-                            viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
+                            queuePacket(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
                         }
                     }
                 }
@@ -280,50 +285,50 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     DownstreamObjective obj = downstream.getObjective(slot);
                     if (obj != null) {
                         // This slot is only used by backend, display it (may send unnecessary packets)
-                        viewer.getConnection().write(new DisplayObjectivePacket(slot, obj.getName()));
+                        queuePacket(new DisplayObjectivePacket(slot, obj.getName()));
                     }
                 }
             }
             case UPDATE -> {
                 // Nothing should be needed here
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
             }
         }
     }
 
-    public void sendPacket(@NotNull ScorePacket packet) {
+    public synchronized void sendPacket(@NotNull ScorePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        viewer.getConnection().write(packet);
+        queuePacket(packet);
     }
 
-    public void sendPacket(@NotNull ScoreSetPacket packet) {
+    public synchronized void sendPacket(@NotNull ScoreSetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        viewer.getConnection().write(packet);
+        queuePacket(packet);
     }
 
-    public void sendPacket(@NotNull ScoreResetPacket packet) {
+    public synchronized void sendPacket(@NotNull ScoreResetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        viewer.getConnection().write(packet);
+        queuePacket(packet);
     }
 
-    public void sendPacket(@NotNull TeamPacket packet, @NotNull VelocityTeam affectedTeam) {
+    public synchronized void sendPacket(@NotNull TeamPacket packet, @NotNull VelocityTeam affectedTeam) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         switch (packet.getAction()) {
             case REGISTER -> {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend is using this team, unregister it to allow this
-                    viewer.getConnection().write(TeamPacket.unregister(packet.getName()));
+                    queuePacket(TeamPacket.unregister(packet.getName()));
                 }
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
             }
             case UNREGISTER -> {
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
                 // Check if backend wanted to display a team with this name
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-                    viewer.getConnection().write(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries().toArray(String[]::new)));
+                    queuePacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries().toArray(String[]::new)));
                 }
 
                 // Check if removed players belonged to backend teams
@@ -332,17 +337,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
-                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
+                            queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
                         }
                     }
                 }
             }
             case UPDATE, ADD_PLAYER -> {
                 // Nothing should be needed here
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
             }
             case REMOVE_PLAYER -> {
-                viewer.getConnection().write(packet);
+                queuePacket(packet);
 
                 // Check if backend wanted to display this player
                 for (DownstreamTeam team : downstream.getDownstreamTeams()) {
@@ -350,11 +355,31 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     for (String removedEntry : affectedTeam.getEntriesRaw()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
-                            viewer.getConnection().write(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
+                            queuePacket(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
                         }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Marks the scoreboard for freeze. While frozen, no packets will be sent.
+     */
+    public void freeze() {
+        frozen = true;
+    }
+
+    private void queuePacket(@NotNull MinecraftPacket packet) {
+        if (frozen) {
+            // TODO queue it
+            return;
+        }
+        viewer.getConnection().write(packet);
+    }
+
+    private void processQueue() {
+        // TODO process it
+        frozen = false;
     }
 }
