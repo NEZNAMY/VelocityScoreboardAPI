@@ -27,6 +27,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
+import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
@@ -216,7 +217,12 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 ));
             }
             for (ProxyScore score : objective.getAllScores()) {
-                ((VelocityScore)score).sendUpdate(); // This one is safe
+                if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
+                    ComponentHolder cHolder = score.getDisplayName() == null ? null : new ComponentHolder(objective.getScoreboard().getViewer().getProtocolVersion(), score.getDisplayName());
+                    viewer.getConnection().write(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), cHolder, score.getNumberFormat()));
+                } else {
+                    viewer.getConnection().write(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
+                }
             }
         }
         processQueue();
@@ -382,7 +388,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
     }
 
     private void processQueue() {
-        System.out.println("Processing queue with " + packetQueue.size() + " packets");
         while (!packetQueue.isEmpty()) {
             viewer.getConnection().write(packetQueue.poll());
         }
