@@ -40,7 +40,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class VelocityScoreboard implements ProxyScoreboard {
 
@@ -57,6 +59,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teamEntries = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
+    private final Queue<MinecraftPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     /** Flag tracking if this scoreboard is frozen. While frozen, no packets will get through. */
     private boolean frozen;
@@ -372,14 +375,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     private void queuePacket(@NotNull MinecraftPacket packet) {
         if (frozen) {
-            // TODO queue it
+            packetQueue.add(packet);
             return;
         }
         viewer.getConnection().write(packet);
     }
 
     private void processQueue() {
-        // TODO process it
+        System.out.println("Processing queue with " + packetQueue.size() + " packets");
+        while (!packetQueue.isEmpty()) {
+            viewer.getConnection().write(packetQueue.poll());
+        }
         frozen = false;
     }
 }
