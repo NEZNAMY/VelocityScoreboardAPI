@@ -313,6 +313,16 @@ public interface ProxyTeam extends Team {
         Builder canSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles);
 
         /**
+         * Adds specified entry into the team.
+         *
+         * @param   entry
+         *          Entry to add
+         * @return  this, for chaining
+         */
+        @NotNull
+        Builder entry(@NotNull String entry);
+
+        /**
          * Adds specified entries into the team.
          *
          * @param   entries

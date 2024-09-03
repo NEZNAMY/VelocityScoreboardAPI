@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.data;
 
-import com.google.common.collect.Lists;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.ProxyObjective;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
@@ -33,7 +32,6 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
 
 /**
  * This class handles outgoing scoreboard packets, allowing to cancel them.
@@ -226,18 +224,8 @@ public class PacketHandler {
             return true;
         } else {
             if (packet.getEntries() != null) { // Any player action
-                Collection<String> modifiedEntries = null;
                 for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
-                    for (String addedEntry : packet.getEntries()) {
-                        if (proxyTeam.getEntriesRaw().contains(addedEntry)) {
-                            // Proxy team has this player assigned, cancel action
-                            if (modifiedEntries == null) modifiedEntries = Lists.newArrayList(packet.getEntries()); // Do not initialize if not needed
-                            modifiedEntries.remove(addedEntry);
-                        }
-                    }
-                }
-                if (modifiedEntries != null) {
-                    packet.setEntries(modifiedEntries.toArray(String[]::new));
+                    packet.getEntries().removeAll(proxyTeam.getEntryCollection());
                 }
             }
         }

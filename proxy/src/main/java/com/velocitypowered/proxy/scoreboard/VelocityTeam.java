@@ -20,12 +20,14 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
 import com.velocitypowered.api.event.scoreboard.TeamEvent;
-import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.api.scoreboard.CollisionRule;
+import com.velocitypowered.api.scoreboard.NameVisibility;
+import com.velocitypowered.api.scoreboard.ProxyTeam;
+import com.velocitypowered.api.scoreboard.TeamColor;
+import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +42,10 @@ public class VelocityTeam implements ProxyTeam {
     @NotNull private final VelocityScoreboard scoreboard;
     @NotNull private final String name;
     @NotNull private final TeamProperties properties;
-    @NotNull private final Collection<String> entries;
+    @NotNull private final StringCollection entries;
     private boolean registered = true;
 
-    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TeamProperties properties, @NotNull Collection<String> entries) {
+    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TeamProperties properties, @NotNull StringCollection entries) {
         this.scoreboard = scoreboard;
         this.name = name;
         this.properties = properties;
@@ -105,11 +107,11 @@ public class VelocityTeam implements ProxyTeam {
     @Override
     @NotNull
     public Collection<String> getEntries() {
-        return Collections.unmodifiableCollection(entries);
+        return Collections.unmodifiableCollection(entries.getEntries());
     }
 
     @NotNull
-    public Collection<String> getEntriesRaw() {
+    public StringCollection getEntryCollection() {
         return entries;
     }
 
@@ -234,7 +236,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     public void sendRegister() {
-        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries.toArray(String[]::new)), this);
+        scoreboard.sendPacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, name, properties, entries), this);
     }
 
     private void sendUpdate() {
@@ -243,8 +245,12 @@ public class VelocityTeam implements ProxyTeam {
 
     public void unregister() {
         checkState();
-        for (String entry : entries) {
-            scoreboard.removeEntryFromTeam(entry, this);
+        if (entries.getEntry() != null) {
+            scoreboard.removeEntryFromTeam(entries.getEntry(), this);
+        } else {
+            for (String entry : entries.getEntries()) {
+                scoreboard.removeEntryFromTeam(entry, this);
+            }
         }
         scoreboard.sendPacket(TeamPacket.unregister(name), this);
         scoreboard.getEventSource().fireEvent(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
@@ -326,7 +332,7 @@ public class VelocityTeam implements ProxyTeam {
     public static class Builder extends PropertyBuilder implements ProxyTeam.Builder {
 
         @NotNull private final String name;
-        @NotNull private Collection<String> entries = Lists.newArrayList();
+        @Nullable private StringCollection entries;
 
         public Builder(@NotNull String name) {
             this.name = name;
@@ -391,8 +397,15 @@ public class VelocityTeam implements ProxyTeam {
 
         @NotNull
         @Override
+        public Builder entry(@NotNull String entry) {
+            this.entries = new StringCollection(entry);
+            return this;
+        }
+
+        @NotNull
+        @Override
         public Builder entries(@NotNull Collection<String> entries) {
-            this.entries = entries;
+            this.entries = new StringCollection(entries);
             return this;
         }
 
@@ -414,7 +427,7 @@ public class VelocityTeam implements ProxyTeam {
             if (allowFriendlyFire == null) allowFriendlyFire = false;
             if (canSeeFriendlyInvisibles == null) canSeeFriendlyInvisibles = false;
             return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles), Sets.newCopyOnWriteArraySet(entries));
+                    color, allowFriendlyFire, canSeeFriendlyInvisibles), entries != null ? entries : new StringCollection());
         }
     }
 }

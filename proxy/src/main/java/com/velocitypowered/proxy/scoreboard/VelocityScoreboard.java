@@ -133,13 +133,19 @@ public class VelocityScoreboard implements ProxyScoreboard {
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
-        for (String entry : team.getEntriesRaw()) {
-            VelocityTeam oldTeam = teamEntries.put(entry, team);
+        if (team.getEntryCollection().getEntry() != null) {
+            VelocityTeam oldTeam = teamEntries.put(team.getEntryCollection().getEntry(), team);
             if (oldTeam != null) {
-                oldTeam.removeEntrySilent(entry);
+                oldTeam.removeEntrySilent(team.getEntryCollection().getEntry());
+            }
+        } else {
+            for (String entry : team.getEntryCollection().getEntries()) {
+                VelocityTeam oldTeam = teamEntries.put(entry, team);
+                if (oldTeam != null) {
+                    oldTeam.removeEntrySilent(entry);
+                }
             }
         }
-
         teams.put(team.getName(), team);
         team.sendRegister();
         eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
@@ -179,7 +185,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         VelocityTeam team = teams.remove(teamName);
         team.unregister();
-        team.getEntriesRaw().forEach(teamEntries::remove);
+        team.getEntryCollection().getEntries().forEach(teamEntries::remove);
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
@@ -199,7 +205,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     TeamPacket.TeamAction.REGISTER,
                     team.getName(),
                     team.getProperties(),
-                    team.getEntriesRaw().toArray(String[]::new)
+                    team.getEntryCollection()
             ));
         }
         for (VelocityObjective objective : objectives.values()) {
@@ -337,16 +343,23 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-                    queuePacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntries().toArray(String[]::new)));
+                    queuePacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntryCollection()));
                 }
 
                 // Check if removed players belonged to backend teams
                 for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
                     Collection<String> teamEntries = dTeam.getEntries();
-                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
-                        if (teamEntries.contains(removedEntry)) {
+                    if (affectedTeam.getEntryCollection().getEntry() != null) {
+                        if (teamEntries.contains(affectedTeam.getEntryCollection().getEntry())) {
                             // Backend team has this player, add back
-                            queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
+                            queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), affectedTeam.getEntryCollection().getEntry(), true));
+                        }
+                    } else {
+                        for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
+                            if (teamEntries.contains(removedEntry)) {
+                                // Backend team has this player, add back
+                                queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
+                            }
                         }
                     }
                 }
@@ -361,7 +374,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 // Check if backend wanted to display this player
                 for (DownstreamTeam team : downstream.getDownstreamTeams()) {
                     Collection<String> teamEntries = team.getEntries();
-                    for (String removedEntry : affectedTeam.getEntriesRaw()) {
+                    for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
                             queuePacket(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));

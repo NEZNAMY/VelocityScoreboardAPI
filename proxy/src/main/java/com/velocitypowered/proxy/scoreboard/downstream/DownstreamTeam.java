@@ -27,11 +27,11 @@ import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.Team;
 import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.LoggerManager;
+import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * A scoreboard team that comes from the backend.
@@ -54,7 +54,7 @@ public class DownstreamTeam implements Team {
      * Entries in the team
      */
     @NotNull
-    private final Collection<String> entries;
+    private final StringCollection entries;
 
     /**
      * Constructs new instance with given parameters.
@@ -63,7 +63,7 @@ public class DownstreamTeam implements Team {
      * @param properties Team properties
      * @param entries    Entries in the team
      */
-    public DownstreamTeam(@NotNull String name, @NotNull TeamProperties properties, @NotNull Collection<String> entries) {
+    public DownstreamTeam(@NotNull String name, @NotNull TeamProperties properties, @NotNull StringCollection entries) {
         this.name = name;
         this.properties = properties;
         this.entries = entries;
@@ -83,10 +83,8 @@ public class DownstreamTeam implements Team {
      *
      * @param entries Entries to add
      */
-    public void addEntries(@NotNull String[] entries) {
-        for (String entry : entries) {
-            this.entries.add(entry);
-        }
+    public void addEntries(@NotNull StringCollection entries) {
+        this.entries.addAll(entries);
     }
 
     /**
@@ -95,13 +93,13 @@ public class DownstreamTeam implements Team {
      * @param viewer Player who received the packet
      * @param entries Entries to remove
      */
-    public void removeEntries(@NotNull Player viewer, @NotNull String[] entries) {
-        for (String entry : entries) {
+    public void removeEntries(@NotNull Player viewer, @NotNull StringCollection entries) {
+        for (String entry : entries.getEntries()) {
             if (!this.entries.contains(entry)) {
                 LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entry);
             }
         }
-        removeEntriesIfPresent(entries);
+        this.entries.removeAll(entries);
     }
 
     @Override
@@ -169,7 +167,12 @@ public class DownstreamTeam implements Team {
     @Override
     @NotNull
     public Collection<String> getEntries() {
-        return Collections.unmodifiableCollection(entries);
+        return entries.getEntries();
+    }
+
+    @NotNull
+    public StringCollection getEntryCollection() {
+        return entries;
     }
 
     /**
@@ -177,9 +180,7 @@ public class DownstreamTeam implements Team {
      *
      * @param entries Entries to remove
      */
-    public void removeEntriesIfPresent(@NotNull String[] entries) {
-        for (String entry : entries) {
-            this.entries.remove(entry);
-        }
+    public void removeEntriesIfPresent(@NotNull StringCollection entries) {
+        this.entries.removeAll(entries);
     }
 }

@@ -23,14 +23,13 @@ package com.velocitypowered.proxy.protocol.packet.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
 import com.velocitypowered.proxy.data.PacketHandler;
+import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
 
 /**
  * Packet for setting scoreboard teams.
@@ -47,7 +46,7 @@ public class TeamPacket implements MinecraftPacket {
     private TeamProperties properties;
 
     /** Players in this team */
-    private String[] entries;
+    private StringCollection entries;
 
     /**
      * Constructs new instance for packet decoding.
@@ -68,7 +67,7 @@ public class TeamPacket implements MinecraftPacket {
      *          Entries in the team
      */
     public TeamPacket(@NotNull TeamAction action, @NotNull String name,
-                      @Nullable TeamProperties properties, @Nullable String[] entries) {
+                      @Nullable TeamProperties properties, @Nullable StringCollection entries) {
         this.action = action;
         this.name = name;
         this.properties = properties;
@@ -104,7 +103,7 @@ public class TeamPacket implements MinecraftPacket {
         TeamPacket packet = new TeamPacket();
         packet.name = name;
         packet.action = (add ? TeamAction.ADD_PLAYER : TeamAction.REMOVE_PLAYER);
-        packet.entries = new String[]{entry};
+        packet.entries = new StringCollection(entry);
         return packet;
     }
 
@@ -116,11 +115,7 @@ public class TeamPacket implements MinecraftPacket {
             properties = new TeamProperties(buf, protocolVersion);
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
-            int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
-            entries = new String[len];
-            for (int i = 0; i < len; i++) {
-                entries[i] = ProtocolUtils.readString(buf);
-            }
+            entries = new StringCollection(buf, protocolVersion);
         }
     }
 
@@ -132,14 +127,7 @@ public class TeamPacket implements MinecraftPacket {
             properties.encode(buf, protocolVersion);
         }
         if (action == TeamAction.REGISTER || action == TeamAction.ADD_PLAYER || action == TeamAction.REMOVE_PLAYER) {
-            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-                ProtocolUtils.writeVarInt(buf, entries.length);
-            } else {
-                buf.writeShort(entries.length);
-            }
-            for (String player : entries) {
-                ProtocolUtils.writeString(buf, player);
-            }
+            entries.write(buf, protocolVersion);
         }
     }
 
@@ -184,23 +172,13 @@ public class TeamPacket implements MinecraftPacket {
      * @return  entries in the team
      */
     @Nullable
-    public String[] getEntries() {
+    public StringCollection getEntries() {
         return entries;
-    }
-
-    /**
-     * Sets entries in this packet.
-     *
-     * @param   entries
-     *          New entry list
-     */
-    public void setEntries(@NotNull String[] entries) {
-        this.entries = entries;
     }
 
     @Override
     public String toString() {
-        return "TeamPacket{action=" + action + ", name=" + name + ", properties=" + properties + ", entries=" + Arrays.toString(entries) + "}";
+        return "TeamPacket{action=" + action + ", name=" + name + ", properties=" + properties + ", entries=" + entries + "}";
     }
 
     /**
