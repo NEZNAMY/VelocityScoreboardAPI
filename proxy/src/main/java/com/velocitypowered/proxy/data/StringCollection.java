@@ -154,9 +154,12 @@ public class StringCollection {
     }
 
     /**
-     * Returns collection of entries.
+     * Returns entries in this collection. If the collection is empty, {@link Collections#emptyList()} is returned.
+     * If the collection contains exactly one element, collection is initialized with that one element and returned.
+     * For this reason, consider checking {@link #getEntry()} first to avoid this operation. If the collection
+     * contains more than 1 entry, it is returned.
      *
-     * @return  collection of entries
+     * @return  entries in this collection
      */
     @NotNull
     public Collection<String> getEntries() {

@@ -185,7 +185,13 @@ public class VelocityScoreboard implements ProxyScoreboard {
         if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         VelocityTeam team = teams.remove(teamName);
         team.unregister();
-        team.getEntryCollection().getEntries().forEach(teamEntries::remove);
+        if (team.getEntryCollection().getEntry() != null) {
+            teamEntries.remove(team.getEntryCollection().getEntry());
+        } else {
+            for (String entry : team.getEntryCollection().getEntries()) {
+                teamEntries.remove(entry);
+            }
+        }
     }
 
     public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
