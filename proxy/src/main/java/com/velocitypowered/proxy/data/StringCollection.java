@@ -190,13 +190,18 @@ public class StringCollection {
      *          Entry to add
      */
     public void add(@NotNull String entry) {
+        if (contains(entry)) return;
         int size = size();
         if (size == 0) {
             this.entry = entry;
+            if (entries != null) entries.add(entry); // Update list if it is not null anymore
         } else if (size == 1) {
-            getEntries(); // Create collection from single entry
-            if (!entries.contains(entry)) entries.add(entry);
-            this.entry = null;
+            if (entries == null) {
+                entries = new ArrayList<>();
+                entries.add(this.entry);
+            }
+            entries.add(entry);
+            this.entry = null; // Do not use anymore for 2 entries
         } else {
             entries.add(entry);
         }
@@ -215,8 +220,8 @@ public class StringCollection {
         if (entry.equals(this.entry)) {
             this.entry = null;
             removed = true;
-        }
-        if (entries != null && entries.remove(entry)) {
+            if (entries != null) entries.remove(entry);
+        } else if (entries != null && entries.remove(entry)) {
             if (entries.size() == 1) {
                 this.entry = entry;
             }
