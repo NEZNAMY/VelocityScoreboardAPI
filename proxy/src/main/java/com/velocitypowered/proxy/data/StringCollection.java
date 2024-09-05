@@ -179,7 +179,7 @@ public class StringCollection {
      * @return  {@code true} if this collection contains given entry, {@code false} if not
      */
     public boolean contains(@NotNull String entry) {
-        if (this.entry != null && this.entry.equals(entry)) return true;
+        if (entry.equals(this.entry)) return true;
         return entries != null && entries.contains(entry);
     }
 
