@@ -26,6 +26,7 @@ import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
+import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
@@ -354,7 +355,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
                 // Check if removed players belonged to backend teams
                 for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
-                    Collection<String> teamEntries = dTeam.getEntries();
+                    StringCollection teamEntries = dTeam.getEntryCollection();
                     if (affectedTeam.getEntryCollection().getEntry() != null) {
                         if (teamEntries.contains(affectedTeam.getEntryCollection().getEntry())) {
                             // Backend team has this player, add back
@@ -379,7 +380,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
                 // Check if backend wanted to display this player
                 for (DownstreamTeam team : downstream.getDownstreamTeams()) {
-                    Collection<String> teamEntries = team.getEntries();
+                    StringCollection teamEntries = team.getEntryCollection();
                     for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
                         if (teamEntries.contains(removedEntry)) {
                             // Backend team has this player, add back
