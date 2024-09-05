@@ -94,9 +94,15 @@ public class DownstreamTeam implements Team {
      * @param entries Entries to remove
      */
     public void removeEntries(@NotNull Player viewer, @NotNull StringCollection entries) {
-        for (String entry : entries.getEntries()) {
-            if (!this.entries.contains(entry)) {
-                LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entry);
+        if (entries.getEntry() != null) {
+            if (!this.entries.contains(entries.getEntry())) {
+                LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entries.getEntry());
+            }
+        } else {
+            for (String entry : entries.getEntries()) {
+                if (!this.entries.contains(entry)) {
+                    LoggerManager.invalidDownstreamPacket(viewer, "Team " + name + " does not contain entry " + entry);
+                }
             }
         }
         this.entries.removeAll(entries);
