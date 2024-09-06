@@ -160,6 +160,6 @@ public class TextHolderImpl extends TextHolder {
 
     @Override
     public String toString() {
-        return "TextHolderImpl{legacyText=" + legacyText + ", modernText=" + modernText + ", holder=" + holder + "}";
+        return "TextHolderImpl{legacyText=" + getLegacyText() + ", modernText=" + getModernText() + ", holder=" + holder + "}";
     }
 }

@@ -100,4 +100,11 @@ public class DownstreamScore implements Score {
     public NumberFormat getNumberFormat() {
         return numberFormat;
     }
+
+    public void dump() {
+        System.out.println("      " + holder + ":");
+        System.out.println("        Score: " + score);
+        System.out.println("        DisplayName: " + displayName);
+        System.out.println("        NumberFormat: " + numberFormat);
+    }
 }

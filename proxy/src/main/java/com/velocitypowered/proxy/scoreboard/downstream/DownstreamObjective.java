@@ -169,4 +169,16 @@ public class DownstreamObjective implements Objective {
     public void removeScore(@NotNull String holder) {
         scores.remove(holder);
     }
+
+    public void dump() {
+        System.out.println("  " + objectiveName + ":");
+        System.out.println("    Title: " + title);
+        System.out.println("    HealthDisplay: " + healthDisplay);
+        System.out.println("    NumberFormat: " + numberFormat);
+        System.out.println("    DisplaySlot: " + displaySlot);
+        System.out.println("    Scores (" + scores.size() + "):");
+        for (DownstreamScore score : scores.values()) {
+            score.dump();
+        }
+    }
 }

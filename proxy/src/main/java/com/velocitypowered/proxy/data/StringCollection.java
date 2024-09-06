@@ -265,4 +265,13 @@ public class StringCollection {
             }
         }
     }
+
+    @Override
+    @NotNull
+    public String toString() {
+        int size = size();
+        if (size == 0) return "Empty";
+        if (size == 1) return "StringCollection(entry=" + entry + ")";
+        return "StringCollection(entries=" + entries + ")";
+    }
 }

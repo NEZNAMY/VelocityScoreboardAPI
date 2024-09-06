@@ -322,4 +322,16 @@ public class DownstreamScoreboard implements Scoreboard {
         objectives.clear();
         teams.clear();
     }
+
+    public void dump() {
+        System.out.println("--- DownstreamScoreboard of player " + viewer.getUsername() + " ---");
+        System.out.println("Teams (" + teams.size() + "):");
+        for (DownstreamTeam team : teams.values()) {
+            team.dump();
+        }
+        System.out.println("Objectives (" + objectives.size() + "):");
+        for (DownstreamObjective objective : objectives.values()) {
+            objective.dump();
+        }
+    }
 }

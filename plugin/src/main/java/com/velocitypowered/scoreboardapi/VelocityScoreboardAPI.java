@@ -21,6 +21,7 @@
 package com.velocitypowered.scoreboardapi;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -67,6 +68,9 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
         this.pluginConfig = PluginConfig.load(configDirectory);
 
         LoggerManager.setLogInvalidPackets(pluginConfig.isPrintInvalidDownstreamPacketWarnings());
+
+        CommandManager cmd = server.getCommandManager();
+        cmd.register(cmd.metaBuilder("vsa").build(), new VSACommand(server));
     }
 
     /**

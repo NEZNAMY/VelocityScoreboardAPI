@@ -189,4 +189,12 @@ public class DownstreamTeam implements Team {
     public void removeEntriesIfPresent(@NotNull StringCollection entries) {
         this.entries.removeAll(entries);
     }
+
+    public void dump() {
+        System.out.println("  " + name + ":");
+        System.out.println("    DisplayName: " + properties.getDisplayName());
+        System.out.println("    Prefix: " + properties.getPrefix());
+        System.out.println("    Suffix: " + properties.getSuffix());
+        System.out.println("    Entries: " + entries);
+    }
 }
