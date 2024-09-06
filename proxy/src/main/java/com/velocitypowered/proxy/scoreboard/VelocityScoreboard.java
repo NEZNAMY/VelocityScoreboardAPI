@@ -124,9 +124,10 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
-        if (!objectives.containsKey(objectiveName)) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
+        VelocityObjective objective = objectives.remove(objectiveName);
+        if (objective == null) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
-        objectives.remove(objectiveName).unregister();
+        objective.unregister();
     }
 
     @NotNull
@@ -183,8 +184,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     public void unregisterTeam(@NotNull String teamName) {
-        if (!teams.containsKey(teamName)) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         VelocityTeam team = teams.remove(teamName);
+        if (team == null) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         team.unregister();
         if (team.getEntryCollection().getEntry() != null) {
             teamEntries.remove(team.getEntryCollection().getEntry());
