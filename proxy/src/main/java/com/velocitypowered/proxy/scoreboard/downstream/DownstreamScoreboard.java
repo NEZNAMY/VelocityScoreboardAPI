@@ -82,17 +82,16 @@ public class DownstreamScoreboard implements Scoreboard {
     public boolean handle(@NotNull ObjectivePacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
-                if (objectives.containsKey(packet.getObjectiveName())) {
+                DownstreamObjective obj = new DownstreamObjective(
+                        packet.getObjectiveName(),
+                        packet.getTitle(),
+                        packet.getHealthDisplay(),
+                        packet.getNumberFormat()
+                );
+                if (objectives.putIfAbsent(packet.getObjectiveName(), obj) != null) {
                     LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard already contains objective \"" + packet.getObjectiveName() + "\"");
                     return true;
                 } else {
-                    DownstreamObjective obj = new DownstreamObjective(
-                            packet.getObjectiveName(),
-                            packet.getTitle(),
-                            packet.getHealthDisplay(),
-                            packet.getNumberFormat()
-                    );
-                    objectives.put(packet.getObjectiveName(), obj);
                     eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, obj));
                 }
             }
@@ -217,12 +216,11 @@ public class DownstreamScoreboard implements Scoreboard {
         StringCollection entries = packet.getEntries();
         switch (packet.getAction()) {
             case REGISTER -> {
-                if (teams.containsKey(packet.getName())) {
+                DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), entries);
+                if (teams.putIfAbsent(packet.getName(), team) != null) {
                     LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard already contains team \"" + packet.getName() + "\"");
                     return true;
                 } else {
-                    DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), entries);
-                    teams.put(packet.getName(), team);
                     eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
                 }
             }
