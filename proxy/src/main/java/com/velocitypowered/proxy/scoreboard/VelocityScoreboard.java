@@ -100,8 +100,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @NotNull
     public VelocityObjective registerObjective(@NotNull ProxyObjective.Builder builder) {
         VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
-        if (objectives.containsKey(objective.getName())) throw new IllegalStateException("An objective with this name (" + objective.getName() + ") already exists in this scoreboard");
-        objectives.put(objective.getName(), objective);
+        if (objectives.putIfAbsent(objective.getName(), objective) != null) {
+            throw new IllegalStateException("An objective with this name (" + objective.getName() + ") already exists in this scoreboard");
+        }
         objective.sendRegister();
         eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, objective));
         if (objective.getDisplaySlot() != null) {
@@ -134,7 +135,9 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @Override
     public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
-        if (teams.containsKey(team.getName())) throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
+        if (teams.putIfAbsent(team.getName(), team) != null) {
+            throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
+        }
         if (team.getEntryCollection().getEntry() != null) {
             VelocityTeam oldTeam = teamEntries.put(team.getEntryCollection().getEntry(), team);
             if (oldTeam != null) {
@@ -148,7 +151,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 }
             }
         }
-        teams.put(team.getName(), team);
+
         team.sendRegister();
         eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
         return team;
