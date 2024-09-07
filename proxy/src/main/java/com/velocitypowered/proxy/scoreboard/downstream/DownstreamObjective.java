@@ -168,27 +168,23 @@ public class DownstreamObjective implements Objective {
         scores.remove(holder);
     }
 
-    public void dump() {
-        System.out.println("  " + objectiveName + ":");
-        System.out.println("    Title: " + title);
-        System.out.println("    HealthDisplay: " + healthDisplay);
-        System.out.println("    NumberFormat: " + numberFormat);
-        System.out.println("    DisplaySlot: " + displaySlot);
-        System.out.println("    Scores (" + scores.size() + "):");
-        for (DownstreamScore score : scores.values()) {
-            score.dump();
-        }
-    }
-
-    public ArrayList<String> getDump() {
-        ArrayList<String> content = new ArrayList<>();
+    /**
+     * Creates a dump of this objective into a list of lines.
+     *
+     * @return  dump of this objective
+     */
+    @NotNull
+    public List<String> dump() {
+        List<String> content = new ArrayList<>();
         content.add("  " + objectiveName + ":");
         content.add("    Title: " + title);
         content.add("    HealthDisplay: " + healthDisplay);
         content.add("    NumberFormat: " + numberFormat);
         content.add("    DisplaySlot: " + displaySlot);
         content.add("    Scores (" + scores.size() + "):");
-        for (DownstreamScore score : scores.values()) content.addAll(score.getDump());
+        for (DownstreamScore score : scores.values()) {
+            content.addAll(score.dump());
+        }
         return content;
     }
 }

@@ -192,16 +192,14 @@ public class DownstreamTeam implements Team {
         this.entries.removeAll(entries);
     }
 
-    public void dump() {
-        System.out.println("  " + name + ":");
-        System.out.println("    DisplayName: " + properties.getDisplayName());
-        System.out.println("    Prefix: " + properties.getPrefix());
-        System.out.println("    Suffix: " + properties.getSuffix());
-        System.out.println("    Entries: " + entries);
-    }
-
-    public ArrayList<String> getDump() {
-        ArrayList<String> content = new ArrayList<>();
+    /**
+     * Creates a dump of this team into a list of lines.
+     *
+     * @return  dump of this team
+     */
+    @NotNull
+    public List<String> dump() {
+        List<String> content = new ArrayList<>();
         content.add("  " + name + ":");
         content.add("    DisplayName: " + properties.getDisplayName());
         content.add("    Prefix: " + properties.getPrefix());

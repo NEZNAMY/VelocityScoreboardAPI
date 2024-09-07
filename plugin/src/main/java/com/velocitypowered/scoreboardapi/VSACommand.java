@@ -24,17 +24,26 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Plugin's main command
+ */
 public class VSACommand implements SimpleCommand {
 
+    @NotNull
     private final ProxyServer server;
 
-    public VSACommand(ProxyServer server) {
+    /**
+     * Constructs new instance with given parameter.
+     *
+     * @param   server
+     *          Proxy server instance
+     */
+    public VSACommand(@NotNull ProxyServer server) {
         this.server = server;
     }
 
@@ -52,7 +61,9 @@ public class VSACommand implements SimpleCommand {
                 if (player != null) {
                     sender.sendMessage(Component.text("Dumping scoreboard into console"));
                     DownstreamScoreboard scoreboard = ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player));
-                    scoreboard.dump();
+                    for (String line : scoreboard.dump()) {
+                        System.out.println(line);
+                    }
                     sender.sendMessage(Component.text("Uploading the result ..."));
                     try {
                         scoreboard.upload(sender);

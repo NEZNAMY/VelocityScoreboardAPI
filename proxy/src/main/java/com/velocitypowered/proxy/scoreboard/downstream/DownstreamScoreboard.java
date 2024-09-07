@@ -43,6 +43,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -331,28 +332,24 @@ public class DownstreamScoreboard implements Scoreboard {
         teams.clear();
     }
 
-    public void dump() {
-        System.out.println("--- DownstreamScoreboard of player " + viewer.getUsername() + " ---");
-        System.out.println("Teams (" + teams.size() + "):");
-        for (DownstreamTeam team : teams.values()) {
-            team.dump();
-        }
-        System.out.println("Objectives (" + objectives.size() + "):");
-        for (DownstreamObjective objective : objectives.values()) {
-            objective.dump();
-        }
+    /**
+     * Creates a dump of this scoreboard into a list of lines.
+     *
+     * @return  dump of this scoreboard
+     */
+    @NotNull
+    public List<String> dump() {
+        ArrayList<String> dump = new ArrayList<>();
+        dump.add("--- DownstreamScoreboard of player " + viewer.getUsername() + " ---");
+        dump.add("Teams (" + teams.size() + "):");
+        teams.values().forEach(team -> dump.addAll(team.dump()));
+        dump.add("Objectives (" + objectives.size() + "):");
+        objectives.values().forEach(objective -> dump.addAll(objective.dump()));
+        return dump;
     }
 
-    public void upload(CommandSource sender) throws Exception {
-        ArrayList<String> content = new ArrayList<>();
-        content.add("--- DownstreamScoreboard of player " + viewer.getUsername() + " ---");
-        content.add("Teams (" + teams.size() + "):");
-        teams.values().forEach(team -> content.addAll(team.getDump()));
-        content.add("Objectives (" + objectives.size() + "):");
-        objectives.values().forEach(objective -> content.addAll(objective.getDump()));
-
-        StringBuilder contentBuilder = new StringBuilder();
-        content.forEach(line -> contentBuilder.append(line).append("\n"));
+    public void upload(@NotNull CommandSource sender) throws Exception {
+        String contentString = String.join("\n", dump()) + "\n";
 
         URL url = new URL("https://api.pastes.dev/post");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -361,7 +358,7 @@ public class DownstreamScoreboard implements Scoreboard {
         connection.setRequestProperty("Content-Type", "text/log; charset=UTF-8");
 
         try (OutputStream os = connection.getOutputStream()) {
-            os.write(contentBuilder.toString().getBytes("UTF-8"));
+            os.write(contentString.getBytes(StandardCharsets.UTF_8));
         }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -375,7 +372,7 @@ public class DownstreamScoreboard implements Scoreboard {
         String id = responseString.substring(responseString.indexOf("\"key\":\"") + 7, responseString.indexOf("\"", responseString.indexOf("\"key\":\"") + 7));
 
         TextComponent message = Component.text("Click here to open the result.");
-        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL,"https://pastes.dev/" + id));
+        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://pastes.dev/" + id));
         sender.sendMessage(message);
     }
 }
