@@ -32,6 +32,8 @@ import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -369,6 +371,11 @@ public class DownstreamScoreboard implements Scoreboard {
         while ((inputLine = in.readLine()) != null) response.append(inputLine);
         in.close();
 
-        sender.sendMessage(Component.text("Result: " + response));
+        String responseString = response.toString();
+        String id = responseString.substring(responseString.indexOf("\"key\":\"") + 7, responseString.indexOf("\"", responseString.indexOf("\"key\":\"") + 7));
+
+        TextComponent message = Component.text("Click here to open the result.");
+        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL,"https://pastes.dev/" + id));
+        sender.sendMessage(message);
     }
 }
