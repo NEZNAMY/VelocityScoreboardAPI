@@ -24,6 +24,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import net.kyori.adventure.text.Component;
@@ -50,7 +51,14 @@ public class VSACommand implements SimpleCommand {
                 Player player = server.getPlayer(args[1]).orElse(null);
                 if (player != null) {
                     sender.sendMessage(Component.text("Dumping scoreboard into console"));
-                    ((DownstreamScoreboard)ScoreboardManager.getInstance().getBackendScoreboard(player)).dump();
+                    DownstreamScoreboard scoreboard = ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player));
+                    scoreboard.dump();
+                    sender.sendMessage(Component.text("Uploading the result ..."));
+                    try {
+                        scoreboard.upload(sender);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     sender.sendMessage(Component.text("No online player found with the name \"" + args[1] + "\""));
                 }

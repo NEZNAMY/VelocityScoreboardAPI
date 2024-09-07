@@ -31,7 +31,9 @@ import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A scoreboard team that comes from the backend.
@@ -196,5 +198,15 @@ public class DownstreamTeam implements Team {
         System.out.println("    Prefix: " + properties.getPrefix());
         System.out.println("    Suffix: " + properties.getSuffix());
         System.out.println("    Entries: " + entries);
+    }
+
+    public ArrayList<String> getDump() {
+        ArrayList<String> content = new ArrayList<>();
+        content.add("  " + name + ":");
+        content.add("    DisplayName: " + properties.getDisplayName());
+        content.add("    Prefix: " + properties.getPrefix());
+        content.add("    Suffix: " + properties.getSuffix());
+        content.add("    Entries: " + entries);
+        return content;
     }
 }
