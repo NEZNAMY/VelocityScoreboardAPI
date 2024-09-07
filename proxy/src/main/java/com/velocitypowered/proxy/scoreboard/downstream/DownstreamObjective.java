@@ -27,9 +27,7 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -180,5 +178,17 @@ public class DownstreamObjective implements Objective {
         for (DownstreamScore score : scores.values()) {
             score.dump();
         }
+    }
+
+    public ArrayList<String> getDump() {
+        ArrayList<String> content = new ArrayList<>();
+        content.add("  " + objectiveName + ":");
+        content.add("    Title: " + title);
+        content.add("    HealthDisplay: " + healthDisplay);
+        content.add("    NumberFormat: " + numberFormat);
+        content.add("    DisplaySlot: " + displaySlot);
+        content.add("    Scores (" + scores.size() + "):");
+        for (DownstreamScore score : scores.values()) content.addAll(score.getDump());
+        return content;
     }
 }

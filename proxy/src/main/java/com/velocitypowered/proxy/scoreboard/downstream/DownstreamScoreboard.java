@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
@@ -30,12 +31,19 @@ import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -333,5 +341,41 @@ public class DownstreamScoreboard implements Scoreboard {
         for (DownstreamObjective objective : objectives.values()) {
             objective.dump();
         }
+    }
+
+    public void upload(CommandSource sender) throws Exception {
+        ArrayList<String> content = new ArrayList<>();
+        content.add("--- DownstreamScoreboard of player " + viewer.getUsername() + " ---");
+        content.add("Teams (" + teams.size() + "):");
+        teams.values().forEach(team -> content.addAll(team.getDump()));
+        content.add("Objectives (" + objectives.size() + "):");
+        objectives.values().forEach(objective -> content.addAll(objective.getDump()));
+
+        StringBuilder contentBuilder = new StringBuilder();
+        content.forEach(line -> contentBuilder.append(line).append("\n"));
+
+        URL url = new URL("https://api.pastes.dev/post");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "text/log; charset=UTF-8");
+
+        try (OutputStream os = connection.getOutputStream()) {
+            os.write(contentBuilder.toString().getBytes("UTF-8"));
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) response.append(inputLine);
+        in.close();
+
+        String responseString = response.toString();
+        String id = responseString.substring(responseString.indexOf("\"key\":\"") + 7, responseString.indexOf("\"", responseString.indexOf("\"key\":\"") + 7));
+
+        TextComponent message = Component.text("Click here to open the result.");
+        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL,"https://pastes.dev/" + id));
+        sender.sendMessage(message);
     }
 }

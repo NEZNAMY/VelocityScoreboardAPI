@@ -27,6 +27,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * A score that comes from a backend scoreboard.
  */
@@ -106,5 +108,14 @@ public class DownstreamScore implements Score {
         System.out.println("        Score: " + score);
         System.out.println("        DisplayName: " + displayName);
         System.out.println("        NumberFormat: " + numberFormat);
+    }
+
+    public ArrayList<String> getDump() {
+        ArrayList<String> content = new ArrayList<>();
+        content.add("      " + holder + ":");
+        content.add("        Score: " + score);
+        content.add("        DisplayName: " + displayName);
+        content.add("        NumberFormat: " + numberFormat);
+        return content;
     }
 }
