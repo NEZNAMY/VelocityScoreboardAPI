@@ -41,7 +41,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -98,7 +97,7 @@ public class DownstreamScoreboard implements Scoreboard {
                         packet.getNumberFormat()
                 );
                 if (objectives.putIfAbsent(packet.getObjectiveName(), obj) != null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard already contains objective \"" + packet.getObjectiveName() + "\"");
+                    LoggerManager.Fatal.doubleObjectiveRegister(viewer, packet.getObjectiveName());
                     return true;
                 } else {
                     eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, obj));
@@ -107,7 +106,7 @@ public class DownstreamScoreboard implements Scoreboard {
             case UNREGISTER -> {
                 DownstreamObjective removed = objectives.remove(packet.getObjectiveName());
                 if (removed == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain objective \"" + packet.getObjectiveName() + "\", cannot unregister");
+                    LoggerManager.Silent.unknownObjectiveUnregister(viewer, packet.getObjectiveName());
                     return true;
                 }
                 displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(packet.getObjectiveName()));
@@ -116,7 +115,7 @@ public class DownstreamScoreboard implements Scoreboard {
             case UPDATE -> {
                 DownstreamObjective objective = objectives.get(packet.getObjectiveName());
                 if (objective == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain objective \"" + packet.getObjectiveName() + "\", cannot update");
+                    LoggerManager.Silent.unknownObjectiveUpdate(viewer, packet.getObjectiveName());
                     return true;
                 } else {
                     objective.update(packet);
@@ -136,7 +135,7 @@ public class DownstreamScoreboard implements Scoreboard {
     public boolean handle(@NotNull DisplayObjectivePacket packet) {
         DownstreamObjective objective = objectives.get(packet.getObjectiveName());
         if (objective == null) {
-            LoggerManager.invalidDownstreamPacket(viewer, "Cannot set display slot of unknown objective \"" + packet.getObjectiveName() + "\" + to " + packet.getPosition());
+            LoggerManager.Silent.unknownObjectiveDisplay(viewer, packet.getObjectiveName(), packet.getPosition());
             return true;
         } else {
             DownstreamObjective previous = displaySlots.put(packet.getPosition(), objective);
@@ -189,7 +188,7 @@ public class DownstreamScoreboard implements Scoreboard {
                               @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
-            LoggerManager.invalidDownstreamPacket(viewer, "Cannot set score \"" + holder + "\" for unknown objective \"" + objectiveName + "\"");
+            LoggerManager.Warn.unknownObjectiveSetScore(viewer, objectiveName, holder);
             return true;
         } else {
             objective.setScore(holder, value, displayName, numberFormat);
@@ -205,7 +204,7 @@ public class DownstreamScoreboard implements Scoreboard {
         } else {
             DownstreamObjective objective = objectives.get(objectiveName);
             if (objective == null) {
-                LoggerManager.invalidDownstreamPacket(viewer, "Cannot reset score \"" + holder + "\" for unknown objective \"" + objectiveName + "\"");
+                LoggerManager.Warn.unknownObjectiveResetScore(viewer, objectiveName, holder);
                 return true;
             } else {
                 objective.removeScore(holder);
@@ -223,65 +222,44 @@ public class DownstreamScoreboard implements Scoreboard {
      */
     public boolean handle(@NotNull TeamPacket packet) {
         StringCollection entries = packet.getEntries();
+        if (packet.getAction() == TeamPacket.TeamAction.REGISTER) {
+            DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), entries);
+            if (teams.putIfAbsent(packet.getName(), team) != null) {
+                LoggerManager.Warn.doubleTeamRegister(viewer, packet.getName());
+                return true;
+            } else {
+                eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
+                return false;
+            }
+        }
+        DownstreamTeam team = teams.get(packet.getName());
+        if (team == null) {
+            LoggerManager.Warn.unknownTeamAction(viewer, packet.getName(), packet.getAction());
+            return true;
+        }
         switch (packet.getAction()) {
-            case REGISTER -> {
-                DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), entries);
-                if (teams.putIfAbsent(packet.getName(), team) != null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard already contains team \"" + packet.getName() + "\"");
-                    return true;
-                } else {
-                    eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
-                }
-            }
-            case UNREGISTER -> {
-                DownstreamTeam removed = teams.remove(packet.getName());
-                if (removed == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain team \"" + packet.getName() + "\", cannot unregister");
-                    return true;
-                }
-                eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, removed));
-            }
-            case UPDATE -> {
-                DownstreamTeam team = teams.get(packet.getName());
-                if (team == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain team \"" + packet.getName() + "\", cannot update");
-                    return true;
-                } else {
-                    team.setProperties(packet.getProperties());
-                }
-            }
+            case UNREGISTER -> eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, teams.remove(packet.getName())));
+            case UPDATE -> team.setProperties(packet.getProperties());
             case ADD_PLAYER -> {
-                DownstreamTeam team = teams.get(packet.getName());
-                if (team == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain team \"" + packet.getName() + "\", cannot add entries");
-                    return true;
+                for (DownstreamTeam allTeams : teams.values()) {
+                    allTeams.removeEntriesIfPresent(entries);
+                }
+                team.addEntries(entries);
+                if (entries.getEntry() != null) {
+                    eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entries.getEntry()));
                 } else {
-                    for (DownstreamTeam allTeams : teams.values()) {
-                        allTeams.removeEntriesIfPresent(entries);
-                    }
-                    team.addEntries(entries);
-                    if (entries.getEntry() != null) {
-                        eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entries.getEntry()));
-                    } else {
-                        for (String entry : entries.getEntries()) {
-                            eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entry));
-                        }
+                    for (String entry : entries.getEntries()) {
+                        eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entry));
                     }
                 }
             }
             case REMOVE_PLAYER -> {
-                DownstreamTeam team = teams.get(packet.getName());
-                if (team == null) {
-                    LoggerManager.invalidDownstreamPacket(viewer, "This scoreboard does not contain team \"" + packet.getName() + "\", cannot remove entries");
-                    return true;
+                team.removeEntries(viewer, entries);
+                if (entries.getEntry() != null) {
+                    eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entries.getEntry()));
                 } else {
-                    team.removeEntries(viewer, entries);
-                    if (entries.getEntry() != null) {
-                        eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entries.getEntry()));
-                    } else {
-                        for (String entry : entries.getEntries()) {
-                            eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entry));
-                        }
+                    for (String entry : entries.getEntries()) {
+                        eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entry));
                     }
                 }
             }
