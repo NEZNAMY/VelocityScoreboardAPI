@@ -96,6 +96,7 @@ public class DownstreamTeam implements Team {
      * @param entries Entries to remove
      */
     public void removeEntries(@NotNull Player viewer, @NotNull StringCollection entries) {
+        // TODO cancel packet / remove entries so it does not cause Network Protocol Error
         if (entries.getEntry() != null) {
             if (!this.entries.contains(entries.getEntry())) {
                 LoggerManager.Fatal.removeUnknownEntry(viewer, name,  entries.getEntry());
