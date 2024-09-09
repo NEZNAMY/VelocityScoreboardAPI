@@ -358,38 +358,33 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 }
 
                 // Check if removed players belonged to backend teams
-                for (DownstreamTeam dTeam : downstream.getDownstreamTeams()) {
-                    StringCollection teamEntries = dTeam.getEntryCollection();
-                    if (affectedTeam.getEntryCollection().getEntry() != null) {
-                        if (teamEntries.contains(affectedTeam.getEntryCollection().getEntry())) {
+                StringCollection teamEntries = affectedTeam.getEntryCollection();
+                if (teamEntries.getEntry() != null) {
+                    DownstreamTeam backendTeam = downstream.getTeamByEntry(teamEntries.getEntry());
+                    if (backendTeam != null) {
+                        // Backend team has this player, add back
+                        queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), teamEntries.getEntry(), true));
+                    }
+                } else {
+                    for (String entry : teamEntries.getEntries()) {
+                        DownstreamTeam backendTeam = downstream.getTeamByEntry(entry);
+                        if (backendTeam != null) {
                             // Backend team has this player, add back
-                            queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), affectedTeam.getEntryCollection().getEntry(), true));
-                        }
-                    } else {
-                        for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
-                            if (teamEntries.contains(removedEntry)) {
-                                // Backend team has this player, add back
-                                queuePacket(TeamPacket.addOrRemovePlayer(dTeam.getName(), removedEntry, true));
-                            }
+                            queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), entry, true));
                         }
                     }
                 }
             }
-            case UPDATE, ADD_PLAYER -> {
-                // Nothing should be needed here
-                queuePacket(packet);
-            }
+            case UPDATE, ADD_PLAYER -> queuePacket(packet); // Nothing should be needed here
             case REMOVE_PLAYER -> {
                 queuePacket(packet);
 
                 // Check if backend wanted to display this player
-                for (DownstreamTeam team : downstream.getDownstreamTeams()) {
-                    StringCollection teamEntries = team.getEntryCollection();
-                    for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
-                        if (teamEntries.contains(removedEntry)) {
-                            // Backend team has this player, add back
-                            queuePacket(TeamPacket.addOrRemovePlayer(team.getName(), removedEntry, true));
-                        }
+                for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
+                    DownstreamTeam backendTeam = downstream.getTeamByEntry(removedEntry);
+                    if (backendTeam != null) {
+                        // Backend team has this player, add back
+                        queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), removedEntry, true));
                     }
                 }
             }

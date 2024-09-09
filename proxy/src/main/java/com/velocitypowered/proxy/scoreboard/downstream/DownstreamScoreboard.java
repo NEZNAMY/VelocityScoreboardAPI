@@ -63,6 +63,9 @@ public class DownstreamScoreboard implements Scoreboard {
     /** Display slots assigned to objectives */
     private final Map<DisplaySlot, DownstreamObjective> displaySlots = new ConcurrentHashMap<>();
 
+    /** Map of entries and teams they belong to */
+    private final Map<String, DownstreamTeam> teamEntries = new ConcurrentHashMap<>();
+
     /** Viewer this scoreboard view belongs to */
     @NotNull
     private final Player viewer;
@@ -229,6 +232,13 @@ public class DownstreamScoreboard implements Scoreboard {
                 return true;
             } else {
                 eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
+                if (entries.getEntry() != null) {
+                    teamEntries.put(entries.getEntry(), team);
+                } else {
+                    for (String entry : entries.getEntries()) {
+                        teamEntries.put(entry, team);
+                    }
+                }
                 return false;
             }
         }
@@ -238,7 +248,16 @@ public class DownstreamScoreboard implements Scoreboard {
             return true;
         }
         switch (packet.getAction()) {
-            case UNREGISTER -> eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, teams.remove(packet.getName())));
+            case UNREGISTER -> {
+                eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, teams.remove(packet.getName())));
+                if (entries.getEntry() != null) {
+                    teamEntries.remove(entries.getEntry());
+                } else {
+                    for (String entry : entries.getEntries()) {
+                        teamEntries.remove(entry);
+                    }
+                }
+            }
             case UPDATE -> team.setProperties(packet.getProperties());
             case ADD_PLAYER -> {
                 for (DownstreamTeam allTeams : teams.values()) {
@@ -247,9 +266,11 @@ public class DownstreamScoreboard implements Scoreboard {
                 team.addEntries(entries);
                 if (entries.getEntry() != null) {
                     eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entries.getEntry()));
+                    teamEntries.put(entries.getEntry(), team);
                 } else {
                     for (String entry : entries.getEntries()) {
                         eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entry));
+                        teamEntries.put(entry, team);
                     }
                 }
             }
@@ -257,9 +278,11 @@ public class DownstreamScoreboard implements Scoreboard {
                 team.removeEntries(viewer, entries);
                 if (entries.getEntry() != null) {
                     eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entries.getEntry()));
+                    teamEntries.remove(entries.getEntry());
                 } else {
                     for (String entry : entries.getEntries()) {
                         eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entry));
+                        teamEntries.remove(entry);
                     }
                 }
             }
@@ -297,9 +320,17 @@ public class DownstreamScoreboard implements Scoreboard {
         return Collections.unmodifiableCollection(teams.values());
     }
 
-    @NotNull
-    public Collection<DownstreamTeam> getDownstreamTeams() {
-        return teams.values();
+    /**
+     * Returns team the specified entry belongs to. If it does not belong to any,
+     * {@code null} is returned.
+     *
+     * @param   entry
+     *          Entry to get team of
+     * @return  Team where this entry belongs or {@code null} if none
+     */
+    @Nullable
+    public DownstreamTeam getTeamByEntry(@NotNull String entry) {
+        return teamEntries.get(entry);
     }
 
     /**
