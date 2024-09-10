@@ -250,10 +250,10 @@ public class DownstreamScoreboard implements Scoreboard {
         switch (packet.getAction()) {
             case UNREGISTER -> {
                 eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, teams.remove(packet.getName())));
-                if (entries.getEntry() != null) {
-                    teamEntries.remove(entries.getEntry());
+                if (team.getEntryCollection().getEntry() != null) {
+                    teamEntries.remove(team.getEntryCollection().getEntry());
                 } else {
-                    for (String entry : entries.getEntries()) {
+                    for (String entry : team.getEntryCollection().getEntries()) {
                         teamEntries.remove(entry);
                     }
                 }
