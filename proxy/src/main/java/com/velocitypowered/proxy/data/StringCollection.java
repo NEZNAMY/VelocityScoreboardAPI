@@ -55,6 +55,9 @@ public class StringCollection {
     @Nullable
     private List<String> entries;
 
+    /** Separate field for size tracking for better performance */
+    private int size;
+
     /**
      * Constructs new instance with empty collection.
      */
@@ -69,6 +72,7 @@ public class StringCollection {
      */
     public StringCollection(@NotNull String entry) {
         this.entry = entry;
+        size = 1;
     }
 
     /**
@@ -78,7 +82,8 @@ public class StringCollection {
      *          Entries in collection
      */
     public StringCollection(@NotNull Collection<String> entries) {
-        if (entries.size() == 1) {
+        size = entries.size();
+        if (size == 1) {
             this.entry = entries.iterator().next();
         } else {
             this.entries = new ArrayList<>(entries); // Clone to prevent external modifications
@@ -95,13 +100,13 @@ public class StringCollection {
      *          Protocol version used to encode the entries
      */
     public StringCollection(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
-        int len = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
-        if (len == 0) return;
-        if (len == 1) {
+        size = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
+        if (size == 0) return;
+        if (size == 1) {
             entry = ProtocolUtils.readString(buf);
         } else {
-            entries = new ArrayList<>(len);
-            for (int i = 0; i < len; i++) {
+            entries = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
                 entries.add(ProtocolUtils.readString(buf));
             }
         }
@@ -116,7 +121,6 @@ public class StringCollection {
      *          Protocol version for encoding
      */
     public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
-        int size = size();
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             ProtocolUtils.writeVarInt(buf, size);
         } else {
@@ -130,16 +134,6 @@ public class StringCollection {
                 ProtocolUtils.writeString(buf, player);
             }
         }
-    }
-
-    /**
-     * Returns size of this collection.
-     *
-     * @return  size of this collection
-     */
-    public int size() {
-        if (entry != null) return 1;
-        return entries == null ? 0 : entries.size();
     }
 
     /**
@@ -163,7 +157,7 @@ public class StringCollection {
      */
     @NotNull
     public Collection<String> getEntries() {
-        if (size() == 0) return Collections.emptyList();
+        if (size == 0) return Collections.emptyList();
         if (entries == null) {
             entries = new ArrayList<>();
             entries.add(entry);
@@ -179,8 +173,9 @@ public class StringCollection {
      * @return  {@code true} if this collection contains given entry, {@code false} if not
      */
     public boolean contains(@NotNull String entry) {
-        if (entry.equals(this.entry)) return true;
-        return entries != null && entries.contains(entry);
+        if (size == 0) return false;
+        if (size == 1) return entry.equals(this.entry);
+        return entries.contains(entry);
     }
 
     /**
@@ -191,7 +186,6 @@ public class StringCollection {
      */
     public void add(@NotNull String entry) {
         if (contains(entry)) return;
-        int size = size();
         if (size == 0) {
             this.entry = entry;
             if (entries != null) entries.add(entry); // Update list if it is not null anymore
@@ -205,6 +199,7 @@ public class StringCollection {
         } else {
             entries.add(entry);
         }
+        size++;
     }
 
     /**
@@ -227,6 +222,7 @@ public class StringCollection {
             }
             removed = true;
         }
+        if (removed) size--;
         return removed;
     }
 
@@ -237,9 +233,8 @@ public class StringCollection {
      *          Entries to add to this collection
      */
     public void addAll(@NotNull StringCollection entries) {
-        int size = entries.size();
-        if (size == 0) return;
-        if (size == 1) {
+        if (entries.size == 0) return;
+        if (entries.size == 1) {
             add(entries.getEntry());
         } else {
             for (String entry : entries.getEntries()) {
@@ -255,9 +250,8 @@ public class StringCollection {
      *          Entries to remove from this collection
      */
     public void removeAll(@NotNull StringCollection entries) {
-        int size = entries.size();
-        if (size == 0) return;
-        if (size == 1) {
+        if (entries.size == 0) return;
+        if (entries.size == 1) {
             remove(entries.getEntry());
         } else {
             for (String entry : entries.getEntries()) {
@@ -269,8 +263,7 @@ public class StringCollection {
     @Override
     @NotNull
     public String toString() {
-        int size = size();
-        if (size == 0) return "Empty";
+        if (size == 0) return "StringCollection(Empty)";
         if (size == 1) return "StringCollection(entry=" + entry + ")";
         return "StringCollection(entries=" + entries + ")";
     }
