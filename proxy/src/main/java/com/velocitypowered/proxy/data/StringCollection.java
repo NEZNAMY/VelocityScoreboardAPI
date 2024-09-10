@@ -166,7 +166,7 @@ public class StringCollection {
         if (size() == 0) return Collections.emptyList();
         if (entries == null) {
             entries = new ArrayList<>();
-            if (entry != null) entries.add(entry);
+            entries.add(entry);
         }
         return entries;
     }
