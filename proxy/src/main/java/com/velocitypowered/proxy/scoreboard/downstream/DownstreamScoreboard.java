@@ -261,7 +261,7 @@ public class DownstreamScoreboard implements Scoreboard {
             case UPDATE -> team.setProperties(packet.getProperties());
             case ADD_PLAYER -> {
                 for (DownstreamTeam allTeams : teams.values()) {
-                    allTeams.removeEntriesIfPresent(entries);
+                    allTeams.getEntryCollection().removeAll(entries);
                 }
                 team.addEntries(entries);
                 if (entries.getEntry() != null) {

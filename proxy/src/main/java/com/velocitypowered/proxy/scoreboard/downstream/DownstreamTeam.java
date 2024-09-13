@@ -185,15 +185,6 @@ public class DownstreamTeam implements Team {
     }
 
     /**
-     * Removes entries from team.
-     *
-     * @param entries Entries to remove
-     */
-    public void removeEntriesIfPresent(@NotNull StringCollection entries) {
-        this.entries.removeAll(entries);
-    }
-
-    /**
      * Creates a dump of this team into a list of lines.
      *
      * @return  dump of this team
