@@ -223,6 +223,7 @@ public class PacketHandler {
             // Proxy is occupying this team, cancel packet
             return true;
         } else {
+            // Remove all entries occupied by a proxy team
             if (packet.getEntries() != null) { // Any player action
                 for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
                     packet.getEntries().removeAll(proxyTeam.getEntryCollection());
