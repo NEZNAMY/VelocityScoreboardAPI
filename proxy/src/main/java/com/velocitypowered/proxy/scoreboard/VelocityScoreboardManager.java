@@ -39,8 +39,6 @@ import java.util.function.Function;
  */
 public class VelocityScoreboardManager extends ScoreboardManager {
 
-    private final ProxyServer server;
-    private final ScoreboardEventSource plugin;
     private final Map<Player, DownstreamScoreboard> downstreamScoreboards = new ConcurrentHashMap<>();
     private final Map<Player, VelocityScoreboard> proxyScoreboards = new ConcurrentHashMap<>();
     private final Function<Player, DownstreamScoreboard> downstreamFunction;
@@ -53,18 +51,9 @@ public class VelocityScoreboardManager extends ScoreboardManager {
      * @param plugin Scoreboard API plugin
      */
     public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull ScoreboardEventSource plugin) {
-        this.server = server;
-        this.plugin = plugin;
-        this.registerEvents();
         new RawTextHolderProvider();
         downstreamFunction = p -> new DownstreamScoreboard(plugin, p);
         proxyFunction = p -> new VelocityScoreboard(plugin, (ConnectedPlayer) p, getBackendScoreboard(p));
-    }
-
-    /**
-     * Registers the event listeners for connecting and disconnecting players.
-     */
-    private void registerEvents() {
         server.getEventManager().register(plugin, DisconnectEvent.class, event -> {
             downstreamScoreboards.remove(event.getPlayer());
             proxyScoreboards.remove(event.getPlayer());
@@ -77,6 +66,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
         return proxyScoreboards.computeIfAbsent(player, proxyFunction);
     }
 
+    @Override
     @NotNull
     public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
         return downstreamScoreboards.computeIfAbsent(player, downstreamFunction);
