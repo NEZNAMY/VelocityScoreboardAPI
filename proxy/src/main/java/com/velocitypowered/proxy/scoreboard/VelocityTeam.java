@@ -336,7 +336,6 @@ public class VelocityTeam implements ProxyTeam {
 
         public Builder(@NotNull String name) {
             this.name = name;
-            this.displayName = TextHolder.of(name);
         }
 
         @NotNull
