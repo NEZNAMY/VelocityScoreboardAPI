@@ -398,7 +398,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         frozen = true;
     }
 
-    private void queuePacket(@NotNull MinecraftPacket packet) {
+    private synchronized void queuePacket(@NotNull MinecraftPacket packet) {
         if (frozen) {
             packetQueue.add(packet);
             return;
@@ -406,7 +406,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         viewer.getConnection().write(packet);
     }
 
-    private void processQueue() {
+    private synchronized void processQueue() {
         while (!packetQueue.isEmpty()) {
             viewer.getConnection().write(packetQueue.poll());
         }
