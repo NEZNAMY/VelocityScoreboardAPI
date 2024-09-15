@@ -24,6 +24,8 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.player.configuration.PlayerEnterConfigurationEvent;
+import com.velocitypowered.api.event.player.configuration.PlayerFinishedConfigurationEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
@@ -34,6 +36,7 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
@@ -112,16 +115,42 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     }
 
     /**
-     * Injects custom channel duplex handler to listen to JoinGame packet.
+     * Injects custom channel duplex handler to listen to JoinGame packet for players below 1.20.2.
      *
      * @param e Login event
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         if (!enabled) return;
+        if (e.getPlayer().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) return;
         ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
-                "handler", "VelocityPacketAPI", new ChannelInjection(e.getPlayer(), this)
+                "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), this)
         );
+    }
+
+    /**
+     * Listens to configuration event start for 1.20.2+ to freeze scoreboard as the client
+     * is about to reset it.
+     *
+     * @param   e
+     *          Configuration start event
+     */
+    @Subscribe
+    public void onConfigStart(@NotNull PlayerEnterConfigurationEvent e) {
+        ((DownstreamScoreboard) VelocityScoreboardManager.getInstance().getBackendScoreboard(e.player())).clear();
+        ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).freeze();
+    }
+
+    /**
+     * Listens to configuration event finish for 1.20.2+ to unfreeze scoreboard and resend it
+     * because the client has just reset it.
+     *
+     * @param   e
+     *          Configuration finish event
+     */
+    @Subscribe
+    public void onConfigFinish(@NotNull PlayerFinishedConfigurationEvent e) {
+        ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
     }
 
     @Override
