@@ -42,9 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class VelocityScoreboard implements ProxyScoreboard {
 
@@ -61,7 +59,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private final Map<DisplaySlot, VelocityObjective> displaySlots = new ConcurrentHashMap<>();
     private final Map<String, VelocityTeam> teamEntries = new ConcurrentHashMap<>();
     private final DownstreamScoreboard downstream;
-    private final Queue<MinecraftPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     /** Flag tracking if this scoreboard is frozen. While frozen, no packets will get through. */
     private boolean frozen;
@@ -242,7 +239,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 }
             }
         }
-        processQueue();
+        frozen = false;
     }
 
     @Override
@@ -262,7 +259,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     public synchronized void sendPacket(@NotNull DisplayObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        queuePacket(packet);
+        sendPacketSafe(packet);
 
         // Check if a slot was freed
         for (DisplaySlot slot : DisplaySlot.values()) {
@@ -271,7 +268,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamObjective objective = downstream.getObjective(packet.getPosition());
                 if (objective != null) {
                     // Backend tried to display something in this slot, allow it now
-                    queuePacket(new DisplayObjectivePacket(slot, objective.getName()));
+                    sendPacketSafe(new DisplayObjectivePacket(slot, objective.getName()));
                 }
             }
         }
@@ -284,23 +281,23 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend is using this scoreboard, unregister it to allow this
-                    queuePacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
+                    sendPacketSafe(new ObjectivePacket(ObjectiveAction.UNREGISTER, packet.getObjectiveName(), null, null, null));
                 }
-                queuePacket(packet);
+                sendPacketSafe(packet);
             }
             case UNREGISTER -> {
-                queuePacket(packet);
+                sendPacketSafe(packet);
 
                 // Check if backend wanted to display an objective with this name
                 DownstreamObjective objective = downstream.getObjective(packet.getObjectiveName());
                 if (objective != null) {
                     // Backend wants this too, send the objective and scores
-                    queuePacket(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
+                    sendPacketSafe(new ObjectivePacket(ObjectiveAction.REGISTER, objective.getName(), objective.getTitle(), objective.getHealthDisplay(), objective.getNumberFormat()));
                     for (DownstreamScore score : objective.getAllScores()) {
                         if (viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
-                            queuePacket(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), score.getDisplayNameHolder(), score.getNumberFormat()));
+                            sendPacketSafe(new ScoreSetPacket(score.getHolder(), objective.getName(), score.getScore(), score.getDisplayNameHolder(), score.getNumberFormat()));
                         } else {
-                            queuePacket(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
+                            sendPacketSafe(new ScorePacket(ScorePacket.ScoreAction.SET, score.getHolder(), objective.getName(), score.getScore()));
                         }
                     }
                 }
@@ -311,30 +308,30 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     DownstreamObjective obj = downstream.getObjective(slot);
                     if (obj != null) {
                         // This slot is only used by backend, display it (may send unnecessary packets)
-                        queuePacket(new DisplayObjectivePacket(slot, obj.getName()));
+                        sendPacketSafe(new DisplayObjectivePacket(slot, obj.getName()));
                     }
                 }
             }
             case UPDATE -> {
                 // Nothing should be needed here
-                queuePacket(packet);
+                sendPacketSafe(packet);
             }
         }
     }
 
     public synchronized void sendPacket(@NotNull ScorePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        queuePacket(packet);
+        sendPacketSafe(packet);
     }
 
     public synchronized void sendPacket(@NotNull ScoreSetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        queuePacket(packet);
+        sendPacketSafe(packet);
     }
 
     public synchronized void sendPacket(@NotNull ScoreResetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
-        queuePacket(packet);
+        sendPacketSafe(packet);
     }
 
     public synchronized void sendPacket(@NotNull TeamPacket packet, @NotNull VelocityTeam affectedTeam) {
@@ -344,17 +341,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend is using this team, unregister it to allow this
-                    queuePacket(TeamPacket.unregister(packet.getName()));
+                    sendPacketSafe(TeamPacket.unregister(packet.getName()));
                 }
-                queuePacket(packet);
+                sendPacketSafe(packet);
             }
             case UNREGISTER -> {
-                queuePacket(packet);
+                sendPacketSafe(packet);
                 // Check if backend wanted to display a team with this name
                 DownstreamTeam team = downstream.getTeam(packet.getName());
                 if (team != null) {
                     // Backend wants this too, send it
-                    queuePacket(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntryCollection()));
+                    sendPacketSafe(new TeamPacket(TeamPacket.TeamAction.REGISTER, team.getName(), team.getProperties(), team.getEntryCollection()));
                 }
 
                 // Check if removed players belonged to backend teams
@@ -363,28 +360,28 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     DownstreamTeam backendTeam = downstream.getTeamByEntry(teamEntries.getEntry());
                     if (backendTeam != null) {
                         // Backend team has this player, add back
-                        queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), teamEntries.getEntry(), true));
+                        sendPacketSafe(TeamPacket.addOrRemovePlayer(backendTeam.getName(), teamEntries.getEntry(), true));
                     }
                 } else {
                     for (String entry : teamEntries.getEntries()) {
                         DownstreamTeam backendTeam = downstream.getTeamByEntry(entry);
                         if (backendTeam != null) {
                             // Backend team has this player, add back
-                            queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), entry, true));
+                            sendPacketSafe(TeamPacket.addOrRemovePlayer(backendTeam.getName(), entry, true));
                         }
                     }
                 }
             }
-            case UPDATE, ADD_PLAYER -> queuePacket(packet); // Nothing should be needed here
+            case UPDATE, ADD_PLAYER -> sendPacketSafe(packet); // Nothing should be needed here
             case REMOVE_PLAYER -> {
-                queuePacket(packet);
+                sendPacketSafe(packet);
 
                 // Check if backend wanted to display this player
                 for (String removedEntry : affectedTeam.getEntryCollection().getEntries()) {
                     DownstreamTeam backendTeam = downstream.getTeamByEntry(removedEntry);
                     if (backendTeam != null) {
                         // Backend team has this player, add back
-                        queuePacket(TeamPacket.addOrRemovePlayer(backendTeam.getName(), removedEntry, true));
+                        sendPacketSafe(TeamPacket.addOrRemovePlayer(backendTeam.getName(), removedEntry, true));
                     }
                 }
             }
@@ -398,18 +395,8 @@ public class VelocityScoreboard implements ProxyScoreboard {
         frozen = true;
     }
 
-    private synchronized void queuePacket(@NotNull MinecraftPacket packet) {
-        if (frozen) {
-            packetQueue.add(packet);
-            return;
-        }
+    private synchronized void sendPacketSafe(@NotNull MinecraftPacket packet) {
+        if (frozen) return;
         viewer.getConnection().write(packet);
-    }
-
-    private synchronized void processQueue() {
-        while (!packetQueue.isEmpty()) {
-            viewer.getConnection().write(packetQueue.poll());
-        }
-        frozen = false;
     }
 }
