@@ -25,7 +25,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.configuration.PlayerEnterConfigurationEvent;
-import com.velocitypowered.api.event.player.configuration.PlayerFinishedConfigurationEvent;
+import com.velocitypowered.api.event.player.configuration.PlayerFinishConfigurationEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
@@ -115,17 +115,18 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     }
 
     /**
-     * Injects custom channel duplex handler to listen to JoinGame packet for players below 1.20.2.
+     * Injects custom channel duplex handler to listen to JoinGame packet for players below 1.20.5.
      *
      * @param e Login event
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         if (!enabled) return;
-        if (e.getPlayer().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) return;
-        ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
-                "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), this)
-        );
+        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+            ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
+                    "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), this)
+            );
+        }
     }
 
     /**
@@ -142,14 +143,15 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     }
 
     /**
-     * Listens to configuration event finish for 1.20.2+ to unfreeze scoreboard and resend it
+     * Listens to configuration event finish for 1.20.5+ to unfreeze scoreboard and resend it
      * because the client has just reset it.
      *
      * @param   e
      *          Configuration finish event
      */
     @Subscribe
-    public void onConfigFinish(@NotNull PlayerFinishedConfigurationEvent e) {
+    public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
+        if (e.player().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) return;
         ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
     }
 
