@@ -18,7 +18,6 @@ Please add the plugin to your Velocity server's plugins folder. Make sure you ar
 ### Requirements
 * Java 17+
 * Velocity 3.3.0 (latest build)
-* Supports Minecraft 1.7.2 &ndash; 1.21
 
 ## Developers
 VelocityScoreboardAPI is available [on Maven](https://repo.william278.net/#/releases/net/william278/velocityscoreboardapi/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/velocityscoreboardapi/latest).
@@ -51,3 +50,12 @@ call_scoreboard_events: true
 print_invalid_downstream_packet_warnings: true
 ```
 
+## Detailed overview of the plugin
+* **Proxy vs backend scoreboard** - Every player has 2 scoreboards.
+  * **Backend scoreboard** - A read-only tracker of objectives and teams coming from backend server (also used internally for proper compatibility).
+  * **Proxy scoreboard** - Scoreboard fully editable using the API. All teams (and their entries) and objectives will take priority over backend scoreboard. Every player has their own proxy scoreboard instance.
+* **Event system** - Events called every time an objective or team is registered, unregistered or player is added/removed from a team. Can be disabled in config.
+* **Consumers for updating properties** - In order to allow performing multiple changes at once with a single packet instead of sending update packet for each individual change, all updates support methods using Consumer<?>. Unlike with an all-arg method, this offers great compatibility in case something is added in future MC versions without having to explicitly support plugins using old method.
+* **High performance** - Tested on a huge server with 1500+ players using spark, the plugin has reached perfect performance. Some code is slightly complex because of this, however, simplifying code at the cost of worse performance can be done any time if decided without having to worry about performance.
+* **Invalid packet cancellation** - Invalid backend packets are cancelled or fixed to prevent warnings/errors/disconnects in the client when an invalid backend packet is received.
+* **Custom TextHolder class** - For allowing to configure both legacy texts and modern components, custom class `TextHolder` is used as value, allowing users to explicitly define per-version values without having to check for client version (if one of the two values is not specified, it will be calculated)
