@@ -103,7 +103,9 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
             PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
         } catch (Throwable e) {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
-            LoggerManager.log(Level.ERROR,"<red>An error occurred while registering packets.");
+            LoggerManager.log(Level.ERROR,"<red>An error occurred while registering packets. This most likely means Velocity had a breaking change " +
+                    "and this plugin needs an update.");
+            e.printStackTrace();
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
             return;
         }
