@@ -96,15 +96,23 @@ public class DownstreamTeam implements Team {
      * @param entries Entries to remove
      */
     public void removeEntries(@NotNull Player viewer, @NotNull StringCollection entries) {
-        // TODO cancel packet / remove entries so it does not cause Network Protocol Error
         if (entries.getEntry() != null) {
             if (!this.entries.contains(entries.getEntry())) {
-                LoggerManager.Fatal.removeUnknownEntry(viewer, name,  entries.getEntry());
+                LoggerManager.Fatal.removeUnknownEntry(viewer, name, entries.getEntry());
+                entries.remove(entries.getEntry());
             }
         } else {
+            List<String> toRemove = null;
             for (String entry : entries.getEntries()) {
                 if (!this.entries.contains(entry)) {
                     LoggerManager.Fatal.removeUnknownEntry(viewer, name, entry);
+                    if (toRemove == null) toRemove = new ArrayList<>();
+                    toRemove.add(entry);
+                }
+            }
+            if (toRemove != null) {
+                for (String entryToRemove : toRemove) {
+                    entries.remove(entryToRemove);
                 }
             }
         }
