@@ -43,8 +43,7 @@ public abstract class TextHolder {
     }
 
     /**
-     * Constructs a TextHolder object with the given legacy text
-     * or returns a cached instance if previously constructed with the same text.
+     * Constructs a TextHolder object with the given legacy text.
      *
      * @param legacyText The legacy text to be used in the TextHolder
      * @return The constructed TextHolder object
@@ -55,8 +54,7 @@ public abstract class TextHolder {
     }
 
     /**
-     * Constructs a TextHolder object with the given Component modern text
-     * or returns a cached instance if previously constructed with the same text.
+     * Constructs a TextHolder object with the given Component modern text.
      *
      * @param modernText The Component modern text to be used in the TextHolder
      * @return The constructed TextHolder object
@@ -67,8 +65,7 @@ public abstract class TextHolder {
     }
 
     /**
-     * Constructs a TextHolder object with both legacy and modern texts
-     * or returns a cached instance if previously constructed with the same texts.
+     * Constructs a TextHolder object with both legacy and modern texts.
      *
      * @param legacyText Text for 1.12- players
      * @param modernText Text for 1.13+ players
