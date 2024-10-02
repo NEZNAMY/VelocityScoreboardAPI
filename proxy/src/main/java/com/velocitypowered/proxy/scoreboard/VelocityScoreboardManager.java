@@ -55,6 +55,9 @@ public class VelocityScoreboardManager extends ScoreboardManager {
         downstreamFunction = p -> new DownstreamScoreboard(plugin, p);
         proxyFunction = p -> new VelocityScoreboard(plugin, (ConnectedPlayer) p, getBackendScoreboard(p));
         server.getEventManager().register(plugin, DisconnectEvent.class, event -> {
+            if (event.getLoginStatus() != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
+                return;
+            }
             downstreamScoreboards.remove(event.getPlayer());
             proxyScoreboards.remove(event.getPlayer());
         });

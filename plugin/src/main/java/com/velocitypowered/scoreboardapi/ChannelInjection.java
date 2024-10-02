@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Channel injection to listen to JoinGame packet. If Scoreboard API gets merged into Velocity,
- * this will be replaced with a line in JOinGame packet handler.
+ * this will be replaced with a line in JoinGame packet handler.
  */
 public class ChannelInjection extends ChannelDuplexHandler {
 
