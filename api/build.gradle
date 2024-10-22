@@ -3,6 +3,5 @@ plugins {
 }
 
 dependencies {
-    compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
-    compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
+    compileOnly 'com.velocitypowered:velocity-api:3.4.0-SNAPSHOT'
 }

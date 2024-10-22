@@ -65,7 +65,8 @@ public class PacketRegistry {
                 map(0x51, ProtocolVersion.MINECRAFT_1_19_4),
                 map(0x53, ProtocolVersion.MINECRAFT_1_20_2),
                 map(0x55, ProtocolVersion.MINECRAFT_1_20_3),
-                map(0x57, ProtocolVersion.MINECRAFT_1_20_5, maximumSupportedVersion)
+                map(0x57, ProtocolVersion.MINECRAFT_1_20_5),
+                map(0x5C, ProtocolVersion.MINECRAFT_1_21_2, maximumSupportedVersion)
         );
         register(clientbound,
                 ObjectivePacket.class,
@@ -83,7 +84,8 @@ public class PacketRegistry {
                 map(0x58, ProtocolVersion.MINECRAFT_1_19_4),
                 map(0x5A, ProtocolVersion.MINECRAFT_1_20_2),
                 map(0x5C, ProtocolVersion.MINECRAFT_1_20_3),
-                map(0x5E, ProtocolVersion.MINECRAFT_1_20_5, maximumSupportedVersion)
+                map(0x5E, ProtocolVersion.MINECRAFT_1_20_5),
+                map(0x64, ProtocolVersion.MINECRAFT_1_21_2, maximumSupportedVersion)
         );
         register(clientbound,
                 ScorePacket.class,
@@ -105,13 +107,15 @@ public class PacketRegistry {
                 ScoreSetPacket.class,
                 ScoreSetPacket::new,
                 map(0x5F, ProtocolVersion.MINECRAFT_1_20_3),
-                map(0x61, ProtocolVersion.MINECRAFT_1_20_5, maximumSupportedVersion)
+                map(0x61, ProtocolVersion.MINECRAFT_1_20_5),
+                map(0x68, ProtocolVersion.MINECRAFT_1_21_2, maximumSupportedVersion)
         );
         register(clientbound,
                 ScoreResetPacket.class,
                 ScoreResetPacket::new,
                 map(0x42, ProtocolVersion.MINECRAFT_1_20_3),
-                map(0x44, ProtocolVersion.MINECRAFT_1_20_5, maximumSupportedVersion)
+                map(0x44, ProtocolVersion.MINECRAFT_1_20_5),
+                map(0x49, ProtocolVersion.MINECRAFT_1_21_2, maximumSupportedVersion)
         );
         register(clientbound,
                 TeamPacket.class,
@@ -129,7 +133,8 @@ public class PacketRegistry {
                 map(0x5A, ProtocolVersion.MINECRAFT_1_19_4),
                 map(0x5C, ProtocolVersion.MINECRAFT_1_20_2),
                 map(0x5E, ProtocolVersion.MINECRAFT_1_20_3),
-                map(0x60, ProtocolVersion.MINECRAFT_1_20_5, maximumSupportedVersion)
+                map(0x60, ProtocolVersion.MINECRAFT_1_20_5),
+                map(0x67, ProtocolVersion.MINECRAFT_1_21_2, maximumSupportedVersion)
         );
     }
 

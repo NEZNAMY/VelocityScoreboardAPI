@@ -5,8 +5,8 @@ plugins {
 dependencies {
     implementation project(':api')
 
-    compileOnly 'com.velocitypowered:velocity-api:3.3.0-SNAPSHOT'
-    compileOnly 'com.velocitypowered:velocity-proxy:3.3.0-SNAPSHOT'
+    compileOnly 'com.velocitypowered:velocity-api:3.4.0-SNAPSHOT'
+    compileOnly 'com.velocitypowered:velocity-proxy:3.4.0-SNAPSHOT'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
     compileOnlyApi 'net.kyori:adventure-nbt:4.17.0'
 
