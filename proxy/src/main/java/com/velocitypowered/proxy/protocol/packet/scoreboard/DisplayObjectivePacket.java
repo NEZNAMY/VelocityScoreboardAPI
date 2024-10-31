@@ -74,7 +74,12 @@ public class DisplayObjectivePacket implements MinecraftPacket {
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
             ProtocolUtils.writeVarInt(buf, position.ordinal());
         } else {
-            buf.writeByte(position.ordinal());
+            int ordinal = position.ordinal();
+            if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_8) && ordinal > 2) {
+                // Sidebars for team colors were added in 1.8, display as normal sidebar
+                ordinal = 1;
+            }
+            buf.writeByte(ordinal);
         }
         ProtocolUtils.writeString(buf, objectiveName);
     }
