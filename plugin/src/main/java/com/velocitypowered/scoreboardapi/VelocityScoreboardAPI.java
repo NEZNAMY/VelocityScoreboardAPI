@@ -94,7 +94,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
             }
         } catch (NoSuchFieldError e) {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
-            LoggerManager.log(Level.ERROR,"<red>The plugin requires a newer velocity build that supports MC 1.21.2.");
+            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #443 (with 1.21.2 support) and up to work.");
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
             return;
         }
