@@ -140,6 +140,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
      */
     @Subscribe
     public void onConfigStart(@NotNull PlayerEnterConfigurationEvent e) {
+        if (!enabled) return;
         ((DownstreamScoreboard) VelocityScoreboardManager.getInstance().getBackendScoreboard(e.player())).clear();
         ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).freeze();
     }
@@ -153,6 +154,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
      */
     @Subscribe
     public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
+        if (!enabled) return;
         if (e.player().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) return;
         ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
     }
