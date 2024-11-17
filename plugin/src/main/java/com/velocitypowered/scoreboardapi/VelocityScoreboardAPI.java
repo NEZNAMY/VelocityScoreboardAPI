@@ -86,27 +86,34 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         try {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
-                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
                 LoggerManager.log(Level.ERROR,"<red>Your Velocity build supports MC version " + ProtocolVersion.MAXIMUM_VERSION +
                         ", but this plugin only supports up to " + VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION + ".");
                 LoggerManager.log(Level.ERROR,"<red>Plugin will be disabled for players with unsupported versions to avoid risk.");
-                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+                LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             }
         } catch (NoSuchFieldError e) {
-            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #443 (with 1.21.2 support) and up to work.");
-            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             return;
         }
 
         try {
             PacketRegistry.registerPackets(VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION);
         } catch (Throwable e) {
-            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
-            LoggerManager.log(Level.ERROR,"<red>An error occurred while registering packets. This most likely means Velocity had a breaking change " +
-                    "and this plugin needs an update.");
-            e.printStackTrace();
-            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(100));
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
+            Throwable cause = e.getCause();
+            if (cause != null && cause.getMessage().contains("because another packet is already registered")) {
+                LoggerManager.log(Level.ERROR, "Failed to register scoreboard packets. " +
+                        "This most likely means you are using another plugin that already registered scoreboard packets. Error message:");
+                LoggerManager.log(Level.ERROR, cause.getClass().getName() + ": " + cause.getMessage());
+            } else {
+                LoggerManager.log(Level.ERROR,"<red>An error occurred while registering packets. This most likely means Velocity had a breaking change " +
+                        "and this plugin needs an update.");
+                e.printStackTrace();
+            }
+            LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             return;
         }
 

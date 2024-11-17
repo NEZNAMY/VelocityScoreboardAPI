@@ -41,10 +41,10 @@ public class PacketRegistry {
      *
      * @param   maximumSupportedVersion
      *          Maximum supported protocol version by current version
-     * @throws  Exception
+     * @throws  ReflectiveOperationException
      *          If thrown by reflective operation
      */
-    public static void registerPackets(@NotNull ProtocolVersion maximumSupportedVersion) throws Exception {
+    public static void registerPackets(@NotNull ProtocolVersion maximumSupportedVersion) throws ReflectiveOperationException {
         Field f = StateRegistry.class.getDeclaredField("clientbound");
         f.setAccessible(true);
         StateRegistry.PacketRegistry clientbound = (StateRegistry.PacketRegistry) f.get(StateRegistry.PLAY);
@@ -138,20 +138,20 @@ public class PacketRegistry {
         );
     }
 
-    private static <P extends MinecraftPacket> void register(
-            StateRegistry.PacketRegistry registry, Class<P> clazz, Supplier<P> packetSupplier, StateRegistry.PacketMapping... mappings) throws Exception {
+    private static <P extends MinecraftPacket> void register(StateRegistry.PacketRegistry registry, Class<P> clazz, Supplier<P> packetSupplier,
+                                                             StateRegistry.PacketMapping... mappings) throws ReflectiveOperationException {
         Method m = StateRegistry.PacketRegistry.class.getDeclaredMethod("register", Class.class, Supplier.class, StateRegistry.PacketMapping[].class);
         m.setAccessible(true);
         m.invoke(registry, clazz, packetSupplier, mappings);
     }
 
-    private static StateRegistry.PacketMapping map(int id, ProtocolVersion version) throws Exception {
+    private static StateRegistry.PacketMapping map(int id, ProtocolVersion version) throws ReflectiveOperationException {
         Method m = StateRegistry.class.getDeclaredMethod("map", int.class, ProtocolVersion.class, boolean.class);
         m.setAccessible(true);
         return (StateRegistry.PacketMapping) m.invoke(null, id, version, false); // encodeOnly false
     }
 
-    private static StateRegistry.PacketMapping map(int id, ProtocolVersion version, ProtocolVersion lastValidProtocolVersion) throws Exception {
+    private static StateRegistry.PacketMapping map(int id, ProtocolVersion version, ProtocolVersion lastValidProtocolVersion) throws ReflectiveOperationException {
         Method m = StateRegistry.class.getDeclaredMethod("map", int.class, ProtocolVersion.class, ProtocolVersion.class, boolean.class);
         m.setAccessible(true);
         return (StateRegistry.PacketMapping) m.invoke(null, id, version, lastValidProtocolVersion, false); // encodeOnly false
