@@ -23,20 +23,15 @@ package com.velocitypowered.scoreboardapi;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
-import com.velocitypowered.api.event.player.configuration.PlayerEnterConfigurationEvent;
-import com.velocitypowered.api.event.player.configuration.PlayerFinishConfigurationEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
-import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
-import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
@@ -51,7 +46,6 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
     private final PluginConfig pluginConfig;
-    private boolean enabled;
 
     /**
      * Constructs new instance with given parameters.
@@ -94,7 +88,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
             }
         } catch (NoSuchFieldError e) {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
-            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #443 (with 1.21.2 support) and up to work.");
+            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #443 and up to work.");
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             return;
         }
@@ -119,51 +113,8 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
 
         ScoreboardManager.setInstance(new VelocityScoreboardManager(server, this));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
-        enabled = true;
+        server.getEventManager().register(this, new EventListener(this));
         metricsFactory.make(this, 22437);
-    }
-
-    /**
-     * Injects custom channel duplex handler to listen to JoinGame packet for players below 1.20.5.
-     *
-     * @param e Login event
-     */
-    @Subscribe
-    public void onJoin(PostLoginEvent e) {
-        if (!enabled) return;
-        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
-            ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
-                    "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), this)
-            );
-        }
-    }
-
-    /**
-     * Listens to configuration event start for 1.20.2+ to freeze scoreboard as the client
-     * is about to reset it.
-     *
-     * @param   e
-     *          Configuration start event
-     */
-    @Subscribe
-    public void onConfigStart(@NotNull PlayerEnterConfigurationEvent e) {
-        if (!enabled) return;
-        ((DownstreamScoreboard) VelocityScoreboardManager.getInstance().getBackendScoreboard(e.player())).clear();
-        ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).freeze();
-    }
-
-    /**
-     * Listens to configuration event finish for 1.20.5+ to unfreeze scoreboard and resend it
-     * because the client has just reset it.
-     *
-     * @param   e
-     *          Configuration finish event
-     */
-    @Subscribe
-    public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
-        if (!enabled) return;
-        if (e.player().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) return;
-        ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
     }
 
     @Override
