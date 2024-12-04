@@ -46,7 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class VelocityScoreboard implements ProxyScoreboard {
 
-    public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21_2;
+    public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21_4;
 
     @NotNull
     private final ScoreboardEventSource eventSource;
