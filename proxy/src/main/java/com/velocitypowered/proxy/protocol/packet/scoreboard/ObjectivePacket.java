@@ -98,7 +98,12 @@ public class ObjectivePacket implements MinecraftPacket {
                 healthDisplay = DISPLAYS[ProtocolUtils.readVarInt(buf)];
             } else {
                 title = TextHolder.of(ProtocolUtils.readString(buf));
-                healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
+                try {
+                    healthDisplay = HealthDisplay.valueOf(ProtocolUtils.readString(buf).toUpperCase(Locale.US));
+                } catch (IllegalArgumentException e) {
+                    // Bad plugin using ProtocolLib to incorrectly write enum string
+                    healthDisplay = HealthDisplay.INTEGER;
+                }
             }
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_20_3)) {
                 if (buf.readBoolean()) {
