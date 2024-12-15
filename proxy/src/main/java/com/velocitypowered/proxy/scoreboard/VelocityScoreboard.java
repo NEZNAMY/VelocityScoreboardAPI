@@ -265,7 +265,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         for (DisplaySlot slot : DisplaySlot.values()) {
             if (!displaySlots.containsKey(slot)) {
                 // Slot is free, check if backend wants to display something
-                DownstreamObjective objective = downstream.getObjective(packet.getPosition());
+                DownstreamObjective objective = downstream.getObjective(slot);
                 if (objective != null) {
                     // Backend tried to display something in this slot, allow it now
                     sendPacketSafe(new DisplayObjectivePacket(slot, objective.getName()));
