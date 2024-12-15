@@ -339,6 +339,8 @@ public class DownstreamScoreboard implements Scoreboard {
     public void clear() {
         objectives.clear();
         teams.clear();
+        displaySlots.clear();
+        teamEntries.clear();
     }
 
     /**
