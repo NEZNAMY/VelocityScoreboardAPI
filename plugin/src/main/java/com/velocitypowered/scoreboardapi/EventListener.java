@@ -36,6 +36,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EventListener {
 
+    /** Including, but not limited to Labymod */
+    private final boolean COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS = true; // Velocity-styled variable name :P
+
     /** Plugin instance */
     private final VelocityScoreboardAPI plugin;
 
@@ -56,7 +59,7 @@ public class EventListener {
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
-        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5) || COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS) {
             ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
                     "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), plugin)
             );
@@ -85,7 +88,8 @@ public class EventListener {
      */
     @Subscribe
     public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
-        if (e.player().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) return;
-        ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
+        if (e.player().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_5) && !COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS) {
+            ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
+        }
     }
 }
