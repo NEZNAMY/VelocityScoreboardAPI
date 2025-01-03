@@ -67,6 +67,11 @@ allprojects {
         maven { url 'https://repo.william278.net/velocity/' }
     }
 
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.36'
+        annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    }
+
     license {
         header = rootProject.file('HEADER')
         include '**/*.java'

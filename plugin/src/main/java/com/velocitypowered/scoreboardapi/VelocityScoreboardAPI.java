@@ -32,6 +32,7 @@ import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
+import lombok.Getter;
 import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
@@ -43,6 +44,7 @@ import java.nio.file.Path;
  */
 public class VelocityScoreboardAPI implements ScoreboardEventSource {
 
+    @Getter
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
     private final PluginConfig pluginConfig;
@@ -123,7 +125,4 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
         server.getEventManager().fire(event);
     }
 
-    public ProxyServer getServer() {
-        return server;
-    }
 }
