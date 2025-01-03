@@ -23,44 +23,27 @@ package com.velocitypowered.api.event.scoreboard;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.ProxyScoreboard;
 import com.velocitypowered.api.scoreboard.Scoreboard;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstract event class for all scoreboard-related events.
  */
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class ScoreboardEvent {
 
     /** Player who received the scoreboard change */
     @NotNull
     private final Player player;
 
-    /** Scoreboard source
+    /**
+     * Scoreboard source
      * If proxy is true, the scoreboard is a {@link ProxyScoreboard}, otherwise it is a backend {@link Scoreboard}
-     * */
+     */
     private final Scoreboard scoreboard;
-
-    /**
-     * Constructs new instance with given player.
-     *
-     * @param   player
-     *          Player who received the change
-     * @param   scoreboard
-     *          Scoreboard source
-     */
-    protected ScoreboardEvent(@NotNull Player player, @NotNull Scoreboard scoreboard) {
-        this.player = player;
-        this.scoreboard = scoreboard;
-    }
-
-    /**
-     * Returns player who received the scoreboard change.
-     *
-     * @return  Player who received the scoreboard change
-     */
-    @NotNull
-    public Player getPlayer() {
-        return player;
-    }
 
     /**
      * Returns if the scoreboard is a {@link ProxyScoreboard} or a backend {@link Scoreboard}.

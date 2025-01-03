@@ -23,6 +23,7 @@ package com.velocitypowered.proxy.data;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import io.netty.buffer.ByteBuf;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +46,7 @@ public class StringCollection {
      * either 0 or more than 1 entry, this field is {@code null}.
      */
     @Nullable
+    @Getter
     private String entry;
 
     /**
@@ -134,17 +136,6 @@ public class StringCollection {
                 ProtocolUtils.writeString(buf, player);
             }
         }
-    }
-
-    /**
-     * Returns single entry in this collection. If this collection does not contain
-     * exactly 1 element, {@code null} is returned
-     *
-     * @return  The only entry in this collection or {@code null} if it does not contain exactly 1 entry
-     */
-    @Nullable
-    public String getEntry() {
-        return entry;
     }
 
     /**

@@ -24,6 +24,9 @@ import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,11 +36,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * An objective coming from a downstream scoreboard.
  */
+@Getter
+@AllArgsConstructor
 public class DownstreamObjective implements Objective {
 
     /** Name of the objective */
     @NotNull
-    private final String objectiveName;
+    private final String name;
 
     /** Objective title */
     @NotNull
@@ -53,81 +58,23 @@ public class DownstreamObjective implements Objective {
 
     /** Display slot of the objective */
     @Nullable
+    @Setter
     private DisplaySlot displaySlot;
 
     /** Registered scores */
     @NotNull
     private final Map<String, DownstreamScore> scores = new ConcurrentHashMap<>();
 
-    /**
-     * Constructs new instance with given parameters.
-     *
-     * @param   objectiveName
-     *          Objective name
-     * @param   title
-     *          Objective title
-     * @param   healthDisplay
-     *          Health display type (1.8+)
-     * @param   numberFormat
-     *          Default number format for all scores (1.20.3+)
-     */
-    public DownstreamObjective(@NotNull String objectiveName, @NotNull TextHolder title,
-                               @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
-        this.objectiveName = objectiveName;
-        this.title = title;
-        this.healthDisplay = healthDisplay;
-        this.numberFormat = numberFormat;
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-        return objectiveName;
-    }
-
-    @Override
-    @NotNull
-    public TextHolder getTitle() {
-        return title;
-    }
-
-    @Override
-    @NotNull
-    public HealthDisplay getHealthDisplay() {
-        return healthDisplay;
-    }
-
     @Override
     @Nullable
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
-    }
-
-    @Override
-    public @Nullable Score getScore(@NotNull String holder) {
+    public Score getScore(@NotNull String holder) {
         return scores.get(holder);
-    }
-
-    @Override
-    @Nullable
-    public DisplaySlot getDisplaySlot() {
-        return displaySlot;
     }
 
     @Override
     @NotNull
     public Collection<DownstreamScore> getAllScores() {
         return Collections.unmodifiableCollection(scores.values());
-    }
-
-    /**
-     * Sets display slot of this objective.
-     *
-     * @param   displaySlot
-     *          New display slot
-     */
-    public void setDisplaySlot(@Nullable DisplaySlot displaySlot) {
-        this.displaySlot = displaySlot;
     }
 
     /**
@@ -176,7 +123,7 @@ public class DownstreamObjective implements Objective {
     @NotNull
     public List<String> dump() {
         List<String> content = new ArrayList<>();
-        content.add("  " + objectiveName + ":");
+        content.add("  " + name + ":");
         content.add("    Title: " + title);
         content.add("    HealthDisplay: " + healthDisplay);
         content.add("    NumberFormat: " + numberFormat);

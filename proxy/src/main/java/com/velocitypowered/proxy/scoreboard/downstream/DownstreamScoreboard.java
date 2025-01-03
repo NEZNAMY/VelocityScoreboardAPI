@@ -31,6 +31,7 @@ import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -49,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This is a downstream tracker that reflects on what the backend tried to display to the player.
  */
+@RequiredArgsConstructor
 public class DownstreamScoreboard implements Scoreboard {
 
     /** Server to call events to */
@@ -71,19 +73,6 @@ public class DownstreamScoreboard implements Scoreboard {
     private final Player viewer;
 
     /**
-     * Constructs new instance with given parameters.
-     *
-     * @param   eventSource
-     *          Object that will be used to fire scoreboard events
-     * @param   viewer
-     *          Player who this view will belong to
-     */
-    public DownstreamScoreboard(@NotNull ScoreboardEventSource eventSource, @NotNull Player viewer) {
-        this.eventSource = eventSource;
-        this.viewer = viewer;
-    }
-
-    /**
      * Handles incoming objective packet coming from backend and updates tracked values.
      *
      * @param   packet
@@ -97,7 +86,8 @@ public class DownstreamScoreboard implements Scoreboard {
                         packet.getObjectiveName(),
                         packet.getTitle(),
                         packet.getHealthDisplay(),
-                        packet.getNumberFormat()
+                        packet.getNumberFormat(),
+                        null
                 );
                 if (objectives.putIfAbsent(packet.getObjectiveName(), obj) != null) {
                     LoggerManager.Fatal.doubleObjectiveRegister(viewer, packet.getObjectiveName());

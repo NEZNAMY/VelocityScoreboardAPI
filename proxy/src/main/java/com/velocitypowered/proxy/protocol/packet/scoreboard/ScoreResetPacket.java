@@ -22,16 +22,22 @@ package com.velocitypowered.proxy.protocol.packet.scoreboard;
 
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.proxy.data.PacketHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
-import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Score reset packet for 1.20.3+ players.
  */
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScoreResetPacket implements MinecraftPacket {
 
     /** Score holder who the score belongs to */
@@ -39,25 +45,6 @@ public class ScoreResetPacket implements MinecraftPacket {
 
     /** Objective from which the holder should be removed (null for all objectives ?) */
     private String objectiveName;
-
-    /**
-     * Constructs new instance for packet decoding.
-     */
-    public ScoreResetPacket() {
-    }
-
-    /**
-     * Constructs new instance for packet sending.
-     *
-     * @param   scoreHolder
-     *          Score holder
-     * @param   objectiveName
-     *          Objective name
-     */
-    public ScoreResetPacket(@NotNull String scoreHolder, @Nullable String objectiveName) {
-        this.scoreHolder = scoreHolder;
-        this.objectiveName = objectiveName;
-    }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
@@ -75,30 +62,5 @@ public class ScoreResetPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns score holder who should be removed from objective.
-     *
-     * @return  score holder who should be removed from objective
-     */
-    @NotNull
-    public String getScoreHolder() {
-        return scoreHolder;
-    }
-
-    /**
-     * Returns objective from which the holder should be removed, null for all objectives.
-     *
-     * @return  objective from which the holder should be removed
-     */
-    @Nullable
-    public String getObjectiveName() {
-        return objectiveName;
-    }
-
-    @Override
-    public String toString() {
-        return "ScoreResetPacket{holder=" + scoreHolder + ", objective=" + objectiveName + "}";
     }
 }

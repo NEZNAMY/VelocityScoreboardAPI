@@ -23,6 +23,7 @@ package com.velocitypowered.api.event.scoreboard;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,6 +33,7 @@ public abstract class TeamEntryEvent extends TeamEvent {
 
     /** Affected entry */
     @NotNull
+    @Getter
     private final String entry;
 
     /**
@@ -49,16 +51,6 @@ public abstract class TeamEntryEvent extends TeamEvent {
     public TeamEntryEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
         super(player, scoreboard, team);
         this.entry = entry;
-    }
-
-    /**
-     * Returns affected entry.
-     *
-     * @return  Affected entry
-     */
-    @NotNull
-    public String getEntry() {
-        return entry;
     }
 
     /**

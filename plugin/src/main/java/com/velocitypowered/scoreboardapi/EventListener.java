@@ -29,11 +29,13 @@ import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for listening to events to properly resend scoreboard on server switch.
  */
+@RequiredArgsConstructor
 public class EventListener {
 
     /** Including, but not limited to Labymod */
@@ -41,16 +43,6 @@ public class EventListener {
 
     /** Plugin instance */
     private final VelocityScoreboardAPI plugin;
-
-    /**
-     * Constructs new instance.
-     *
-     * @param   plugin
-     *          Plugin instance
-     */
-    public EventListener(@NotNull VelocityScoreboardAPI plugin) {
-        this.plugin = plugin;
-    }
 
     /**
      * Injects custom channel duplex handler to listen to JoinGame packet for players below 1.20.5.

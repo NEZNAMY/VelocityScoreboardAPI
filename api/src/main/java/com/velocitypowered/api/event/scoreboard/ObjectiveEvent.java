@@ -25,6 +25,7 @@ import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.ProxyObjective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,10 +33,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
-    /** Objective
+    /**
+     * Objective.
      * If proxy is true, the objective is a {@link ProxyObjective}, otherwise it is a backend {@link Objective}
-     * */
+     */
     @NotNull
+    @Getter
     private final Objective objective;
 
     /**
@@ -54,22 +57,13 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
     }
 
     /**
-     * Returns affected objective.
-     *
-     * @return  Affected objective
-     */
-    @NotNull
-    public Objective getObjective() {
-        return objective;
-    }
-
-    /**
      * This event is called when an objective is assigned a display slot.
      */
     public static class Display extends ObjectiveEvent {
 
         /** New display slot */
         @NotNull
+        @Getter
         private final DisplaySlot newSlot;
 
         /**
@@ -87,16 +81,6 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
         public Display(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective, @NotNull DisplaySlot newSlot) {
             super(player, scoreboard, objective);
             this.newSlot = newSlot;
-        }
-
-        /**
-         * Returns new display slot for the objective.
-         *
-         * @return  New display slot for the objective
-         */
-        @NotNull
-        public DisplaySlot getNewSlot() {
-            return newSlot;
         }
     }
 

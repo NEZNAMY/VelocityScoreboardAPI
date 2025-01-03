@@ -29,11 +29,17 @@ import com.velocitypowered.proxy.data.TextHolderImpl;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class storing properties of a scoreboard team.
  */
+@AllArgsConstructor
+@Getter
+@ToString
 public class TeamProperties {
 
     /** Cached array to prevent new array instantiation on each .values() call */
@@ -68,39 +74,6 @@ public class TeamProperties {
 
     /** Seeing player in the same team as transparent when invisible */
     private boolean canSeeFriendlyInvisibles;
-
-    /**
-     * Constructs new instance with given parameters.
-     *
-     * @param   displayName
-     *          Team display name
-     * @param   prefix
-     *          Team prefix
-     * @param   suffix
-     *          Team suffix
-     * @param   nameVisibility
-     *          Name tag visibility rule (1.8+)
-     * @param   collisionRule
-     *          Collision rule (1.9+)
-     * @param   color
-     *          Team color (1.13+)
-     * @param   allowFriendlyFire
-     *          Friendly file
-     * @param   canSeeFriendlyInvisibles
-     *          Seeing invisible players as transparent
-     */
-    public TeamProperties(@NotNull TextHolder displayName, @NotNull TextHolder prefix, @NotNull TextHolder suffix,
-                          @NotNull NameVisibility nameVisibility, @NotNull CollisionRule collisionRule, @NotNull TeamColor color,
-                          boolean allowFriendlyFire, boolean canSeeFriendlyInvisibles) {
-        this.displayName = displayName;
-        this.prefix = prefix;
-        this.suffix = suffix;
-        this.nameVisibility = nameVisibility;
-        this.collisionRule = collisionRule;
-        this.color = color;
-        this.allowFriendlyFire = allowFriendlyFire;
-        this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
-    }
 
     /**
      * Constructs new instance using given ByteBuf to read data from.
@@ -171,84 +144,6 @@ public class TeamProperties {
             buf.writeByte(0); // 1.8 - 1.12 does not actually use this field, non-zero values crash the client
             // buf.writeByte(color.ordinal());
         }
-    }
-
-    /**
-     * Returns display name.
-     *
-     * @return  display name
-     */
-    @NotNull
-    public TextHolder getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Returns team prefix.
-     *
-     * @return  team prefix
-     */
-    @NotNull
-    public TextHolder getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * Returns team suffix.
-     *
-     * @return  team suffix
-     */
-    @NotNull
-    public TextHolder getSuffix() {
-        return suffix;
-    }
-
-    /**
-     * Returns nametag visibility rule.
-     *
-     * @return  nametag visibility rule
-     */
-    @NotNull
-    public NameVisibility getNameTagVisibility() {
-        return nameVisibility;
-    }
-
-    /**
-     * Returns collision rule.
-     *
-     * @return  collision rule
-     */
-    @NotNull
-    public CollisionRule getCollisionRule() {
-        return collisionRule;
-    }
-
-    /**
-     * Returns team color.
-     *
-     * @return  team color
-     */
-    @NotNull
-    public TeamColor getColor() {
-        return color;
-    }
-
-    /**
-     * Returns friendly fire flag.
-     *
-     * @return  friendly fire flag
-     */
-    public boolean isAllowFriendlyFire() {
-        return allowFriendlyFire;
-    }
-
-    /**
-     * Returns can see friendly invisibles flag.
-     *
-     * @return  can see friendly invisibles flag
-     */
-    public boolean isCanSeeFriendlyInvisibles() {
-        return canSeeFriendlyInvisibles;
     }
 
     /**
@@ -353,19 +248,5 @@ public class TeamProperties {
         if (this.canSeeFriendlyInvisibles == canSeeFriendlyInvisibles) return false;
         this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return "TeamProperties{" +
-                "displayName=" + displayName +
-                ", prefix=" + prefix +
-                ", suffix=" + suffix +
-                ", nameVisibility=" + nameVisibility +
-                ", collisionRule=" + collisionRule +
-                ", color=" + color +
-                ", allowFriendlyFire=" + allowFriendlyFire +
-                ", canSeeFriendlyInvisibles=" + canSeeFriendlyInvisibles +
-                '}';
     }
 }

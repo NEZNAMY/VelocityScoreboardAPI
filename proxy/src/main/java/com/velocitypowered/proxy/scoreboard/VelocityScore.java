@@ -27,10 +27,12 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreSetPacket;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
 public class VelocityScore implements ProxyScore {
 
     @NotNull private final VelocityObjective objective;
@@ -47,29 +49,6 @@ public class VelocityScore implements ProxyScore {
         this.score = score;
         this.displayName = displayName;
         this.numberFormat = numberFormat;
-    }
-
-    @NotNull
-    @Override
-    public String getHolder() {
-        return holder;
-    }
-
-    @Override
-    public int getScore() {
-        return score;
-    }
-
-    @Nullable
-    @Override
-    public Component getDisplayName() {
-        return displayName;
-    }
-
-    @Nullable
-    @Override
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
     }
 
     @Override

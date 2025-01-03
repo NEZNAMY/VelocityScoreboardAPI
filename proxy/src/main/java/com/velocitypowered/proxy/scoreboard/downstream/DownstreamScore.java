@@ -23,6 +23,8 @@ package com.velocitypowered.proxy.scoreboard.downstream;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.api.scoreboard.Score;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +35,8 @@ import java.util.List;
 /**
  * A score that comes from a backend scoreboard.
  */
+@RequiredArgsConstructor
+@Getter
 public class DownstreamScore implements Score {
 
     /** Score holder */
@@ -44,21 +48,11 @@ public class DownstreamScore implements Score {
 
     /** Holder's display name */
     @Nullable
-    private ComponentHolder displayName;
+    private ComponentHolder displayNameHolder;
 
     /** Number format for score */
     @Nullable
     private NumberFormat numberFormat;
-
-    /**
-     * Constructs new instance with given holder.
-     *
-     * @param   holder
-     *          Score holder
-     */
-    public DownstreamScore(@NotNull String holder) {
-        this.holder = holder;
-    }
 
     /**
      * Updates values of this score.
@@ -72,36 +66,14 @@ public class DownstreamScore implements Score {
      */
     public void update(int score, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         this.score = score;
-        this.displayName = displayName;
+        this.displayNameHolder = displayName;
         this.numberFormat = numberFormat;
-    }
-
-    @Override
-    @NotNull
-    public String getHolder() {
-        return holder;
-    }
-
-    @Override
-    public int getScore() {
-        return score;
     }
 
     @Override
     @Nullable
     public Component getDisplayName() {
-        return displayName == null ? null : displayName.getComponent();
-    }
-
-    @Nullable
-    public ComponentHolder getDisplayNameHolder() {
-        return displayName;
-    }
-
-    @Override
-    @Nullable
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
+        return displayNameHolder == null ? null : displayNameHolder.getComponent();
     }
 
     /**
@@ -114,7 +86,7 @@ public class DownstreamScore implements Score {
         List<String> content = new ArrayList<>();
         content.add("      " + holder + ":");
         content.add("        Score: " + score);
-        content.add("        DisplayName: " + displayName);
+        content.add("        DisplayName: " + displayNameHolder);
         content.add("        NumberFormat: " + numberFormat);
         return content;
     }

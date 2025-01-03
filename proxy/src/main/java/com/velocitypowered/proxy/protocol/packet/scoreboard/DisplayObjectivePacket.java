@@ -23,15 +23,22 @@ package com.velocitypowered.proxy.protocol.packet.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.proxy.data.PacketHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
-import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Display objective packet for assigning slot to objectives.
  */
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class DisplayObjectivePacket implements MinecraftPacket {
 
     /** Display slot */
@@ -39,25 +46,6 @@ public class DisplayObjectivePacket implements MinecraftPacket {
 
     /** Name of this objective (up to 16 characters) */
     private String objectiveName;
-
-    /**
-     * Constructs new instance for packet decoding.
-     */
-    public DisplayObjectivePacket() {
-    }
-
-    /**
-     * Constructs new instance for packet sending.
-     *
-     * @param   position
-     *          Display slot
-     * @param   objectiveName
-     *          Objective name
-     */
-    public DisplayObjectivePacket(@NotNull DisplaySlot position, @NotNull String objectiveName) {
-        this.position = position;
-        this.objectiveName = objectiveName;
-    }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
@@ -87,30 +75,5 @@ public class DisplayObjectivePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns position the objective was assigned to.
-     *
-     * @return  position the objective was assigned
-     */
-    @NotNull
-    public DisplaySlot getPosition() {
-        return position;
-    }
-
-    /**
-     * Returns name of objective to assign position to.
-     *
-     * @return  name of objective to assign position to
-     */
-    @NotNull
-    public String getObjectiveName() {
-        return objectiveName;
-    }
-
-    @Override
-    public String toString() {
-        return "DisplayObjectivePacket{position=" + position + ", objective=" + objectiveName + "}";
     }
 }

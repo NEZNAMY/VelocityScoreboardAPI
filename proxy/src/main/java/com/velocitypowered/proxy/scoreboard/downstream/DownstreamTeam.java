@@ -29,6 +29,8 @@ import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -38,6 +40,8 @@ import java.util.List;
 /**
  * A scoreboard team that comes from the backend.
  */
+@Setter
+@Getter
 public class DownstreamTeam implements Team {
 
     /**
@@ -69,15 +73,6 @@ public class DownstreamTeam implements Team {
         this.name = name;
         this.properties = properties;
         this.entries = entries;
-    }
-
-    /**
-     * Updates team properties.
-     *
-     * @param properties New team properties
-     */
-    public void setProperties(@NotNull TeamProperties properties) {
-        this.properties = properties;
     }
 
     /**
@@ -121,12 +116,6 @@ public class DownstreamTeam implements Team {
 
     @Override
     @NotNull
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    @NotNull
     public TextHolder getDisplayName() {
         return properties.getDisplayName();
     }
@@ -146,7 +135,7 @@ public class DownstreamTeam implements Team {
     @Override
     @NotNull
     public NameVisibility getNameVisibility() {
-        return properties.getNameTagVisibility();
+        return properties.getNameVisibility();
     }
 
     @Override
@@ -169,16 +158,6 @@ public class DownstreamTeam implements Team {
     @Override
     public boolean isCanSeeFriendlyInvisibles() {
         return properties.isCanSeeFriendlyInvisibles();
-    }
-
-    /**
-     * Retrieves the properties of the team.
-     *
-     * @return The properties of the team
-     */
-    @NotNull
-    public TeamProperties getProperties() {
-        return properties;
     }
 
     @Override

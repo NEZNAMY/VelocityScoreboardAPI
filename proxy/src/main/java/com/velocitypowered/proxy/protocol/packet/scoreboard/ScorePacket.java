@@ -26,12 +26,19 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Packet for setting scores in objectives for players 1.20.2 and below.
  */
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScorePacket implements MinecraftPacket {
 
     /** Packet action */
@@ -45,32 +52,6 @@ public class ScorePacket implements MinecraftPacket {
 
     /** Score value */
     private int value;
-
-    /**
-     * Constructs new instance for packet decoding.
-     */
-    public ScorePacket() {
-    }
-
-    /**
-     * Constructs new instance for packet sending.
-     *
-     * @param   action
-     *          Packet action
-     * @param   scoreHolder
-     *          Score holder
-     * @param   objectiveName
-     *          Objective name
-     * @param   value
-     *          Score value
-     */
-    public ScorePacket(@NotNull ScoreAction action, @NotNull String scoreHolder,
-                       @Nullable String objectiveName, int value) {
-        this.action = action;
-        this.scoreHolder = scoreHolder;
-        this.objectiveName = objectiveName;
-        this.value = value;
-    }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
@@ -103,51 +84,6 @@ public class ScorePacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns packet action.
-     *
-     * @return  packet action
-     */
-    @NotNull
-    public ScoreAction getAction() {
-        return action;
-    }
-
-    /**
-     * Returns score holder.
-     *
-     * @return  score holder
-     */
-    @NotNull
-    public String getScoreHolder() {
-        return scoreHolder;
-    }
-
-    /**
-     * Returns objective where this score should be modified.
-     *
-     * @return  objective where this score should be modified
-     */
-    @Nullable
-    public String getObjectiveName() {
-        return objectiveName;
-    }
-
-    /**
-     * Returns score value.
-     *
-     * @return  score value
-     */
-    public int getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "ScorePacket{action=" + action + ", holder=" + scoreHolder + ", objective=" + objectiveName +
-                ", value=" + value + "}";
     }
 
     /**

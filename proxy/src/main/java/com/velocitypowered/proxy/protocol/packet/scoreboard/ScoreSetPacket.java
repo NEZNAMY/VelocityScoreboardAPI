@@ -23,18 +23,25 @@ package com.velocitypowered.proxy.protocol.packet.scoreboard;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler;
+import com.velocitypowered.proxy.data.NumberFormatEncoder;
+import com.velocitypowered.proxy.data.PacketHandler;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
-import com.velocitypowered.proxy.data.NumberFormatEncoder;
-import com.velocitypowered.proxy.data.PacketHandler;
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Score packet set for 1.20.3+ players.
  */
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScoreSetPacket implements MinecraftPacket {
 
     /** Score holder who the score belongs to */
@@ -53,35 +60,6 @@ public class ScoreSetPacket implements MinecraftPacket {
     /** Number format of the score, null to use default number format from objective (1.20.3+) */
     @Nullable
     private NumberFormat numberFormat;
-
-    /**
-     * Constructs new instance for packet decoding.
-     */
-    public ScoreSetPacket() {
-    }
-
-    /**
-     * Constructs new instance for packet sending.
-     *
-     * @param   scoreHolder
-     *          Score holder
-     * @param   objectiveName
-     *          Objective name
-     * @param   value
-     *          Score value
-     * @param   displayName
-     *          Holder's display name (1.20.3+)
-     * @param   numberFormat
-     *          Number format of the score (1.20.3+)
-     */
-    public ScoreSetPacket(@NotNull String scoreHolder, @NotNull String objectiveName,
-                          int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
-        this.scoreHolder = scoreHolder;
-        this.objectiveName = objectiveName;
-        this.value = value;
-        this.displayName = displayName;
-        this.numberFormat = numberFormat;
-    }
 
     @Override
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
@@ -106,60 +84,5 @@ public class ScoreSetPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Return score holder who should be set in the objective.
-     *
-     * @return  score holder who should be set in the objective
-     */
-    @NotNull
-    public String getScoreHolder() {
-        return scoreHolder;
-    }
-
-    /**
-     * Returns name of objective where holder should be set.
-     *
-     * @return  name of objective where holder should be set
-     */
-    @NotNull
-    public String getObjectiveName() {
-        return objectiveName;
-    }
-
-    /**
-     * Returns value assigned to score holder.
-     *
-     * @return  value assigned to score holder
-     */
-    public int getValue() {
-        return value;
-    }
-
-    /**
-     * Returns custom name for the score holder.
-     *
-     * @return  custom name for the score holder
-     */
-    @Nullable
-    public ComponentHolder getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Returns number format for the score.
-     *
-     * @return  number format for the score
-     */
-    @Nullable
-    public NumberFormat getNumberFormat() {
-        return numberFormat;
-    }
-
-    @Override
-    public String toString() {
-        return "ScoreSetPacket{holder=" + scoreHolder + ", objective=" + objectiveName + ", value=" + value +
-                ", displayName=" + displayName + ", numberFormat=" + numberFormat + "}";
     }
 }

@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Team collision rule enum.
  */
+@RequiredArgsConstructor
 public enum CollisionRule {
 
     /** Always pushes all players */
@@ -49,16 +51,6 @@ public enum CollisionRule {
     /** Code name of this constant */
     @NotNull
     private final String string;
-
-    /**
-     * Constructs new instance with given code name.
-     *
-     * @param   string
-     *          Code name used in protocol
-     */
-    CollisionRule(@NotNull String string) {
-        this.string = string;
-    }
 
     @Override
     public String toString() {

@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Nametag visibility enum.
  */
+@RequiredArgsConstructor
 public enum NameVisibility {
 
     /** Name can be seen by everyone */
@@ -49,16 +51,6 @@ public enum NameVisibility {
     /** Code name of this constant */
     @NotNull
     private final String string;
-
-    /**
-     * Constructs new instance with given code name.
-     *
-     * @param   string
-     *          Code name used in protocol
-     */
-    NameVisibility(@NotNull String string) {
-        this.string = string;
-    }
 
     @Override
     public String toString() {

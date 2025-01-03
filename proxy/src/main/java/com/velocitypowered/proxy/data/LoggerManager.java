@@ -23,6 +23,7 @@ package com.velocitypowered.proxy.data;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
@@ -45,15 +46,8 @@ public class LoggerManager {
     /**
      * Whether to log invalid packets.
      */
+    @Setter
     private static boolean logInvalidPackets;
-
-    /**
-     * Sets whether to log invalid packets.
-     * @param logInvalidPackets whether to log invalid packets
-     */
-    public static void setLogInvalidPackets(boolean logInvalidPackets) {
-        LoggerManager.logInvalidPackets = logInvalidPackets;
-    }
 
     /**
      * Logs an error message indicating an invalid downstream packet.

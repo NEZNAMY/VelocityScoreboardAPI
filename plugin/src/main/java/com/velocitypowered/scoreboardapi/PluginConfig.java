@@ -21,6 +21,9 @@
 package com.velocitypowered.scoreboardapi;
 
 import de.exlll.configlib.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +31,8 @@ import java.nio.file.Path;
 
 @SuppressWarnings("FieldCanBeLocal")
 @Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class PluginConfig {
 
     @NotNull
@@ -52,9 +57,6 @@ public class PluginConfig {
     @Comment("Whether to log invalid packets received from downstream servers")
     private boolean printInvalidDownstreamPacketWarnings = true;
 
-    private PluginConfig() {
-    }
-
     @NotNull
     public static PluginConfig load(@NotNull Path directory) {
         return YamlConfigurations.update(
@@ -63,13 +65,4 @@ public class PluginConfig {
                 YAML_CONFIG.header(PluginConfig.FILE_HEADER).build()
         );
     }
-
-    public boolean isCallScoreboardEvents() {
-        return callScoreboardEvents;
-    }
-
-    public boolean isPrintInvalidDownstreamPacketWarnings() {
-        return printInvalidDownstreamPacketWarnings;
-    }
-
 }

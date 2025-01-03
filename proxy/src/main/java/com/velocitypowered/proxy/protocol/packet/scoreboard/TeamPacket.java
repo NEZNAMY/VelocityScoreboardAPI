@@ -28,12 +28,19 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import io.netty.buffer.ByteBuf;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Packet for setting scoreboard teams.
  */
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TeamPacket implements MinecraftPacket {
 
     /** Packet action */
@@ -47,32 +54,6 @@ public class TeamPacket implements MinecraftPacket {
 
     /** Players in this team */
     private StringCollection entries;
-
-    /**
-     * Constructs new instance for packet decoding.
-     */
-    public TeamPacket() {
-    }
-
-    /**
-     * Constructs new instance with given parameters.
-     *
-     * @param   action
-     *          Team action
-     * @param   name
-     *          Team name
-     * @param   properties
-     *          Team properties
-     * @param   entries
-     *          Entries in the team
-     */
-    public TeamPacket(@NotNull TeamAction action, @NotNull String name,
-                      @Nullable TeamProperties properties, @Nullable StringCollection entries) {
-        this.action = action;
-        this.name = name;
-        this.properties = properties;
-        this.entries = entries;
-    }
 
     /**
      * Creates a packet for unregistering team.
@@ -134,51 +115,6 @@ public class TeamPacket implements MinecraftPacket {
     @Override
     public boolean handle(MinecraftSessionHandler minecraftSessionHandler) {
         return PacketHandler.handle(minecraftSessionHandler, this);
-    }
-
-    /**
-     * Returns team action.
-     *
-     * @return  team action
-     */
-    @NotNull
-    public TeamAction getAction() {
-        return action;
-    }
-
-    /**
-     * Returns team name.
-     *
-     * @return  team name
-     */
-    @NotNull
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Returns team properties (only for register and update actions).
-     *
-     * @return  team properties
-     */
-    @Nullable
-    public TeamProperties getProperties() {
-        return properties;
-    }
-
-    /**
-     * Returns entries in the team (only for register / add player / remove player).
-     *
-     * @return  entries in the team
-     */
-    @Nullable
-    public StringCollection getEntries() {
-        return entries;
-    }
-
-    @Override
-    public String toString() {
-        return "TeamPacket{action=" + action + ", name=" + name + ", properties=" + properties + ", entries=" + entries + "}";
     }
 
     /**

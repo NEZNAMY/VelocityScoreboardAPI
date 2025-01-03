@@ -26,26 +26,18 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Plugin's main command
  */
+@RequiredArgsConstructor
 public class VSACommand implements SimpleCommand {
 
     @NotNull
     private final ProxyServer server;
-
-    /**
-     * Constructs new instance with given parameter.
-     *
-     * @param   server
-     *          Proxy server instance
-     */
-    public VSACommand(@NotNull ProxyServer server) {
-        this.server = server;
-    }
 
     @Override
     public void execute(@NotNull Invocation invocation) {

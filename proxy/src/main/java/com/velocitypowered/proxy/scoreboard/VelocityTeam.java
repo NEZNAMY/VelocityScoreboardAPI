@@ -29,6 +29,7 @@ import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +38,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
 
+@Getter
 public class VelocityTeam implements ProxyTeam {
 
     @NotNull private final VelocityScoreboard scoreboard;
@@ -50,12 +52,6 @@ public class VelocityTeam implements ProxyTeam {
         this.name = name;
         this.properties = properties;
         this.entries = entries;
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -79,7 +75,7 @@ public class VelocityTeam implements ProxyTeam {
     @Override
     @NotNull
     public NameVisibility getNameVisibility() {
-        return properties.getNameTagVisibility();
+        return properties.getNameVisibility();
     }
 
     @Override
@@ -223,16 +219,6 @@ public class VelocityTeam implements ProxyTeam {
     @ApiStatus.Internal
     public void removeEntrySilent(@NotNull String entry) {
         entries.remove(entry);
-    }
-
-    /**
-     * Returns properties of this team.
-     *
-     * @return  properties of this team
-     */
-    @NotNull
-    public TeamProperties getProperties() {
-        return properties;
     }
 
     public void sendRegister() {

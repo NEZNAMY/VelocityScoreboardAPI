@@ -35,6 +35,8 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamObjective;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScore;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamTeam;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,14 +46,17 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequiredArgsConstructor
 public class VelocityScoreboard implements ProxyScoreboard {
 
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21_4;
 
     @NotNull
+    @Getter
     private final ScoreboardEventSource eventSource;
 
     @NotNull
+    @Getter
     private final ConnectedPlayer viewer;
 
     private final Map<String, VelocityObjective> objectives = new ConcurrentHashMap<>();
@@ -62,18 +67,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     /** Flag tracking if this scoreboard is frozen. While frozen, no packets will get through. */
     private boolean frozen;
-
-    public VelocityScoreboard(@NotNull ScoreboardEventSource eventSource, @NotNull ConnectedPlayer viewer,
-                              @NotNull DownstreamScoreboard downstream) {
-        this.eventSource = eventSource;
-        this.viewer = viewer;
-        this.downstream = downstream;
-    }
-
-    @NotNull
-    public ConnectedPlayer getViewer() {
-        return viewer;
-    }
 
     @Override
     @NotNull
@@ -248,15 +241,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return displaySlots.get(displaySlot);
     }
 
-    /**
-     * Returns server.
-     * @return  Server
-     */
-    @NotNull
-    public ScoreboardEventSource getEventSource() {
-        return eventSource;
-    }
-
     public synchronized void sendPacket(@NotNull DisplayObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         sendPacketSafe(packet);
@@ -312,10 +296,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
                     }
                 }
             }
-            case UPDATE -> {
-                // Nothing should be needed here
-                sendPacketSafe(packet);
-            }
+            case UPDATE -> sendPacketSafe(packet); // Nothing should be needed here
         }
     }
 
