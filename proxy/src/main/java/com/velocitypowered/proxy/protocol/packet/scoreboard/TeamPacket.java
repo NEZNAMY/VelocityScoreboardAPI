@@ -28,10 +28,7 @@ import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
 import io.netty.buffer.ByteBuf;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -62,7 +59,7 @@ public class TeamPacket implements MinecraftPacket {
      *          Team name
      * @return  Unregister team packet
      */
-    public static TeamPacket unregister(@NotNull String name) {
+    public static TeamPacket unregister(@NonNull String name) {
         TeamPacket packet = new TeamPacket();
         packet.name = name;
         packet.action = TeamAction.UNREGISTER;
@@ -80,7 +77,7 @@ public class TeamPacket implements MinecraftPacket {
      *          {@code true} for adding, {@code false} for removing
      * @return  Packet with given parameters
      */
-    public static TeamPacket addOrRemovePlayer(@NotNull String name, @NotNull String entry, boolean add) {
+    public static TeamPacket addOrRemovePlayer(@NonNull String name, @NonNull String entry, boolean add) {
         TeamPacket packet = new TeamPacket();
         packet.name = name;
         packet.action = (add ? TeamAction.ADD_PLAYER : TeamAction.REMOVE_PLAYER);

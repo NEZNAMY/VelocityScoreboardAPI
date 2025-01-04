@@ -21,6 +21,7 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +80,7 @@ public interface Objective {
      * @return  Score of given holder
      */
     @Nullable
-    Score getScore(@NotNull String holder);
+    Score getScore(@NonNull String holder);
 
     /**
      * Retrieves all scores associated with this objective.

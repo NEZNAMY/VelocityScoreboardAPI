@@ -21,6 +21,7 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ public interface ProxyObjective extends Objective {
      *          New display slot
      * @see     #getDisplaySlot()
      */
-    void setDisplaySlot(@NotNull DisplaySlot displaySlot);
+    void setDisplaySlot(@NonNull DisplaySlot displaySlot);
 
     /**
      * Sets title of this objective.
@@ -48,7 +49,7 @@ public interface ProxyObjective extends Objective {
      *          New title to use
      * @see     #getTitle()
      */
-    void setTitle(@NotNull TextHolder title);
+    void setTitle(@NonNull TextHolder title);
 
     /**
      * Sets health display type.
@@ -57,7 +58,7 @@ public interface ProxyObjective extends Objective {
      *          New health display
      * @see     #getHealthDisplay() 
      */
-    void setHealthDisplay(@NotNull HealthDisplay healthDisplay);
+    void setHealthDisplay(@NonNull HealthDisplay healthDisplay);
 
     /**
      * Sets default number format for all scores in this objective.
@@ -77,7 +78,7 @@ public interface ProxyObjective extends Objective {
      * @see     #setScore(String, Consumer)
      */
     @Nullable
-    ProxyScore getScore(@NotNull String holder);
+    ProxyScore getScore(@NonNull String holder);
 
     /**
      * Retrieves all scores associated with this objective.
@@ -97,7 +98,7 @@ public interface ProxyObjective extends Objective {
      * @see #removeScore(String) 
      */
     @NotNull
-    ProxyScore setScore(@NotNull String holder, @NotNull Consumer<ProxyScore.Builder> consumer);
+    ProxyScore setScore(@NonNull String holder, @NonNull Consumer<ProxyScore.Builder> consumer);
 
     /**
      * Removes score of given holder.
@@ -107,7 +108,7 @@ public interface ProxyObjective extends Objective {
      * @see     #getScore(String)
      * @see     #setScore(String, Consumer) 
      */
-    void removeScore(@NotNull String holder);
+    void removeScore(@NonNull String holder);
 
     /**
      * Interface for building objectives.
@@ -122,7 +123,7 @@ public interface ProxyObjective extends Objective {
          * @return  this, for chaining
          */
         @NotNull
-        Builder title(@NotNull TextHolder title);
+        Builder title(@NonNull TextHolder title);
 
         /**
          * Sets health display.
@@ -132,7 +133,7 @@ public interface ProxyObjective extends Objective {
          * @return  this, for chaining
          */
         @NotNull
-        Builder healthDisplay(@NotNull HealthDisplay healthDisplay);
+        Builder healthDisplay(@NonNull HealthDisplay healthDisplay);
 
         /**
          * Sets display slot.
@@ -142,7 +143,7 @@ public interface ProxyObjective extends Objective {
          * @return  this, for chaining
          */
         @NotNull
-        Builder displaySlot(@NotNull DisplaySlot displaySlot);
+        Builder displaySlot(@NonNull DisplaySlot displaySlot);
 
         /**
          * Sets default number format for all scores.

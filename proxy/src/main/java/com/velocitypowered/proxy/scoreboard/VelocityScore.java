@@ -27,29 +27,24 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreSetPacket;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
+@AllArgsConstructor
 public class VelocityScore implements ProxyScore {
 
-    @NotNull private final VelocityObjective objective;
-    @NotNull private final String holder;
+    @NonNull private final VelocityObjective objective;
+    @NonNull private final String holder;
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;
-    private boolean registered = true;
-
-    private VelocityScore(@NotNull VelocityObjective objective, @NotNull String holder, int score,
-                         @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
-        this.objective = objective;
-        this.holder = holder;
-        this.score = score;
-        this.displayName = displayName;
-        this.numberFormat = numberFormat;
-    }
+    private boolean registered;
 
     @Override
     public void setScore(int score) {
@@ -75,7 +70,7 @@ public class VelocityScore implements ProxyScore {
         sendUpdate();
     }
 
-    public void updateProperties(@NotNull VelocityScore.Builder builder) {
+    public void updateProperties(@NonNull VelocityScore.Builder builder) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         this.score = builder.score;
         this.displayName = builder.displayName;
@@ -106,16 +101,13 @@ public class VelocityScore implements ProxyScore {
         sendRemove();
     }
 
+    @RequiredArgsConstructor
     public static class Builder implements ProxyScore.Builder {
 
-        @NotNull private final String holder;
+        @NonNull private final String holder;
         private int score;
         @Nullable private Component displayName;
-        @Nullable private NumberFormat numberFormat = null;
-
-        public Builder(@NotNull String holder) {
-            this.holder = holder;
-        }
+        @Nullable private NumberFormat numberFormat;
 
         @Override
         @NotNull
@@ -146,8 +138,8 @@ public class VelocityScore implements ProxyScore {
          * @return  New built score
          */
         @NotNull
-        public VelocityScore build(@NotNull VelocityObjective objective) {
-            return new VelocityScore(objective, holder, score, displayName, numberFormat);
+        public VelocityScore build(@NonNull VelocityObjective objective) {
+            return new VelocityScore(objective, holder, score, displayName, numberFormat, true);
         }
     }
 }

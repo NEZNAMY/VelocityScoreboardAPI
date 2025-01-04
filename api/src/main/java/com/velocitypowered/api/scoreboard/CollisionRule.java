@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +67,7 @@ public enum CollisionRule {
      * @return  Enum constant from given code name
      */
     @NotNull
-    public static CollisionRule getByName(@NotNull String name) {
+    public static CollisionRule getByName(@NonNull String name) {
         return BY_NAME.getOrDefault(name, ALWAYS);
     }
 }

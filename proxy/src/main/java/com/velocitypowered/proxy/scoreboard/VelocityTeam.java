@@ -30,6 +30,8 @@ import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,13 +43,13 @@ import java.util.function.Consumer;
 @Getter
 public class VelocityTeam implements ProxyTeam {
 
-    @NotNull private final VelocityScoreboard scoreboard;
-    @NotNull private final String name;
-    @NotNull private final TeamProperties properties;
-    @NotNull private final StringCollection entries;
+    @NonNull private final VelocityScoreboard scoreboard;
+    @NonNull private final String name;
+    @NonNull private final TeamProperties properties;
+    @NonNull private final StringCollection entries;
     private boolean registered = true;
 
-    private VelocityTeam(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TeamProperties properties, @NotNull StringCollection entries) {
+    private VelocityTeam(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull TeamProperties properties, @NonNull StringCollection entries) {
         this.scoreboard = scoreboard;
         this.name = name;
         this.properties = properties;
@@ -112,7 +114,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setDisplayName(@NotNull TextHolder displayName) {
+    public void setDisplayName(@NonNull TextHolder displayName) {
         checkState();
         if (properties.setDisplayName(displayName)) {
             sendUpdate();
@@ -120,7 +122,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setPrefix(@NotNull TextHolder prefix) {
+    public void setPrefix(@NonNull TextHolder prefix) {
         checkState();
         if (properties.setPrefix(prefix)) {
             sendUpdate();
@@ -128,7 +130,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setSuffix(@NotNull TextHolder suffix) {
+    public void setSuffix(@NonNull TextHolder suffix) {
         checkState();
         if (properties.setSuffix(suffix)) {
             sendUpdate();
@@ -136,7 +138,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setNameVisibility(@NotNull NameVisibility visibility) {
+    public void setNameVisibility(@NonNull NameVisibility visibility) {
         checkState();
         if (properties.setNameVisibility(visibility)) {
             sendUpdate();
@@ -144,7 +146,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setCollisionRule(@NotNull CollisionRule collisionRule) {
+    public void setCollisionRule(@NonNull CollisionRule collisionRule) {
         checkState();
         if (properties.setCollisionRule(collisionRule)) {
             sendUpdate();
@@ -152,7 +154,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void setColor(@NotNull TeamColor color) {
+    public void setColor(@NonNull TeamColor color) {
         checkState();
         if (properties.setColor(color)) {
             sendUpdate();
@@ -176,7 +178,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void updateProperties(@NotNull Consumer<ProxyTeam.PropertyBuilder> builderConsumer) {
+    public void updateProperties(@NonNull Consumer<ProxyTeam.PropertyBuilder> builderConsumer) {
         checkState();
         PropertyBuilder builder = new PropertyBuilder();
         builderConsumer.accept(builder);
@@ -192,7 +194,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void addEntry(@NotNull String entry) {
+    public void addEntry(@NonNull String entry) {
         checkState();
         if (entries.contains(entry)) return;
         VelocityTeam oldTeam = scoreboard.addEntryToTeam(entry, this);
@@ -205,7 +207,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @Override
-    public void removeEntry(@NotNull String entry) throws IllegalArgumentException {
+    public void removeEntry(@NonNull String entry) throws IllegalArgumentException {
         checkState();
         if (entries.remove(entry)) {
             scoreboard.removeEntryFromTeam(entry, this);
@@ -217,7 +219,7 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     @ApiStatus.Internal
-    public void removeEntrySilent(@NotNull String entry) {
+    public void removeEntrySilent(@NonNull String entry) {
         entries.remove(entry);
     }
 
@@ -260,42 +262,42 @@ public class VelocityTeam implements ProxyTeam {
 
         @NotNull
         @Override
-        public PropertyBuilder displayName(@NotNull TextHolder displayName) {
+        public PropertyBuilder displayName(@NonNull TextHolder displayName) {
             this.displayName = displayName;
             return this;
         }
 
         @NotNull
         @Override
-        public PropertyBuilder prefix(@NotNull TextHolder prefix) {
+        public PropertyBuilder prefix(@NonNull TextHolder prefix) {
             this.prefix = prefix;
             return this;
         }
 
         @NotNull
         @Override
-        public PropertyBuilder suffix(@NotNull TextHolder suffix) {
+        public PropertyBuilder suffix(@NonNull TextHolder suffix) {
             this.suffix = suffix;
             return this;
         }
 
         @NotNull
         @Override
-        public PropertyBuilder nameVisibility(@NotNull NameVisibility nameVisibility) {
+        public PropertyBuilder nameVisibility(@NonNull NameVisibility nameVisibility) {
             this.nameVisibility = nameVisibility;
             return this;
         }
 
         @NotNull
         @Override
-        public PropertyBuilder collisionRule(@NotNull CollisionRule collisionRule) {
+        public PropertyBuilder collisionRule(@NonNull CollisionRule collisionRule) {
             this.collisionRule = collisionRule;
             return this;
         }
 
         @NotNull
         @Override
-        public PropertyBuilder color(@NotNull TeamColor color) {
+        public PropertyBuilder color(@NonNull TeamColor color) {
             this.color = color;
             return this;
         }
@@ -315,53 +317,50 @@ public class VelocityTeam implements ProxyTeam {
         }
     }
 
+    @RequiredArgsConstructor
     public static class Builder extends PropertyBuilder implements ProxyTeam.Builder {
 
-        @NotNull private final String name;
+        @NonNull private final String name;
         @Nullable private StringCollection entries;
-
-        public Builder(@NotNull String name) {
-            this.name = name;
-        }
 
         @NotNull
         @Override
-        public Builder displayName(@NotNull TextHolder displayName) {
+        public Builder displayName(@NonNull TextHolder displayName) {
             this.displayName = displayName;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder prefix(@NotNull TextHolder prefix) {
+        public Builder prefix(@NonNull TextHolder prefix) {
             this.prefix = prefix;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder suffix(@NotNull TextHolder suffix) {
+        public Builder suffix(@NonNull TextHolder suffix) {
             this.suffix = suffix;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder nameVisibility(@NotNull NameVisibility nameVisibility) {
+        public Builder nameVisibility(@NonNull NameVisibility nameVisibility) {
             this.nameVisibility = nameVisibility;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder collisionRule(@NotNull CollisionRule collisionRule) {
+        public Builder collisionRule(@NonNull CollisionRule collisionRule) {
             this.collisionRule = collisionRule;
             return this;
         }
 
         @NotNull
         @Override
-        public Builder color(@NotNull TeamColor color) {
+        public Builder color(@NonNull TeamColor color) {
             this.color = color;
             return this;
         }
@@ -382,14 +381,14 @@ public class VelocityTeam implements ProxyTeam {
 
         @NotNull
         @Override
-        public Builder entry(@NotNull String entry) {
+        public Builder entry(@NonNull String entry) {
             this.entries = new StringCollection(entry);
             return this;
         }
 
         @NotNull
         @Override
-        public Builder entries(@NotNull Collection<String> entries) {
+        public Builder entries(@NonNull Collection<String> entries) {
             this.entries = new StringCollection(entries);
             return this;
         }
@@ -402,7 +401,7 @@ public class VelocityTeam implements ProxyTeam {
          * @return  Newly created team
          */
         @NotNull
-        public VelocityTeam build(@NotNull VelocityScoreboard scoreboard) {
+        public VelocityTeam build(@NonNull VelocityScoreboard scoreboard) {
             if (displayName == null) displayName = TextHolder.of(name);
             if (prefix == null) prefix = TextHolder.empty();
             if (suffix == null) suffix = TextHolder.empty();

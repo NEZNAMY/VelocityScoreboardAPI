@@ -25,6 +25,7 @@ import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
+import lombok.NonNull;
 import net.kyori.adventure.text.serializer.nbt.NBTComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +45,7 @@ public class NumberFormatEncoder {
      * @return  Decoded Number Format
      */
     @NotNull
-    public static NumberFormat read(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver) {
+    public static NumberFormat read(@NonNull ByteBuf buf, @NonNull ProtocolVersion ver) {
         int format = ProtocolUtils.readVarInt(buf);
         return switch (format) {
             case 0 -> NumberFormat.BlankFormat.INSTANCE;
@@ -64,7 +65,7 @@ public class NumberFormatEncoder {
      * @param   format
      *          NumberFormat to write
      */
-    public static void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion ver, @NotNull NumberFormat format) {
+    public static void write(@NonNull ByteBuf buf, @NonNull ProtocolVersion ver, @NonNull NumberFormat format) {
         if (format instanceof NumberFormat.BlankFormat) {
             ProtocolUtils.writeVarInt(buf, 0);
         } else if (format instanceof NumberFormat.StyledFormat styled) {
@@ -79,6 +80,6 @@ public class NumberFormatEncoder {
         } else throw new IllegalArgumentException("Unknown number format type " + format.getClass().getName());
     }
 
-    private record DeserializedFixedFormat(@NotNull ComponentHolder holder) implements NumberFormat {
+    private record DeserializedFixedFormat(@NonNull ComponentHolder holder) implements NumberFormat {
     }
 }

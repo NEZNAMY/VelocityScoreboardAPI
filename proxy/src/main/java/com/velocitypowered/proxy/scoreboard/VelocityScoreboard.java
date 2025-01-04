@@ -36,6 +36,7 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScore;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamTeam;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -51,11 +52,11 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     public static final ProtocolVersion MAXIMUM_SUPPORTED_VERSION = ProtocolVersion.MINECRAFT_1_21_4;
 
-    @NotNull
+    @NonNull
     @Getter
     private final ScoreboardEventSource eventSource;
 
-    @NotNull
+    @NonNull
     @Getter
     private final ConnectedPlayer viewer;
 
@@ -70,7 +71,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @NotNull
-    public VelocityTeam.Builder teamBuilder(@NotNull String name) {
+    public VelocityTeam.Builder teamBuilder(@NonNull String name) {
         return new VelocityTeam.Builder(name);
     }
 
@@ -82,13 +83,13 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @NotNull
-    public VelocityObjective.Builder objectiveBuilder(@NotNull String name) {
+    public VelocityObjective.Builder objectiveBuilder(@NonNull String name) {
         return new VelocityObjective.Builder(name);
     }
 
     @Override
     @NotNull
-    public VelocityObjective registerObjective(@NotNull ProxyObjective.Builder builder) {
+    public VelocityObjective registerObjective(@NonNull ProxyObjective.Builder builder) {
         VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
         if (objectives.putIfAbsent(objective.getName(), objective) != null) {
             throw new IllegalStateException("An objective with this name (" + objective.getName() + ") already exists in this scoreboard");
@@ -104,7 +105,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @Nullable
-    public VelocityObjective getObjective(@NotNull String name) {
+    public VelocityObjective getObjective(@NonNull String name) {
         return objectives.get(name);
     }
 
@@ -114,7 +115,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
     }
 
     @Override
-    public void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException {
+    public void unregisterObjective(@NonNull String objectiveName) throws IllegalStateException {
         VelocityObjective objective = objectives.remove(objectiveName);
         if (objective == null) throw new IllegalStateException("This scoreboard does not contain an objective named " + objectiveName);
         displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(objectiveName));
@@ -123,7 +124,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @NotNull
     @Override
-    public VelocityTeam registerTeam(@NotNull ProxyTeam.Builder builder) {
+    public VelocityTeam registerTeam(@NonNull ProxyTeam.Builder builder) {
         VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
         if (teams.putIfAbsent(team.getName(), team) != null) {
             throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
@@ -149,7 +150,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @Nullable
-    public VelocityTeam getTeam(@NotNull String teamName) {
+    public VelocityTeam getTeam(@NonNull String teamName) {
         return teams.get(teamName);
     }
 
@@ -166,17 +167,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @ApiStatus.Internal
     @Nullable
-    public VelocityTeam addEntryToTeam(@NotNull String entry, @NotNull VelocityTeam team) {
+    public VelocityTeam addEntryToTeam(@NonNull String entry, @NonNull VelocityTeam team) {
         return teamEntries.put(entry, team);
     }
 
     @ApiStatus.Internal
-    public void removeEntryFromTeam(@NotNull String entry, @NotNull VelocityTeam team) {
+    public void removeEntryFromTeam(@NonNull String entry, @NonNull VelocityTeam team) {
         teamEntries.remove(entry, team);
     }
 
     @Override
-    public void unregisterTeam(@NotNull String teamName) {
+    public void unregisterTeam(@NonNull String teamName) {
         VelocityTeam team = teams.remove(teamName);
         if (team == null) throw new IllegalStateException("This scoreboard does not contain a team named " + teamName);
         team.unregister();
@@ -189,7 +190,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
     }
 
-    public void setDisplaySlot(@NotNull DisplaySlot displaySlot, @NotNull VelocityObjective objective) {
+    public void setDisplaySlot(@NonNull DisplaySlot displaySlot, @NonNull VelocityObjective objective) {
         VelocityObjective previous = displaySlots.put(displaySlot, objective);
         if (previous != null) previous.clearDisplaySlot();
     }
@@ -237,11 +238,11 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @Nullable
-    public ProxyObjective getObjective(@NotNull DisplaySlot displaySlot) {
+    public ProxyObjective getObjective(@NonNull DisplaySlot displaySlot) {
         return displaySlots.get(displaySlot);
     }
 
-    public synchronized void sendPacket(@NotNull DisplayObjectivePacket packet) {
+    public synchronized void sendPacket(@NonNull DisplayObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         sendPacketSafe(packet);
 
@@ -258,7 +259,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
     }
 
-    public synchronized void sendPacket(@NotNull ObjectivePacket packet) {
+    public synchronized void sendPacket(@NonNull ObjectivePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         switch (packet.getAction()) {
             case REGISTER -> {
@@ -300,22 +301,22 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
     }
 
-    public synchronized void sendPacket(@NotNull ScorePacket packet) {
+    public synchronized void sendPacket(@NonNull ScorePacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         sendPacketSafe(packet);
     }
 
-    public synchronized void sendPacket(@NotNull ScoreSetPacket packet) {
+    public synchronized void sendPacket(@NonNull ScoreSetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         sendPacketSafe(packet);
     }
 
-    public synchronized void sendPacket(@NotNull ScoreResetPacket packet) {
+    public synchronized void sendPacket(@NonNull ScoreResetPacket packet) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         sendPacketSafe(packet);
     }
 
-    public synchronized void sendPacket(@NotNull TeamPacket packet, @NotNull VelocityTeam affectedTeam) {
+    public synchronized void sendPacket(@NonNull TeamPacket packet, @NonNull VelocityTeam affectedTeam) {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
         switch (packet.getAction()) {
             case REGISTER -> {
@@ -376,7 +377,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
         frozen = true;
     }
 
-    private synchronized void sendPacketSafe(@NotNull MinecraftPacket packet) {
+    private synchronized void sendPacketSafe(@NonNull MinecraftPacket packet) {
         if (frozen) return;
         viewer.getConnection().write(packet);
     }

@@ -22,6 +22,7 @@ package com.velocitypowered.proxy.data;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.TextHolderProvider;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,19 +42,19 @@ public class RawTextHolderProvider extends TextHolderProvider {
 
     @Override
     @NotNull
-    public TextHolder ofLegacy(@NotNull String legacyText) {
+    public TextHolder ofLegacy(@NonNull String legacyText) {
         return new TextHolderImpl(legacyText);
     }
 
     @Override
     @NotNull
-    public TextHolder ofComponent(@NotNull Component modernText) {
+    public TextHolder ofComponent(@NonNull Component modernText) {
         return new TextHolderImpl(modernText);
     }
 
     @Override
     @NotNull
-    public TextHolder ofCombined(@NotNull String legacyText, @NotNull Component modernText) {
+    public TextHolder ofCombined(@NonNull String legacyText, @NonNull Component modernText) {
         return new TextHolderImpl(legacyText, modernText);
     }
 }

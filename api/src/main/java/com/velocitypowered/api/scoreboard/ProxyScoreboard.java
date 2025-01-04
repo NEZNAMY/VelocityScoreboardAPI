@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +41,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @see     #createObjective(String, Consumer)
      */
     @Nullable
-    ProxyObjective getObjective(@NotNull String name);
+    ProxyObjective getObjective(@NonNull String name);
 
     /**
      * Retrieves the proxy objective displayed in the specified display slot.
@@ -49,7 +50,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return The proxy objective displayed in the specified display slot, or {@code null} if no objective is present
      */
     @Nullable
-    ProxyObjective getObjective(@NotNull DisplaySlot displaySlot);
+    ProxyObjective getObjective(@NonNull DisplaySlot displaySlot);
 
     /**
      * Retrieves the set of objectives in the scoreboard.
@@ -67,7 +68,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return  Objective builder with given objective name
      */
     @NotNull
-    ProxyObjective.Builder objectiveBuilder(@NotNull String name);
+    ProxyObjective.Builder objectiveBuilder(@NonNull String name);
 
     /**
      * Registers objective into this scoreboard.
@@ -79,7 +80,7 @@ public interface ProxyScoreboard extends Scoreboard {
      *          If objective with this name already exists
      */
     @NotNull
-    ProxyObjective registerObjective(@NotNull ProxyObjective.Builder builder) throws IllegalStateException;
+    ProxyObjective registerObjective(@NonNull ProxyObjective.Builder builder) throws IllegalStateException;
 
     /**
      * Registers objective into this scoreboard.
@@ -91,7 +92,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return  Registered objective
      */
     @NotNull
-    default ProxyObjective createObjective(@NotNull String name, @NotNull Consumer<ProxyObjective.Builder> consumer) {
+    default ProxyObjective createObjective(@NonNull String name, @NonNull Consumer<ProxyObjective.Builder> consumer) {
         ProxyObjective.Builder builder = objectiveBuilder(name);
         consumer.accept(builder);
         return registerObjective(builder);
@@ -105,7 +106,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @throws  IllegalStateException
      *          If no such objective is registered
      */
-    void unregisterObjective(@NotNull String objectiveName) throws IllegalStateException;
+    void unregisterObjective(@NonNull String objectiveName) throws IllegalStateException;
 
     /**
      * Returns team with give name. If no such team is present, returns {@code null}.
@@ -116,7 +117,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @see     #createTeam(String, Consumer)
      */
     @Nullable
-    ProxyTeam getTeam(@NotNull String teamName);
+    ProxyTeam getTeam(@NonNull String teamName);
 
     /**
      * Retrieves the set of teams in the scoreboard.
@@ -134,7 +135,7 @@ public interface ProxyScoreboard extends Scoreboard {
      * @return  Team builder with given team name
      */
     @NotNull
-    ProxyTeam.Builder teamBuilder(@NotNull String name);
+    ProxyTeam.Builder teamBuilder(@NonNull String name);
 
     /**
      * Creates a new team property builder.
@@ -154,7 +155,7 @@ public interface ProxyScoreboard extends Scoreboard {
      *          If team with this name already exists
      */
     @NotNull
-    ProxyTeam registerTeam(@NotNull ProxyTeam.Builder builder) throws IllegalStateException;
+    ProxyTeam registerTeam(@NonNull ProxyTeam.Builder builder) throws IllegalStateException;
 
     /**
      * Registers team into this scoreboard.
@@ -168,7 +169,7 @@ public interface ProxyScoreboard extends Scoreboard {
      *          If team with this name already exists
      */
     @NotNull
-    default ProxyTeam createTeam(@NotNull String name, @NotNull Consumer<ProxyTeam.Builder> consumer) throws IllegalStateException {
+    default ProxyTeam createTeam(@NonNull String name, @NonNull Consumer<ProxyTeam.Builder> consumer) throws IllegalStateException {
         ProxyTeam.Builder builder = teamBuilder(name);
         consumer.accept(builder);
         return registerTeam(builder);
@@ -182,5 +183,5 @@ public interface ProxyScoreboard extends Scoreboard {
      * @throws  IllegalStateException
      *          If no such team exists
      */
-    void unregisterTeam(@NotNull String teamName) throws IllegalStateException;
+    void unregisterTeam(@NonNull String teamName) throws IllegalStateException;
 }

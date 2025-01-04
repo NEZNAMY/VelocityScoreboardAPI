@@ -24,6 +24,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.ProtocolUtils;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +73,7 @@ public class StringCollection {
      * @param   entry
      *          Entry in collection
      */
-    public StringCollection(@NotNull String entry) {
+    public StringCollection(@NonNull String entry) {
         this.entry = entry;
         size = 1;
     }
@@ -83,7 +84,7 @@ public class StringCollection {
      * @param   entries
      *          Entries in collection
      */
-    public StringCollection(@NotNull Collection<String> entries) {
+    public StringCollection(@NonNull Collection<String> entries) {
         size = entries.size();
         if (size == 1) {
             this.entry = entries.iterator().next();
@@ -101,7 +102,7 @@ public class StringCollection {
      * @param   protocolVersion
      *          Protocol version used to encode the entries
      */
-    public StringCollection(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
+    public StringCollection(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
         size = protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8) ? ProtocolUtils.readVarInt(buf) : buf.readShort();
         if (size == 0) return;
         if (size == 1) {
@@ -122,7 +123,7 @@ public class StringCollection {
      * @param   protocolVersion
      *          Protocol version for encoding
      */
-    public void write(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
+    public void write(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
             ProtocolUtils.writeVarInt(buf, size);
         } else {
@@ -163,7 +164,7 @@ public class StringCollection {
      *          Entry to check for
      * @return  {@code true} if this collection contains given entry, {@code false} if not
      */
-    public boolean contains(@NotNull String entry) {
+    public boolean contains(@NonNull String entry) {
         if (size == 0) return false;
         if (size == 1) return entry.equals(this.entry);
         return entries.contains(entry);
@@ -175,7 +176,7 @@ public class StringCollection {
      * @param   entry
      *          Entry to add
      */
-    public void add(@NotNull String entry) {
+    public void add(@NonNull String entry) {
         if (contains(entry)) return;
         if (size == 0) {
             this.entry = entry;
@@ -201,7 +202,7 @@ public class StringCollection {
      *          Entry to remove
      * @return  {@code true} if entry was present and removed, {@code false} otherwise
      */
-    public boolean remove(@NotNull String entry) {
+    public boolean remove(@NonNull String entry) {
         boolean removed = false;
         if (entry.equals(this.entry)) {
             this.entry = null;
@@ -223,7 +224,7 @@ public class StringCollection {
      * @param   entries
      *          Entries to add to this collection
      */
-    public void addAll(@NotNull StringCollection entries) {
+    public void addAll(@NonNull StringCollection entries) {
         if (entries.size == 0) return;
         if (entries.size == 1) {
             add(entries.getEntry());
@@ -240,7 +241,7 @@ public class StringCollection {
      * @param   entries
      *          Entries to remove from this collection
      */
-    public void removeAll(@NotNull StringCollection entries) {
+    public void removeAll(@NonNull StringCollection entries) {
         if (entries.size == 0) return;
         if (entries.size == 1) {
             remove(entries.getEntry());

@@ -29,7 +29,7 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 /**
  * Channel injection to listen to JoinGame packet. If Scoreboard API gets merged into Velocity,
@@ -49,7 +49,7 @@ public class ChannelInjection extends ChannelDuplexHandler {
      * @param   plugin
      *          Plugin instance
      */
-    public ChannelInjection(@NotNull Player player, @NotNull VelocityScoreboardAPI plugin) {
+    public ChannelInjection(@NonNull Player player, @NonNull VelocityScoreboardAPI plugin) {
         this.plugin = plugin;
         downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
         proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);

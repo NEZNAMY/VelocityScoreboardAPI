@@ -27,6 +27,7 @@ import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePack
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
 import lombok.Getter;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,17 +40,17 @@ import java.util.function.Consumer;
 @Getter
 public class VelocityObjective implements ProxyObjective {
 
-    @NotNull private final VelocityScoreboard scoreboard;
-    @NotNull private final String name;
-    @NotNull private TextHolder title;
-    @NotNull private HealthDisplay healthDisplay;
+    @NonNull private final VelocityScoreboard scoreboard;
+    @NonNull private final String name;
+    @NonNull private TextHolder title;
+    @NonNull private HealthDisplay healthDisplay;
     @Nullable private NumberFormat numberFormat;
     @Nullable private DisplaySlot displaySlot;
     private boolean registered = true;
     private final Map<String, VelocityScore> scores = new ConcurrentHashMap<>();
 
-    private VelocityObjective(@NotNull VelocityScoreboard scoreboard, @NotNull String name, @NotNull TextHolder title,
-                             @NotNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
+    private VelocityObjective(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull TextHolder title,
+                             @NonNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat, @Nullable DisplaySlot displaySlot) {
         this.scoreboard = scoreboard;
         this.name = name;
         this.title = title;
@@ -60,7 +61,7 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     @Override
-    public void setDisplaySlot(@NotNull DisplaySlot displaySlot) {
+    public void setDisplaySlot(@NonNull DisplaySlot displaySlot) {
         checkState();
         if (this.displaySlot == displaySlot) return;
         scoreboard.setDisplaySlot(displaySlot, this);
@@ -70,7 +71,7 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     @Override
-    public void setTitle(@NotNull TextHolder title) {
+    public void setTitle(@NonNull TextHolder title) {
         checkState();
         if (this.title == title) return;
         this.title = title;
@@ -78,7 +79,7 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     @Override
-    public void setHealthDisplay(@NotNull HealthDisplay healthDisplay) {
+    public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
         checkState();
         if (this.healthDisplay == healthDisplay) return;
         this.healthDisplay = healthDisplay;
@@ -95,7 +96,7 @@ public class VelocityObjective implements ProxyObjective {
 
     @Override
     @NotNull
-    public ProxyScore setScore(@NotNull String holder, @NotNull Consumer<ProxyScore.Builder> consumer) {
+    public ProxyScore setScore(@NonNull String holder, @NonNull Consumer<ProxyScore.Builder> consumer) {
         checkState();
         VelocityScore.Builder builder = new VelocityScore.Builder(holder);
         consumer.accept(builder);
@@ -112,18 +113,19 @@ public class VelocityObjective implements ProxyObjective {
 
     @Override
     @Nullable
-    public ProxyScore getScore(@NotNull String holder) {
+    public ProxyScore getScore(@NonNull String holder) {
         checkState();
         return scores.get(holder);
     }
 
     @Override
-    public @NotNull Collection<ProxyScore> getAllScores() {
+    @NotNull
+    public Collection<ProxyScore> getAllScores() {
         return Collections.unmodifiableCollection(scores.values());
     }
 
     @Override
-    public void removeScore(@NotNull String holder) {
+    public void removeScore(@NonNull String holder) {
         checkState();
         VelocityScore score = scores.get(holder);
         if (score == null) throw new IllegalArgumentException("Score \"" + holder + "\" is not in this objective (" + name + ")");
@@ -159,13 +161,13 @@ public class VelocityObjective implements ProxyObjective {
 
     public static class Builder implements ProxyObjective.Builder {
 
-        @NotNull private final String name;
-        @NotNull private TextHolder title;
-        @NotNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
+        @NonNull private final String name;
+        @NonNull private TextHolder title;
+        @NonNull private HealthDisplay healthDisplay = HealthDisplay.INTEGER;
         @Nullable private DisplaySlot displaySlot = null;
         @Nullable private NumberFormat numberFormat = null;
 
-        public Builder(@NotNull String name) {
+        public Builder(@NonNull String name) {
             if (name.length() > 16) throw new IllegalArgumentException("Objective name cannot be longer than 16 characters (was " + name.length() + ": " + name + ")");
             this.name = name;
             this.title = TextHolder.of(name);
@@ -173,21 +175,21 @@ public class VelocityObjective implements ProxyObjective {
 
         @Override
         @NotNull
-        public Builder title(@NotNull TextHolder title) {
+        public Builder title(@NonNull TextHolder title) {
             this.title = title;
             return this;
         }
 
         @Override
         @NotNull
-        public Builder healthDisplay(@NotNull HealthDisplay healthDisplay) {
+        public Builder healthDisplay(@NonNull HealthDisplay healthDisplay) {
             this.healthDisplay = healthDisplay;
             return this;
         }
 
         @Override
         @NotNull
-        public ProxyObjective.Builder displaySlot(@NotNull DisplaySlot displaySlot) {
+        public ProxyObjective.Builder displaySlot(@NonNull DisplaySlot displaySlot) {
             this.displaySlot = displaySlot;
             return this;
         }
@@ -207,7 +209,7 @@ public class VelocityObjective implements ProxyObjective {
          * @return  Objective from builder
          */
         @NotNull
-        public VelocityObjective build(@NotNull VelocityScoreboard scoreboard) {
+        public VelocityObjective build(@NonNull VelocityScoreboard scoreboard) {
             return new VelocityObjective(scoreboard, name, title, healthDisplay, numberFormat, displaySlot);
         }
     }

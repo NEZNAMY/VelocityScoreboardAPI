@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +39,7 @@ public interface Scoreboard {
      * @return  Objective by given name or {@code null} if not present
      */
     @Nullable
-    Objective getObjective(@NotNull String name);
+    Objective getObjective(@NonNull String name);
 
     /**
      * Retrieves the objective displayed in the specified display slot.
@@ -47,7 +48,7 @@ public interface Scoreboard {
      * @return The objective displayed in the specified display slot, or {@code null} if no objective is present
      */
     @Nullable
-    Objective getObjective(@NotNull DisplaySlot displaySlot);
+    Objective getObjective(@NonNull DisplaySlot displaySlot);
 
     /**
      * Retrieves the set of objectives in the scoreboard.
@@ -65,7 +66,7 @@ public interface Scoreboard {
      * @return  Team with given name, {@code null} if no such team exists
      */
     @Nullable
-    Team getTeam(@NotNull String teamName);
+    Team getTeam(@NonNull String teamName);
 
     /**
      * Retrieves the set of teams in the scoreboard.

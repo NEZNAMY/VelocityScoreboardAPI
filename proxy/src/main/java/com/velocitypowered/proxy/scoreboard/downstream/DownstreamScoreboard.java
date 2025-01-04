@@ -31,6 +31,7 @@ import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -79,7 +80,7 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Objective packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull ObjectivePacket packet) {
+    public boolean handle(@NonNull ObjectivePacket packet) {
         switch (packet.getAction()) {
             case REGISTER -> {
                 DownstreamObjective obj = new DownstreamObjective(
@@ -125,7 +126,7 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Display objective packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull DisplayObjectivePacket packet) {
+    public boolean handle(@NonNull DisplayObjectivePacket packet) {
         DownstreamObjective objective = objectives.get(packet.getObjectiveName());
         if (objective == null) {
             LoggerManager.Silent.unknownObjectiveDisplay(viewer, packet.getObjectiveName(), packet.getPosition());
@@ -146,7 +147,7 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Score packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull ScorePacket packet) {
+    public boolean handle(@NonNull ScorePacket packet) {
         if (packet.getAction() == ScorePacket.ScoreAction.SET) {
             return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(), null, null);
         } else {
@@ -161,7 +162,7 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Set score packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull ScoreSetPacket packet) {
+    public boolean handle(@NonNull ScoreSetPacket packet) {
         return handleSet(packet.getObjectiveName(), packet.getScoreHolder(), packet.getValue(),
                 packet.getDisplayName(), packet.getNumberFormat());
     }
@@ -173,11 +174,11 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Reset score packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull ScoreResetPacket packet) {
+    public boolean handle(@NonNull ScoreResetPacket packet) {
         return handleReset(packet.getObjectiveName(), packet.getScoreHolder());
     }
 
-    private boolean handleSet(@NotNull String objectiveName, @NotNull String holder, int value,
+    private boolean handleSet(@NonNull String objectiveName, @NonNull String holder, int value,
                               @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         DownstreamObjective objective = objectives.get(objectiveName);
         if (objective == null) {
@@ -189,7 +190,7 @@ public class DownstreamScoreboard implements Scoreboard {
         }
     }
 
-    private boolean handleReset(@Nullable String objectiveName, @NotNull String holder) {
+    private boolean handleReset(@Nullable String objectiveName, @NonNull String holder) {
         if (objectiveName == null || objectiveName.isEmpty()) {
             for (DownstreamObjective objective : objectives.values()) {
                 objective.removeScore(holder);
@@ -213,7 +214,7 @@ public class DownstreamScoreboard implements Scoreboard {
      *          Team packet coming from backend
      * @return  {@code true} if packet is invalid and should be cancelled, {@code false} if not
      */
-    public boolean handle(@NotNull TeamPacket packet) {
+    public boolean handle(@NonNull TeamPacket packet) {
         StringCollection entries = packet.getEntries();
         if (packet.getAction() == TeamPacket.TeamAction.REGISTER) {
             DownstreamTeam team = new DownstreamTeam(packet.getName(), packet.getProperties(), entries);
@@ -282,13 +283,13 @@ public class DownstreamScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public DownstreamObjective getObjective(@NotNull DisplaySlot displaySlot) {
+    public DownstreamObjective getObjective(@NonNull DisplaySlot displaySlot) {
         return displaySlots.get(displaySlot);
     }
 
     @Override
     @Nullable
-    public DownstreamObjective getObjective(@NotNull String objectiveName) {
+    public DownstreamObjective getObjective(@NonNull String objectiveName) {
         return objectives.get(objectiveName);
     }
 
@@ -300,7 +301,7 @@ public class DownstreamScoreboard implements Scoreboard {
 
     @Override
     @Nullable
-    public DownstreamTeam getTeam(@NotNull String teamName) {
+    public DownstreamTeam getTeam(@NonNull String teamName) {
         return teams.get(teamName);
     }
 
@@ -319,7 +320,7 @@ public class DownstreamScoreboard implements Scoreboard {
      * @return  Team where this entry belongs or {@code null} if none
      */
     @Nullable
-    public DownstreamTeam getTeamByEntry(@NotNull String entry) {
+    public DownstreamTeam getTeamByEntry(@NonNull String entry) {
         return teamEntries.get(entry);
     }
 
@@ -349,7 +350,7 @@ public class DownstreamScoreboard implements Scoreboard {
         return dump;
     }
 
-    public void upload(@NotNull CommandSource sender) throws Exception {
+    public void upload(@NonNull CommandSource sender) throws Exception {
         String contentString = String.join("\n", dump()) + "\n";
 
         URL url = new URL("https://api.pastes.dev/post");

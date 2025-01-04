@@ -25,11 +25,13 @@ import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import lombok.Getter;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract class for team-related events.
  */
+@Getter
 public abstract class TeamEvent extends ScoreboardEvent {
 
     /**
@@ -37,7 +39,6 @@ public abstract class TeamEvent extends ScoreboardEvent {
      * If proxy is true, the team is a {@link ProxyTeam}, otherwise it is a backend {@link Team}
      */
     @NotNull
-    @Getter
     private final Team team;
 
     /**
@@ -50,7 +51,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
      * @param   team
      *          Name of affected team
      */
-    public TeamEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+    public TeamEvent(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team) {
         super(player, scoreboard);
         this.team = team;
     }
@@ -70,7 +71,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          * @param   team
          *          Name of affected team
          */
-        public Register(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+        public Register(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team) {
             super(player, scoreboard, team);
         }
     }
@@ -90,7 +91,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          * @param   team
          *          Name of affected team
          */
-        public Unregister(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team) {
+        public Unregister(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team) {
             super(player, scoreboard, team);
         }
     }

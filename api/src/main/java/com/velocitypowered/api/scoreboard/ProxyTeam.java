@@ -22,6 +22,7 @@ package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public interface ProxyTeam extends Team {
      *          New display name to use
      * @see     #getDisplayName()
      */
-    void setDisplayName(@NotNull TextHolder displayName);
+    void setDisplayName(@NonNull TextHolder displayName);
 
     /**
      * Sets team prefix to new value.
@@ -50,7 +51,7 @@ public interface ProxyTeam extends Team {
      *          New team prefix
      * @see     #getPrefix()
      */
-    void setPrefix(@NotNull TextHolder prefix);
+    void setPrefix(@NonNull TextHolder prefix);
 
     /**
      * Sets team suffix to new value.
@@ -59,7 +60,7 @@ public interface ProxyTeam extends Team {
      *          New team suffix
      * @see     #getSuffix()
      */
-    void setSuffix(@NotNull TextHolder suffix);
+    void setSuffix(@NonNull TextHolder suffix);
 
     /**
      * Sets nametag visibility rule to new value (1.8+).
@@ -68,7 +69,7 @@ public interface ProxyTeam extends Team {
      *          New nametag visibility rule
      * @see     #getNameVisibility()
      */
-    void setNameVisibility(@NotNull NameVisibility nameVisibility);
+    void setNameVisibility(@NonNull NameVisibility nameVisibility);
 
     /**
      * Sets collision rule to new value (1.9+).
@@ -77,7 +78,7 @@ public interface ProxyTeam extends Team {
      *          New collision rule
      * @see     #getCollisionRule()
      */
-    void setCollisionRule(@NotNull CollisionRule collisionRule);
+    void setCollisionRule(@NonNull CollisionRule collisionRule);
 
     /**
      * Sets team color to new value (1.13+).
@@ -86,7 +87,7 @@ public interface ProxyTeam extends Team {
      *          New team color
      * @see     #getColor()
      */
-    void setColor(@NotNull TeamColor color);
+    void setColor(@NonNull TeamColor color);
 
     /**
      * Sets friendly fire flag to new value.
@@ -115,7 +116,7 @@ public interface ProxyTeam extends Team {
      * @param   builderConsumer
      *          Consumer with changed properties
      */
-    void updateProperties(@NotNull Consumer<PropertyBuilder> builderConsumer);
+    void updateProperties(@NonNull Consumer<PropertyBuilder> builderConsumer);
 
     /**
      * Adds an entry to this team. It will be removed from all other teams.
@@ -126,7 +127,7 @@ public interface ProxyTeam extends Team {
      * @see     #getEntries()
      * @see     #removeEntry(String)
      */
-    void addEntry(@NotNull String entry);
+    void addEntry(@NonNull String entry);
 
     /**
      * Removes entry from this team. If entry is not present, throws
@@ -139,7 +140,7 @@ public interface ProxyTeam extends Team {
      * @throws  IllegalArgumentException
      *          If given entry is not in this team
      */
-    void removeEntry(@NotNull String entry) throws IllegalArgumentException;
+    void removeEntry(@NonNull String entry) throws IllegalArgumentException;
 
     /**
      * This is a builder for team properties.
@@ -154,7 +155,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder displayName(@NotNull TextHolder displayName);
+        PropertyBuilder displayName(@NonNull TextHolder displayName);
 
         /**
          * Sets prefix to specified value.
@@ -164,7 +165,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder prefix(@NotNull TextHolder prefix);
+        PropertyBuilder prefix(@NonNull TextHolder prefix);
 
         /**
          * Sets suffix to specified value.
@@ -174,7 +175,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder suffix(@NotNull TextHolder suffix);
+        PropertyBuilder suffix(@NonNull TextHolder suffix);
 
         /**
          * Sets nametag visibility to specified value.
@@ -184,7 +185,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder nameVisibility(@NotNull NameVisibility visibility);
+        PropertyBuilder nameVisibility(@NonNull NameVisibility visibility);
 
         /**
          * Sets collision rule to specified value.
@@ -194,7 +195,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder collisionRule(@NotNull CollisionRule collisionRule);
+        PropertyBuilder collisionRule(@NonNull CollisionRule collisionRule);
 
         /**
          * Sets color to specified value.
@@ -204,7 +205,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        PropertyBuilder color(@NotNull TeamColor color);
+        PropertyBuilder color(@NonNull TeamColor color);
 
         /**
          * Sets friendly fire to specified value.
@@ -240,7 +241,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder displayName(@NotNull TextHolder displayName);
+        Builder displayName(@NonNull TextHolder displayName);
 
         /**
          * Sets prefix to specified value.
@@ -250,7 +251,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder prefix(@NotNull TextHolder prefix);
+        Builder prefix(@NonNull TextHolder prefix);
 
         /**
          * Sets suffix to specified value.
@@ -260,7 +261,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder suffix(@NotNull TextHolder suffix);
+        Builder suffix(@NonNull TextHolder suffix);
 
         /**
          * Sets nametag visibility to specified value.
@@ -270,7 +271,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder nameVisibility(@NotNull NameVisibility visibility);
+        Builder nameVisibility(@NonNull NameVisibility visibility);
 
         /**
          * Sets collision rule to specified value.
@@ -280,7 +281,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder collisionRule(@NotNull CollisionRule collisionRule);
+        Builder collisionRule(@NonNull CollisionRule collisionRule);
 
         /**
          * Sets color to specified value.
@@ -290,7 +291,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder color(@NotNull TeamColor color);
+        Builder color(@NonNull TeamColor color);
 
         /**
          * Sets friendly fire to specified value.
@@ -320,7 +321,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder entry(@NotNull String entry);
+        Builder entry(@NonNull String entry);
 
         /**
          * Adds specified entries into the team.
@@ -330,7 +331,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        Builder entries(@NotNull Collection<String> entries);
+        Builder entries(@NonNull Collection<String> entries);
 
         /**
          * Adds specified entries into the team.
@@ -340,7 +341,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        default Builder entries(@NotNull String... entries) {
+        default Builder entries(@NonNull String... entries) {
             return entries(Set.of(entries));
         }
 
@@ -352,7 +353,7 @@ public interface ProxyTeam extends Team {
          * @return  this, for chaining
          */
         @NotNull
-        default Builder entries(@NotNull Player... players) {
+        default Builder entries(@NonNull Player... players) {
             return entries(Arrays.stream(players).map(Player::getUsername).toList());
         }
     }

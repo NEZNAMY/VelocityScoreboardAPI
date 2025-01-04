@@ -21,6 +21,7 @@
 package com.velocitypowered.api.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
+import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public abstract class ScoreboardManager {
      *          Scoreboard API instance
      */
     @ApiStatus.Internal
-    public static void setInstance(@NotNull ScoreboardManager instance) {
+    public static void setInstance(@NonNull ScoreboardManager instance) {
         if (INSTANCE != null) throw new IllegalStateException("The VelocityScoreboardAPI has already been registered");
         INSTANCE = instance;
     }
@@ -65,7 +66,7 @@ public abstract class ScoreboardManager {
      * @return  Player's proxy scoreboard
      */
     @NotNull
-    public abstract ProxyScoreboard getProxyScoreboard(@NotNull Player player);
+    public abstract ProxyScoreboard getProxyScoreboard(@NonNull Player player);
 
     /**
      * Retrieves the backend scoreboard for the specified player.
@@ -74,7 +75,7 @@ public abstract class ScoreboardManager {
      * @return the backend scoreboard for the specified player
      */
     @NotNull
-    public abstract Scoreboard getBackendScoreboard(@NotNull Player player);
+    public abstract Scoreboard getBackendScoreboard(@NonNull Player player);
 
     /**
      * An exception indicating the plugin has been accessed before it has been registered.

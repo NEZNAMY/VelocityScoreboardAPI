@@ -33,6 +33,7 @@ import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
@@ -120,7 +121,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     }
 
     @Override
-    public void fireEvent(@NotNull Object event) {
+    public void fireEvent(@NonNull Object event) {
         if (!pluginConfig.isCallScoreboardEvents()) return;
         server.getEventManager().fire(event);
     }

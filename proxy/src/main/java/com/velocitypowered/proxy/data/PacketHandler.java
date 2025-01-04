@@ -29,6 +29,7 @@ import com.velocitypowered.proxy.connection.backend.VelocityServerConnection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import com.velocitypowered.proxy.scoreboard.*;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -60,7 +61,7 @@ public class PacketHandler {
      * @return  Player this handler belongs to
      */
     @NotNull
-    private static Player getPlayer(@NotNull MinecraftSessionHandler handler) {
+    private static Player getPlayer(@NonNull MinecraftSessionHandler handler) {
         try {
             VelocityServerConnection connection = (VelocityServerConnection) serverConn.get(handler);
             return connection.getPlayer();
@@ -69,11 +70,11 @@ public class PacketHandler {
         }
     }
     
-    private static DownstreamScoreboard getDownstream(@NotNull MinecraftSessionHandler handler) {
+    private static DownstreamScoreboard getDownstream(@NonNull MinecraftSessionHandler handler) {
         return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getBackendScoreboard(getPlayer(handler));
     }
 
-    private static VelocityScoreboard getProxy(@NotNull MinecraftSessionHandler handler) {
+    private static VelocityScoreboard getProxy(@NonNull MinecraftSessionHandler handler) {
         return ((VelocityScoreboardManager)ScoreboardManager.getInstance()).getProxyScoreboard(getPlayer(handler));
     }
 
@@ -86,7 +87,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull DisplayObjectivePacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull DisplayObjectivePacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
@@ -107,7 +108,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ObjectivePacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull ObjectivePacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
@@ -129,7 +130,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScorePacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull ScorePacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
@@ -160,7 +161,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreResetPacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull ScoreResetPacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
@@ -192,7 +193,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull ScoreSetPacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull ScoreSetPacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 
@@ -214,7 +215,7 @@ public class PacketHandler {
      *          Received packet
      * @return  {@code true} if packet should be cancelled, {@code false} if not
      */
-    public static boolean handle(@NotNull MinecraftSessionHandler handler, @NotNull TeamPacket packet) {
+    public static boolean handle(@NonNull MinecraftSessionHandler handler, @NonNull TeamPacket packet) {
         // Filter out invalid packets
         if (getDownstream(handler).handle(packet)) return true;
 

@@ -28,6 +28,7 @@ import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
 import com.velocitypowered.proxy.data.RawTextHolderProvider;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -50,7 +51,7 @@ public class VelocityScoreboardManager extends ScoreboardManager {
      * @param server Server to call events to
      * @param plugin Scoreboard API plugin
      */
-    public VelocityScoreboardManager(@NotNull ProxyServer server, @NotNull ScoreboardEventSource plugin) {
+    public VelocityScoreboardManager(@NonNull ProxyServer server, @NonNull ScoreboardEventSource plugin) {
         new RawTextHolderProvider();
         downstreamFunction = p -> new DownstreamScoreboard(plugin, p);
         proxyFunction = p -> new VelocityScoreboard(plugin, (ConnectedPlayer) p, getBackendScoreboard(p));
@@ -62,13 +63,13 @@ public class VelocityScoreboardManager extends ScoreboardManager {
 
     @Override
     @NotNull
-    public VelocityScoreboard getProxyScoreboard(@NotNull Player player) {
+    public VelocityScoreboard getProxyScoreboard(@NonNull Player player) {
         return proxyScoreboards.computeIfAbsent(player, proxyFunction);
     }
 
     @Override
     @NotNull
-    public DownstreamScoreboard getBackendScoreboard(@NotNull Player player) {
+    public DownstreamScoreboard getBackendScoreboard(@NonNull Player player) {
         return downstreamScoreboards.computeIfAbsent(player, downstreamFunction);
     }
 

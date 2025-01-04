@@ -31,6 +31,7 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import io.netty.buffer.ByteBuf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +84,7 @@ public class TeamProperties {
      * @param   protocolVersion
      *          Protocol version used to decode the data
      */
-    public TeamProperties(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
+    public TeamProperties(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
             displayName = TextHolder.of(ProtocolUtils.readString(buf));
             prefix = TextHolder.of((ProtocolUtils.readString(buf)));
@@ -118,7 +119,7 @@ public class TeamProperties {
      * @param   protocolVersion
      *          Protocol version used to encode data
      */
-    public void encode(@NotNull ByteBuf buf, @NotNull ProtocolVersion protocolVersion) {
+    public void encode(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
             ProtocolUtils.writeString(buf, displayName.getLegacyText(16));
             ProtocolUtils.writeString(buf, prefix.getLegacyText(16));
@@ -153,7 +154,7 @@ public class TeamProperties {
      *          New display name to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setDisplayName(@NotNull TextHolder displayName) {
+    public boolean setDisplayName(@NonNull TextHolder displayName) {
         if (this.displayName == displayName) return false;
         this.displayName = displayName;
         return true;
@@ -166,7 +167,7 @@ public class TeamProperties {
      *          New prefix to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setPrefix(@NotNull TextHolder prefix) {
+    public boolean setPrefix(@NonNull TextHolder prefix) {
         if (this.prefix == prefix) return false;
         this.prefix = prefix;
         return true;
@@ -179,7 +180,7 @@ public class TeamProperties {
      *          New suffix to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setSuffix(@NotNull TextHolder suffix) {
+    public boolean setSuffix(@NonNull TextHolder suffix) {
         if (this.suffix == suffix) return false;
         this.suffix = suffix;
         return true;
@@ -192,7 +193,7 @@ public class TeamProperties {
      *          New visibility to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setNameVisibility(@NotNull NameVisibility nameVisibility) {
+    public boolean setNameVisibility(@NonNull NameVisibility nameVisibility) {
         if (this.nameVisibility == nameVisibility) return false;
         this.nameVisibility = nameVisibility;
         return true;
@@ -205,7 +206,7 @@ public class TeamProperties {
      *          New collision rule to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setCollisionRule(@NotNull CollisionRule collisionRule) {
+    public boolean setCollisionRule(@NonNull CollisionRule collisionRule) {
         if (this.collisionRule == collisionRule) return false;
         this.collisionRule = collisionRule;
         return true;
@@ -218,7 +219,7 @@ public class TeamProperties {
      *          New team color to use
      * @return  {@code true} if value changed, {@code false} if not
      */
-    public boolean setColor(@NotNull TeamColor color) {
+    public boolean setColor(@NonNull TeamColor color) {
         if (this.color == color) return false;
         this.color = color;
         return true;

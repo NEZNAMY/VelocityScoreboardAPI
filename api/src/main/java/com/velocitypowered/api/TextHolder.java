@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api;
 
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +50,7 @@ public abstract class TextHolder {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public static TextHolder of(@NotNull String legacyText) {
+    public static TextHolder of(@NonNull String legacyText) {
         return TextHolderProvider.getProvider().ofLegacy(legacyText);
     }
 
@@ -60,7 +61,7 @@ public abstract class TextHolder {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public static TextHolder of(@NotNull Component modernText) {
+    public static TextHolder of(@NonNull Component modernText) {
         return TextHolderProvider.getProvider().ofComponent(modernText);
     }
 
@@ -72,7 +73,7 @@ public abstract class TextHolder {
      * @return The constructed TextHolder object
      */
     @NotNull
-    public static TextHolder of(@NotNull String legacyText, @NotNull Component modernText) {
+    public static TextHolder of(@NonNull String legacyText, @NonNull Component modernText) {
         return TextHolderProvider.getProvider().ofCombined(legacyText, modernText);
     }
 

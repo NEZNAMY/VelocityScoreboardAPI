@@ -24,7 +24,7 @@ import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.MinecraftPacket;
 import com.velocitypowered.proxy.protocol.StateRegistry;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -44,7 +44,7 @@ public class PacketRegistry {
      * @throws  ReflectiveOperationException
      *          If thrown by reflective operation
      */
-    public static void registerPackets(@NotNull ProtocolVersion maximumSupportedVersion) throws ReflectiveOperationException {
+    public static void registerPackets(@NonNull ProtocolVersion maximumSupportedVersion) throws ReflectiveOperationException {
         Field f = StateRegistry.class.getDeclaredField("clientbound");
         f.setAccessible(true);
         StateRegistry.PacketRegistry clientbound = (StateRegistry.PacketRegistry) f.get(StateRegistry.PLAY);

@@ -26,19 +26,20 @@ import com.velocitypowered.api.scoreboard.Objective;
 import com.velocitypowered.api.scoreboard.ProxyObjective;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import lombok.Getter;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for Objective events.
  */
+@Getter
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
     /**
      * Objective.
      * If proxy is true, the objective is a {@link ProxyObjective}, otherwise it is a backend {@link Objective}
      */
-    @NotNull
-    @Getter
+    @NonNull
     private final Objective objective;
 
     /**
@@ -51,7 +52,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
      * @param   objective
      *          Name of affected objective
      */
-    public ObjectiveEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+    public ObjectiveEvent(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
         super(player, scoreboard);
         this.objective = objective;
     }
@@ -78,7 +79,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          * @param   newSlot
          *          New display slot
          */
-        public Display(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective, @NotNull DisplaySlot newSlot) {
+        public Display(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective, @NonNull DisplaySlot newSlot) {
             super(player, scoreboard, objective);
             this.newSlot = newSlot;
         }
@@ -99,7 +100,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          * @param   objective
          *          Name of affected objective
          */
-        public Register(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+        public Register(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
             super(player, scoreboard, objective);
         }
     }
@@ -119,7 +120,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          * @param   objective
          *          Name of affected objective
          */
-        public Unregister(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Objective objective) {
+        public Unregister(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
             super(player, scoreboard, objective);
         }
     }

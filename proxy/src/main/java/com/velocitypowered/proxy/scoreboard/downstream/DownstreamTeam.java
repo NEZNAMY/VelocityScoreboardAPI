@@ -29,7 +29,9 @@ import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.scoreboard.TeamProperties;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,45 +44,27 @@ import java.util.List;
  */
 @Setter
 @Getter
+@AllArgsConstructor
 public class DownstreamTeam implements Team {
 
-    /**
-     * Team name
-     */
-    @NotNull
+    /** Team name */
+    @NonNull
     private final String name;
 
-    /**
-     * Team properties
-     */
-    @NotNull
+    /** Team properties */
+    @NonNull
     private TeamProperties properties;
 
-    /**
-     * Entries in the team
-     */
-    @NotNull
+    /** Entries in the team */
+    @NonNull
     private final StringCollection entries;
-
-    /**
-     * Constructs new instance with given parameters.
-     *
-     * @param name       Team name
-     * @param properties Team properties
-     * @param entries    Entries in the team
-     */
-    public DownstreamTeam(@NotNull String name, @NotNull TeamProperties properties, @NotNull StringCollection entries) {
-        this.name = name;
-        this.properties = properties;
-        this.entries = entries;
-    }
 
     /**
      * Adds entries to the team.
      *
      * @param entries Entries to add
      */
-    public void addEntries(@NotNull StringCollection entries) {
+    public void addEntries(@NonNull StringCollection entries) {
         this.entries.addAll(entries);
     }
 
@@ -90,7 +74,7 @@ public class DownstreamTeam implements Team {
      * @param viewer Player who received the packet
      * @param entries Entries to remove
      */
-    public void removeEntries(@NotNull Player viewer, @NotNull StringCollection entries) {
+    public void removeEntries(@NonNull Player viewer, @NonNull StringCollection entries) {
         if (entries.getEntry() != null) {
             if (!this.entries.contains(entries.getEntry())) {
                 LoggerManager.Fatal.removeUnknownEntry(viewer, name, entries.getEntry());

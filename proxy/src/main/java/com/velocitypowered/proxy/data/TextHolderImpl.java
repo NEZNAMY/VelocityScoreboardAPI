@@ -23,6 +23,7 @@ package com.velocitypowered.proxy.data;
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,7 @@ public class TextHolderImpl extends TextHolder {
      * @param   legacyText
      *          Legacy text to display
      */
-    public TextHolderImpl(@NotNull String legacyText) {
+    public TextHolderImpl(@NonNull String legacyText) {
         this.legacyText = legacyText;
     }
 
@@ -68,7 +69,7 @@ public class TextHolderImpl extends TextHolder {
      * @param   modernText
      *          Modern text to display
      */
-    public TextHolderImpl(@NotNull Component modernText) {
+    public TextHolderImpl(@NonNull Component modernText) {
         this.modernText = modernText;
     }
 
@@ -78,7 +79,7 @@ public class TextHolderImpl extends TextHolder {
      * @param   holder
      *          Component holder for serialization
      */
-    public TextHolderImpl(@NotNull ComponentHolder holder) {
+    public TextHolderImpl(@NonNull ComponentHolder holder) {
         this.holder = holder;
     }
 
@@ -90,7 +91,7 @@ public class TextHolderImpl extends TextHolder {
      * @param   modernText
      *          Text to display for 1.13+ players
      */
-    public TextHolderImpl(@NotNull String legacyText, @NotNull Component modernText) {
+    public TextHolderImpl(@NonNull String legacyText, @NonNull Component modernText) {
         this.legacyText = legacyText;
         this.modernText = modernText;
     }
@@ -153,7 +154,7 @@ public class TextHolderImpl extends TextHolder {
      * @return  Component holder
      */
     @NotNull
-    public ComponentHolder getHolder(@NotNull ProtocolVersion version) {
+    public ComponentHolder getHolder(@NonNull ProtocolVersion version) {
         if (holder == null) return new ComponentHolder(version, getModernText()); // Cannot save because of potential different versions
         return holder;
     }

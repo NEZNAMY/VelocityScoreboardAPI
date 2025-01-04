@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-@SuppressWarnings("FieldCanBeLocal")
 @Configuration
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter

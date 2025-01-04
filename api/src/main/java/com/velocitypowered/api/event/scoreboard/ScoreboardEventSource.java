@@ -20,10 +20,10 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 public interface ScoreboardEventSource {
 
-    void fireEvent(@NotNull Object event);
+    void fireEvent(@NonNull Object event);
 
 }

@@ -24,16 +24,17 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
 import lombok.Getter;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Abstract class for team entry related events.
  */
+@Getter
 public abstract class TeamEntryEvent extends TeamEvent {
 
     /** Affected entry */
     @NotNull
-    @Getter
     private final String entry;
 
     /**
@@ -48,7 +49,7 @@ public abstract class TeamEntryEvent extends TeamEvent {
      * @param   entry
      *          Affected entry
      */
-    public TeamEntryEvent(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+    public TeamEntryEvent(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team, @NonNull String entry) {
         super(player, scoreboard, team);
         this.entry = entry;
     }
@@ -70,7 +71,7 @@ public abstract class TeamEntryEvent extends TeamEvent {
          * @param   entry
          *          Added entry
          */
-        public Add(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+        public Add(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team, @NonNull String entry) {
             super(player, scoreboard, team, entry);
         }
     }
@@ -92,7 +93,7 @@ public abstract class TeamEntryEvent extends TeamEvent {
          * @param   entry
          *          Removed entry
          */
-        public Remove(@NotNull Player player, @NotNull Scoreboard scoreboard, @NotNull Team team, @NotNull String entry) {
+        public Remove(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team, @NonNull String entry) {
             super(player, scoreboard, team, entry);
         }
     }

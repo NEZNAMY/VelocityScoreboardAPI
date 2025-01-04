@@ -26,6 +26,7 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,15 +42,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DownstreamObjective implements Objective {
 
     /** Name of the objective */
-    @NotNull
+    @NonNull
     private final String name;
 
     /** Objective title */
-    @NotNull
+    @NonNull
     private TextHolder title;
 
     /** Health display (1.8+) */
-    @NotNull
+    @NonNull
     private HealthDisplay healthDisplay;
 
     /** Default number format for all scores (1.20.3+) */
@@ -67,7 +68,7 @@ public class DownstreamObjective implements Objective {
 
     @Override
     @Nullable
-    public Score getScore(@NotNull String holder) {
+    public Score getScore(@NonNull String holder) {
         return scores.get(holder);
     }
 
@@ -83,7 +84,7 @@ public class DownstreamObjective implements Objective {
      * @param   packet
      *          Packet to take parameters from
      */
-    public void update(@NotNull ObjectivePacket packet) {
+    public void update(@NonNull ObjectivePacket packet) {
         title = packet.getTitle();
         healthDisplay = packet.getHealthDisplay();
         numberFormat = packet.getNumberFormat();
@@ -101,7 +102,7 @@ public class DownstreamObjective implements Objective {
      * @param   numberFormat
      *          Number formatter for score (1.20.3+)
      */
-    public void setScore(@NotNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
+    public void setScore(@NonNull String holder, int value, @Nullable ComponentHolder displayName, @Nullable NumberFormat numberFormat) {
         scores.computeIfAbsent(holder, DownstreamScore::new).update(value, displayName, numberFormat);
     }
 
@@ -111,7 +112,7 @@ public class DownstreamObjective implements Objective {
      * @param   holder
      *          Score holder to remove
      */
-    public void removeScore(@NotNull String holder) {
+    public void removeScore(@NonNull String holder) {
         scores.remove(holder);
     }
 

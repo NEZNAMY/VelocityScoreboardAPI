@@ -20,6 +20,7 @@
 
 package com.velocitypowered.api.scoreboard;
 
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +48,7 @@ public interface NumberFormat {
      * @return  Styled format with given style
      */
     @NotNull
-    static NumberFormat styled(@NotNull Style style) {
+    static NumberFormat styled(@NonNull Style style) {
         return new StyledFormat(style);
     }
 
@@ -59,7 +60,7 @@ public interface NumberFormat {
      * @return  Fixed format with given text
      */
     @NotNull
-    static NumberFormat fixed(@NotNull Component text) {
+    static NumberFormat fixed(@NonNull Component text) {
         return new FixedFormat(text);
     }
 
@@ -78,7 +79,7 @@ public interface NumberFormat {
      * @param   style
      *          Style to apply to all scores
      */
-    record StyledFormat(@NotNull Style style) implements NumberFormat {
+    record StyledFormat(@NonNull Style style) implements NumberFormat {
     }
 
     /**
@@ -87,6 +88,6 @@ public interface NumberFormat {
      * @param   component
      *          Component to display instead of score
      */
-    record FixedFormat(@NotNull Component component) implements NumberFormat {
+    record FixedFormat(@NonNull Component component) implements NumberFormat {
     }
 }
