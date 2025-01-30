@@ -20,7 +20,6 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
 import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
 import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
@@ -33,9 +32,6 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -350,7 +346,8 @@ public class DownstreamScoreboard implements Scoreboard {
         return dump;
     }
 
-    public void upload(@NonNull CommandSource sender) throws Exception {
+    @NotNull
+    public String upload() throws Exception {
         String contentString = String.join("\n", dump()) + "\n";
 
         URL url = new URL("https://api.pastes.dev/post");
@@ -373,8 +370,6 @@ public class DownstreamScoreboard implements Scoreboard {
         String responseString = response.toString();
         String id = responseString.substring(responseString.indexOf("\"key\":\"") + 7, responseString.indexOf("\"", responseString.indexOf("\"key\":\"") + 7));
 
-        TextComponent message = Component.text("Click here to open the result.");
-        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://pastes.dev/" + id));
-        sender.sendMessage(message);
+        return "https://pastes.dev/" + id;
     }
 }

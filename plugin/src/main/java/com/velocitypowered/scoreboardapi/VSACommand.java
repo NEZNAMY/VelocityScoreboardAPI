@@ -28,6 +28,9 @@ import com.velocitypowered.api.scoreboard.ScoreboardManager;
 import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -51,16 +54,15 @@ public class VSACommand implements SimpleCommand {
             if (args[0].equalsIgnoreCase("dump")) {
                 Player player = server.getPlayer(args[1]).orElse(null);
                 if (player != null) {
-                    sender.sendMessage(Component.text("Dumping scoreboard into console"));
                     DownstreamScoreboard scoreboard = ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player));
-                    for (String line : scoreboard.dump()) {
-                        System.out.println(line);
-                    }
-                    sender.sendMessage(Component.text("Uploading the result ..."));
                     try {
-                        scoreboard.upload(sender);
+                        String link = scoreboard.upload();
+                        TextComponent message = Component.text("See the result at " + link, TextColor.color(0x00aa00));
+                        message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, link));
+                        sender.sendMessage(message);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        sender.sendMessage(Component.text("Failed to upload result, see console for more info", TextColor.color(0xff0000)));
+                        e.printStackTrace();
                     }
                 } else {
                     sender.sendMessage(Component.text("No online player found with the name \"" + args[1] + "\""));
