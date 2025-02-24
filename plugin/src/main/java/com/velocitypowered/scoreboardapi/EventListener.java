@@ -32,6 +32,8 @@ import com.velocitypowered.proxy.scoreboard.downstream.DownstreamScoreboard;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.NoSuchElementException;
+
 /**
  * Class for listening to events to properly resend scoreboard on server switch.
  */
@@ -52,9 +54,14 @@ public class EventListener {
     @Subscribe
     public void onJoin(PostLoginEvent e) {
         if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5) || COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS) {
-            ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
-                    "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), plugin)
-            );
+            try {
+                ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
+                        "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer(), plugin)
+                );
+            } catch (NoSuchElementException ex) {
+                // java.util.NoSuchElementException: handler
+                // Looks like player left before this event was fired
+            }
         }
     }
 
