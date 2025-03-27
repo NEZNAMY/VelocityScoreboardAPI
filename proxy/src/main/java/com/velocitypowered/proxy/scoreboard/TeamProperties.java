@@ -95,11 +95,16 @@ public class TeamProperties {
         byte flags = buf.readByte();
         allowFriendlyFire = (flags & 0x01) > 0;
         canSeeFriendlyInvisibles = (flags & 0x02) > 0;
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-            nameVisibility = NameVisibility.getByName(ProtocolUtils.readString(buf));
-        }
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
-            collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
+        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_21_5)) {
+            nameVisibility = NameVisibility.values()[ProtocolUtils.readVarInt(buf)];
+            collisionRule = CollisionRule.values()[ProtocolUtils.readVarInt(buf)];
+        } else {
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
+                nameVisibility = NameVisibility.getByName(ProtocolUtils.readString(buf));
+            }
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
+                collisionRule = CollisionRule.getByName(ProtocolUtils.readString(buf));
+            }
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
             color = COLORS[ProtocolUtils.readVarInt(buf)];
@@ -131,11 +136,16 @@ public class TeamProperties {
         if (allowFriendlyFire) flags += 0x01;
         if (canSeeFriendlyInvisibles) flags += 0x02;
         buf.writeByte(flags);
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
-            ProtocolUtils.writeString(buf, nameVisibility.toString());
-        }
-        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
-            ProtocolUtils.writeString(buf, collisionRule.toString());
+        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_21_5)) {
+            ProtocolUtils.writeVarInt(buf, nameVisibility.ordinal());
+            ProtocolUtils.writeVarInt(buf, collisionRule.ordinal());
+        } else {
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_8)) {
+                ProtocolUtils.writeString(buf, nameVisibility.toString());
+            }
+            if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_9)) {
+                ProtocolUtils.writeString(buf, collisionRule.toString());
+            }
         }
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
             ProtocolUtils.writeVarInt(buf, color.ordinal());
