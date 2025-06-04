@@ -71,10 +71,12 @@ public class ObjectivePacket implements MinecraftPacket {
     public void decode(ByteBuf buf, ProtocolUtils.Direction direction, ProtocolVersion protocolVersion) {
         objectiveName = ProtocolUtils.readString(buf);
         if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) {
-            title =  TextHolder.of(ProtocolUtils.readString(buf));
+            title = TextHolder.of(ProtocolUtils.readString(buf));
+            action = ObjectiveAction.byId(buf.readByte());
+            healthDisplay = HealthDisplay.INTEGER; // To avoid NPE in processing
+            return;
         }
         action = ObjectiveAction.byId(buf.readByte());
-        if (protocolVersion.noGreaterThan(ProtocolVersion.MINECRAFT_1_7_6)) return;
         if (action == ObjectiveAction.REGISTER || action == ObjectiveAction.UPDATE) {
             if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_13)) {
                 title = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
