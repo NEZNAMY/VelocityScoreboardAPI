@@ -85,13 +85,14 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
             if (ProtocolVersion.MAXIMUM_VERSION != VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION) {
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
                 LoggerManager.log(Level.ERROR,"<red>Your Velocity build supports MC version " + ProtocolVersion.MAXIMUM_VERSION +
-                        ", but this plugin only supports up to " + VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION + ".");
+                        ", but this plugin version only supports up to " + VelocityScoreboard.MAXIMUM_SUPPORTED_VERSION + ".");
                 LoggerManager.log(Level.ERROR,"<red>Plugin will be disabled for players with unsupported versions to avoid risk.");
+                LoggerManager.log(Level.ERROR,"<red>Check for updates at https://github.com/NEZNAMY/VelocityScoreboardAPI/releases");
                 LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             }
         } catch (NoSuchFieldError e) {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
-            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #514 and up to work.");
+            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #520 and up to work.");
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             return;
         }
