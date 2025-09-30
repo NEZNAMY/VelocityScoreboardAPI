@@ -92,7 +92,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
             }
         } catch (NoSuchFieldError e) {
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
-            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #520 and up to work.");
+            LoggerManager.log(Level.ERROR,"<red>The plugin requires velocity build #539 and up to work.");
             LoggerManager.log(Level.ERROR,"<red>" + "-".repeat(80));
             return;
         }
