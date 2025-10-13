@@ -42,9 +42,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
@@ -380,5 +378,21 @@ public class VelocityScoreboard implements ProxyScoreboard {
     private synchronized void sendPacketSafe(@NonNull MinecraftPacket packet) {
         if (frozen) return;
         viewer.getConnection().write(packet);
+    }
+
+    /**
+     * Creates a dump of this scoreboard into a list of lines.
+     *
+     * @return  dump of this scoreboard
+     */
+    @NotNull
+    public List<String> dump() {
+        ArrayList<String> dump = new ArrayList<>();
+        dump.add("--- ProxyScoreboard of player " + viewer.getUsername() + " ---");
+        dump.add("Teams (" + teams.size() + "):");
+        teams.values().forEach(team -> dump.addAll(team.dump()));
+        dump.add("Objectives (" + objectives.size() + "):");
+        objectives.values().forEach(objective -> dump.addAll(objective.dump()));
+        return dump;
     }
 }

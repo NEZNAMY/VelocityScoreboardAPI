@@ -31,9 +31,7 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -157,6 +155,26 @@ public class VelocityObjective implements ProxyObjective {
 
     private void checkState() {
         if (!registered) throw new IllegalStateException("This objective (" + name + ") was unregistered");
+    }
+
+    /**
+     * Creates a dump of this objective into a list of lines.
+     *
+     * @return  dump of this objective
+     */
+    @NotNull
+    public List<String> dump() {
+        List<String> content = new ArrayList<>();
+        content.add("  " + name + ":");
+        content.add("    Title: " + title);
+        content.add("    HealthDisplay: " + healthDisplay);
+        content.add("    NumberFormat: " + numberFormat);
+        content.add("    DisplaySlot: " + displaySlot);
+        content.add("    Scores (" + scores.size() + "):");
+        for (VelocityScore score : scores.values()) {
+            content.addAll(score.dump());
+        }
+        return content;
     }
 
     public static class Builder implements ProxyObjective.Builder {

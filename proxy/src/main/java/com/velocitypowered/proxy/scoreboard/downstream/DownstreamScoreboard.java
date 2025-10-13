@@ -35,12 +35,6 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -344,32 +338,5 @@ public class DownstreamScoreboard implements Scoreboard {
         dump.add("Objectives (" + objectives.size() + "):");
         objectives.values().forEach(objective -> dump.addAll(objective.dump()));
         return dump;
-    }
-
-    @NotNull
-    public String upload() throws Exception {
-        String contentString = String.join("\n", dump()) + "\n";
-
-        URL url = new URL("https://api.pastes.dev/post");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setDoOutput(true);
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "text/log; charset=UTF-8");
-
-        try (OutputStream os = connection.getOutputStream()) {
-            os.write(contentString.getBytes(StandardCharsets.UTF_8));
-        }
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) response.append(inputLine);
-        in.close();
-
-        String responseString = response.toString();
-        String id = responseString.substring(responseString.indexOf("\"key\":\"") + 7, responseString.indexOf("\"", responseString.indexOf("\"key\":\"") + 7));
-
-        return "https://pastes.dev/" + id;
     }
 }

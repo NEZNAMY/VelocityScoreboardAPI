@@ -36,8 +36,10 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
@@ -247,6 +249,22 @@ public class VelocityTeam implements ProxyTeam {
 
     private void checkState() {
         if (!registered) throw new IllegalStateException("This team (" + name + ") was unregistered");
+    }
+
+    /**
+     * Creates a dump of this team into a list of lines.
+     *
+     * @return  dump of this team
+     */
+    @NotNull
+    public List<String> dump() {
+        List<String> content = new ArrayList<>();
+        content.add("  " + name + ":");
+        content.add("    DisplayName: " + properties.getDisplayName());
+        content.add("    Prefix: " + properties.getPrefix());
+        content.add("    Suffix: " + properties.getSuffix());
+        content.add("    Entries: " + entries);
+        return content;
     }
 
     public static class PropertyBuilder implements ProxyTeam.PropertyBuilder {
