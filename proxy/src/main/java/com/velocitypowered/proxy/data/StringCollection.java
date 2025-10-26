@@ -210,7 +210,7 @@ public class StringCollection {
             if (entries != null) entries.remove(entry);
         } else if (entries != null && entries.remove(entry)) {
             if (entries.size() == 1) {
-                this.entry = entry;
+                this.entry = entries.iterator().next();
             }
             removed = true;
         }
