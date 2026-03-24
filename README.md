@@ -16,8 +16,8 @@
 Please add the plugin to your Velocity server's plugins folder. Make sure you are running the latest version of Velocity (check the requirements below).
 
 ### Requirements
-* Java 17+
-* Velocity 3.4.0 build 539+
+* Java 21+
+* Velocity 3.5.0 build 584+
 
 ## Developers
 VelocityScoreboardAPI is available [on Maven](https://repo.william278.net/#/releases/net/william278/velocityscoreboardapi/). You can browse the Javadocs [here](https://repo.william278.net/javadoc/releases/net/william278/velocityscoreboardapi/latest).
