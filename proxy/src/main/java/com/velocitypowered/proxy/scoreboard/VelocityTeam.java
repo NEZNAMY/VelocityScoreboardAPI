@@ -118,65 +118,49 @@ public class VelocityTeam implements ProxyTeam {
     @Override
     public void setDisplayName(@NonNull TextHolder displayName) {
         checkState();
-        if (properties.setDisplayName(displayName)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setDisplayName(displayName));
     }
 
     @Override
     public void setPrefix(@NonNull TextHolder prefix) {
         checkState();
-        if (properties.setPrefix(prefix)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setPrefix(prefix));
     }
 
     @Override
     public void setSuffix(@NonNull TextHolder suffix) {
         checkState();
-        if (properties.setSuffix(suffix)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setSuffix(suffix));
     }
 
     @Override
     public void setNameVisibility(@NonNull NameVisibility visibility) {
         checkState();
-        if (properties.setNameVisibility(visibility)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setNameVisibility(visibility));
     }
 
     @Override
     public void setCollisionRule(@NonNull CollisionRule collisionRule) {
         checkState();
-        if (properties.setCollisionRule(collisionRule)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setCollisionRule(collisionRule));
     }
 
     @Override
     public void setColor(@NonNull TeamColor color) {
         checkState();
-        if (properties.setColor(color)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setColor(color));
     }
 
     @Override
     public void setAllowFriendlyFire(boolean friendlyFire) {
         checkState();
-        if (properties.setAllowFriendlyFire(friendlyFire)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setAllowFriendlyFire(friendlyFire));
     }
 
     @Override
     public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
         checkState();
-        if (properties.setCanSeeFriendlyInvisibles(canSeeFriendlyInvisibles)) {
-            sendUpdate();
-        }
+        applyPropertiesUpdate(event -> event.setCanSeeFriendlyInvisibles(canSeeFriendlyInvisibles));
     }
 
     @Override
@@ -184,15 +168,36 @@ public class VelocityTeam implements ProxyTeam {
         checkState();
         PropertyBuilder builder = new PropertyBuilder();
         builderConsumer.accept(builder);
-        if (builder.displayName != null) properties.setDisplayName(builder.displayName);
-        if (builder.prefix != null) properties.setPrefix(builder.prefix);
-        if (builder.suffix != null) properties.setSuffix(builder.suffix);
-        if (builder.nameVisibility != null) properties.setNameVisibility(builder.nameVisibility);
-        if (builder.collisionRule != null) properties.setCollisionRule(builder.collisionRule);
-        if (builder.color != null) properties.setColor(builder.color);
-        if (builder.allowFriendlyFire != null) properties.setAllowFriendlyFire(builder.allowFriendlyFire);
-        if (builder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(builder.canSeeFriendlyInvisibles);
-        sendUpdate();
+        applyPropertiesUpdate(event -> {
+            if (builder.displayName != null) event.setDisplayName(builder.displayName);
+            if (builder.prefix != null) event.setPrefix(builder.prefix);
+            if (builder.suffix != null) event.setSuffix(builder.suffix);
+            if (builder.nameVisibility != null) event.setNameVisibility(builder.nameVisibility);
+            if (builder.collisionRule != null) event.setCollisionRule(builder.collisionRule);
+            if (builder.color != null) event.setColor(builder.color);
+            if (builder.allowFriendlyFire != null) event.setAllowFriendlyFire(builder.allowFriendlyFire);
+            if (builder.canSeeFriendlyInvisibles != null) event.setCanSeeFriendlyInvisibles(builder.canSeeFriendlyInvisibles);
+        });
+    }
+
+    private void applyPropertiesUpdate(@NonNull Consumer<TeamEvent.PropertiesChange> applier) {
+        TeamEvent.PropertiesChange event = new TeamEvent.PropertiesChange(scoreboard.getViewer(), scoreboard, this);
+        applier.accept(event);
+        scoreboard.getEventSource().fireEvent(event);
+
+        boolean changed = false;
+        changed |= properties.setDisplayName(event.getDisplayName());
+        changed |= properties.setPrefix(event.getPrefix());
+        changed |= properties.setSuffix(event.getSuffix());
+        changed |= properties.setNameVisibility(event.getNameVisibility());
+        changed |= properties.setCollisionRule(event.getCollisionRule());
+        changed |= properties.setColor(event.getColor());
+        changed |= properties.setAllowFriendlyFire(event.isAllowFriendlyFire());
+        changed |= properties.setCanSeeFriendlyInvisibles(event.isCanSeeFriendlyInvisibles());
+
+        if (changed) {
+            sendUpdate();
+        }
     }
 
     @Override

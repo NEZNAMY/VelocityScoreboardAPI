@@ -20,10 +20,14 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.scoreboard.CollisionRule;
+import com.velocitypowered.api.scoreboard.NameVisibility;
 import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.Scoreboard;
 import com.velocitypowered.api.scoreboard.Team;
+import com.velocitypowered.api.scoreboard.TeamColor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -93,6 +97,100 @@ public abstract class TeamEvent extends ScoreboardEvent {
          */
         public Unregister(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team) {
             super(player, scoreboard, team);
+        }
+    }
+
+    /**
+     * This event is called before team properties are changed.
+     */
+    @Getter
+    public static class PropertiesChange extends TeamEvent {
+
+        @NotNull private TextHolder displayName;
+        @NotNull private TextHolder prefix;
+        @NotNull private TextHolder suffix;
+        @NotNull private NameVisibility nameVisibility;
+        @NotNull private CollisionRule collisionRule;
+        @NotNull private TeamColor color;
+        private boolean allowFriendlyFire;
+        private boolean canSeeFriendlyInvisibles;
+
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   scoreboard
+         *          Scoreboard source
+         * @param   team
+         *          Name of affected team
+         */
+        public PropertiesChange(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Team team) {
+            super(player, scoreboard, team);
+            this.displayName = team.getDisplayName();
+            this.prefix = team.getPrefix();
+            this.suffix = team.getSuffix();
+            this.nameVisibility = team.getNameVisibility();
+            this.collisionRule = team.getCollisionRule();
+            this.color = team.getColor();
+            this.allowFriendlyFire = team.isAllowFriendlyFire();
+            this.canSeeFriendlyInvisibles = team.isCanSeeFriendlyInvisibles();
+        }
+
+        public void setDisplayName(@NonNull TextHolder displayName) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.displayName = displayName;
+        }
+
+        public void setPrefix(@NonNull TextHolder prefix) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.prefix = prefix;
+        }
+
+        public void setSuffix(@NonNull TextHolder suffix) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.suffix = suffix;
+        }
+
+        public void setNameVisibility(@NonNull NameVisibility nameVisibility) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.nameVisibility = nameVisibility;
+        }
+
+        public void setCollisionRule(@NonNull CollisionRule collisionRule) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.collisionRule = collisionRule;
+        }
+
+        public void setColor(@NonNull TeamColor color) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.color = color;
+        }
+
+        public void setAllowFriendlyFire(boolean allowFriendlyFire) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.allowFriendlyFire = allowFriendlyFire;
+        }
+
+        public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
+            if (!isProxy()) {
+                throw new IllegalStateException("Cannot modify backend scoreboard events");
+            }
+            this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         }
     }
 }
