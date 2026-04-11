@@ -21,7 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
-import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.api.event.scoreboard.TeamEvent;
 import com.velocitypowered.api.scoreboard.CollisionRule;
 import com.velocitypowered.api.scoreboard.NameVisibility;
@@ -29,6 +29,7 @@ import com.velocitypowered.api.scoreboard.ProxyTeam;
 import com.velocitypowered.api.scoreboard.TeamColor;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.TeamPacket;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class VelocityTeam implements ProxyTeam {
 
     @NonNull private final VelocityScoreboard scoreboard;
@@ -50,13 +52,6 @@ public class VelocityTeam implements ProxyTeam {
     @NonNull private final TeamProperties properties;
     @NonNull private final StringCollection entries;
     private boolean registered = true;
-
-    private VelocityTeam(@NonNull VelocityScoreboard scoreboard, @NonNull String name, @NonNull TeamProperties properties, @NonNull StringCollection entries) {
-        this.scoreboard = scoreboard;
-        this.name = name;
-        this.properties = properties;
-        this.entries = entries;
-    }
 
     @Override
     @NotNull
@@ -117,106 +112,129 @@ public class VelocityTeam implements ProxyTeam {
 
     @Override
     public void setDisplayName(@NonNull TextHolder displayName) {
-        checkState();
-        if (properties.setDisplayName(displayName)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.displayName(displayName);
+        tryUpdate(builder);
     }
 
     @Override
     public void setPrefix(@NonNull TextHolder prefix) {
-        checkState();
-        if (properties.setPrefix(prefix)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.prefix(prefix);
+        tryUpdate(builder);
     }
 
     @Override
     public void setSuffix(@NonNull TextHolder suffix) {
-        checkState();
-        if (properties.setSuffix(suffix)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.suffix(suffix);
+        tryUpdate(builder);
     }
 
     @Override
     public void setNameVisibility(@NonNull NameVisibility visibility) {
-        checkState();
-        if (properties.setNameVisibility(visibility)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.nameVisibility(visibility);
+        tryUpdate(builder);
     }
 
     @Override
     public void setCollisionRule(@NonNull CollisionRule collisionRule) {
-        checkState();
-        if (properties.setCollisionRule(collisionRule)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.collisionRule(collisionRule);
+        tryUpdate(builder);
     }
 
     @Override
     public void setColor(@NonNull TeamColor color) {
-        checkState();
-        if (properties.setColor(color)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.color(color);
+        tryUpdate(builder);
     }
 
     @Override
     public void setAllowFriendlyFire(boolean friendlyFire) {
-        checkState();
-        if (properties.setAllowFriendlyFire(friendlyFire)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.allowFriendlyFire(isAllowFriendlyFire());
+        tryUpdate(builder);
     }
 
     @Override
     public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
-        checkState();
-        if (properties.setCanSeeFriendlyInvisibles(canSeeFriendlyInvisibles)) {
-            sendUpdate();
-        }
+        PropertyBuilder builder = new PropertyBuilder();
+        builder.canSeeFriendlyInvisibles(canSeeFriendlyInvisibles);
+        tryUpdate(builder);
     }
 
     @Override
     public void updateProperties(@NonNull Consumer<ProxyTeam.PropertyBuilder> builderConsumer) {
-        checkState();
         PropertyBuilder builder = new PropertyBuilder();
         builderConsumer.accept(builder);
-        if (builder.displayName != null) properties.setDisplayName(builder.displayName);
-        if (builder.prefix != null) properties.setPrefix(builder.prefix);
-        if (builder.suffix != null) properties.setSuffix(builder.suffix);
-        if (builder.nameVisibility != null) properties.setNameVisibility(builder.nameVisibility);
-        if (builder.collisionRule != null) properties.setCollisionRule(builder.collisionRule);
-        if (builder.color != null) properties.setColor(builder.color);
-        if (builder.allowFriendlyFire != null) properties.setAllowFriendlyFire(builder.allowFriendlyFire);
-        if (builder.canSeeFriendlyInvisibles != null) properties.setCanSeeFriendlyInvisibles(builder.canSeeFriendlyInvisibles);
-        sendUpdate();
+        tryUpdate(builder);
+    }
+
+    private void tryUpdate(@NonNull PropertyBuilder builder) {
+        checkState();
+        TeamEvent.Update event = new TeamEvent.Update(
+                scoreboard.getViewer(),
+                true,
+                name,
+                builder.displayName != null ? builder.displayName : properties.getDisplayName(),
+                builder.prefix != null ? builder.prefix : properties.getPrefix(),
+                builder.suffix != null ? builder.suffix : properties.getSuffix(),
+                builder.nameVisibility != null ? builder.nameVisibility : properties.getNameVisibility(),
+                builder.collisionRule != null ? builder.collisionRule : properties.getCollisionRule(),
+                builder.color != null ? builder.color : properties.getColor(),
+                builder.allowFriendlyFire != null ? builder.allowFriendlyFire : properties.isAllowFriendlyFire(),
+                builder.canSeeFriendlyInvisibles != null ? builder.canSeeFriendlyInvisibles : properties.isCanSeeFriendlyInvisibles()
+        );
+        scoreboard.getEventSource().fireEvent(event);
+
+        boolean changed = false;
+        changed |= properties.setDisplayName(event.getDisplayName());
+        changed |= properties.setPrefix(event.getPrefix());
+        changed |= properties.setSuffix(event.getSuffix());
+        changed |= properties.setNameVisibility(event.getNameVisibility());
+        changed |= properties.setCollisionRule(event.getCollisionRule());
+        changed |= properties.setColor(event.getColor());
+        changed |= properties.setAllowFriendlyFire(event.isAllowFriendlyFire());
+        changed |= properties.setCanSeeFriendlyInvisibles(event.isCanSeeFriendlyInvisibles());
+        if (changed) {
+            sendUpdate();
+        }
     }
 
     @Override
     public void addEntry(@NonNull String entry) {
         checkState();
-        if (entries.contains(entry)) return;
-        VelocityTeam oldTeam = scoreboard.addEntryToTeam(entry, this);
-        if (oldTeam != null) {
-            oldTeam.entries.remove(entry);
+        TeamEvent.AddPlayers event = new TeamEvent.AddPlayers(scoreboard.getViewer(), true, name, Collections.singleton(entry));
+        scoreboard.getEventSource().fireEvent(event);
+        for (String entry0 : event.getEntries()) {
+            if (entries.contains(entry0)) continue;
+            VelocityTeam oldTeam = scoreboard.addEntryToTeam(entry0, this);
+            if (oldTeam != null) {
+                oldTeam.entries.remove(entry0);
+            }
+            entries.add(entry0);
+            // Maybe merge packets into one?
+            scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry0, true), this);
         }
-        entries.add(entry);
-        scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, true), this);
-        scoreboard.getEventSource().fireEvent(new TeamEntryEvent.Add(scoreboard.getViewer(), scoreboard, this, entry));
     }
 
     @Override
     public void removeEntry(@NonNull String entry) throws IllegalArgumentException {
         checkState();
-        if (entries.remove(entry)) {
-            scoreboard.removeEntryFromTeam(entry, this);
-            scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry, false), this);
-            scoreboard.getEventSource().fireEvent(new TeamEntryEvent.Remove(scoreboard.getViewer(), scoreboard, this, entry));
-        } else {
-            throw new IllegalArgumentException("Entry " + entry + " is not in team " + name + ", cannot remove");
+        TeamEvent.RemovePlayers event = new TeamEvent.RemovePlayers(scoreboard.getViewer(), true, name,  Collections.singleton(entry));
+        scoreboard.getEventSource().fireEvent(event);
+        for (String entry0 : event.getEntries()) {
+            if (entries.remove(entry0)) {
+                scoreboard.removeEntryFromTeam(entry0, this);
+                // Maybe merge packets into one?
+                scoreboard.sendPacket(TeamPacket.addOrRemovePlayer(name, entry0, false), this);
+            } else {
+                // What if it was modified in event and caller is innocent?
+                throw new IllegalArgumentException("Entry " + entry0 + " is not in team " + name + ", cannot remove");
+            }
         }
     }
 
@@ -243,7 +261,7 @@ public class VelocityTeam implements ProxyTeam {
             }
         }
         scoreboard.sendPacket(TeamPacket.unregister(name), this);
-        scoreboard.getEventSource().fireEvent(new TeamEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
+        scoreboard.getEventSource().fireEvent(new TeamEvent.Unregister(scoreboard.getViewer(), true, name));
         registered = false;
     }
 
@@ -335,11 +353,12 @@ public class VelocityTeam implements ProxyTeam {
         }
     }
 
+    @Getter
     @RequiredArgsConstructor
     public static class Builder extends PropertyBuilder implements ProxyTeam.Builder {
 
         @NonNull private final String name;
-        @Nullable private StringCollection entries;
+        @Nullable private Collection<String> entries;
 
         @NotNull
         @Override
@@ -400,36 +419,58 @@ public class VelocityTeam implements ProxyTeam {
         @NotNull
         @Override
         public Builder entry(@NonNull String entry) {
-            this.entries = new StringCollection(entry);
+            this.entries = Collections.singleton(entry);
             return this;
         }
 
         @NotNull
         @Override
         public Builder entries(@NonNull Collection<String> entries) {
-            this.entries = new StringCollection(entries);
+            this.entries = entries;
             return this;
         }
 
         /**
-         * Builds this entry into a team.
+         * Fires register event, applies modifications, creates the team and returns it.
          *
+         * @param   eventSource
+         *          Event source to fire event on
          * @param   scoreboard
-         *          Scoreboard to register this team into
-         * @return  Newly created team
+         *          Scoreboard to create the team on
+         * @return  Created team
          */
         @NotNull
-        public VelocityTeam build(@NonNull VelocityScoreboard scoreboard) {
-            if (displayName == null) displayName = TextHolder.of(name);
-            if (prefix == null) prefix = TextHolder.empty();
-            if (suffix == null) suffix = TextHolder.empty();
-            if (nameVisibility == null) nameVisibility = NameVisibility.ALWAYS;
-            if (collisionRule == null) collisionRule = CollisionRule.ALWAYS;
-            if (color == null) color = TeamColor.RESET;
-            if (allowFriendlyFire == null) allowFriendlyFire = false;
-            if (canSeeFriendlyInvisibles == null) canSeeFriendlyInvisibles = false;
-            return new VelocityTeam(scoreboard, name, new TeamProperties(displayName, prefix, suffix, nameVisibility, collisionRule,
-                    color, allowFriendlyFire, canSeeFriendlyInvisibles), entries != null ? entries : new StringCollection());
+        public VelocityTeam callEventAndBuild(@NonNull ScoreboardEventSource eventSource, @NonNull VelocityScoreboard scoreboard) {
+            TeamEvent.Register registerEvent = new TeamEvent.Register(
+                    scoreboard.getViewer(),
+                    true,
+                    name,
+                    displayName != null ? displayName : TextHolder.of(name),
+                    prefix != null ? prefix : TextHolder.empty(),
+                    suffix != null ? suffix : TextHolder.empty(),
+                    nameVisibility != null ? nameVisibility : NameVisibility.ALWAYS,
+                    collisionRule != null ? collisionRule : CollisionRule.ALWAYS,
+                    color != null ? color : TeamColor.RESET,
+                    allowFriendlyFire != null ? allowFriendlyFire : Boolean.FALSE,
+                    canSeeFriendlyInvisibles != null ? canSeeFriendlyInvisibles : Boolean.FALSE,
+                    entries != null ? entries : Collections.emptyList()
+            );
+            eventSource.fireEvent(registerEvent);
+            return new VelocityTeam(
+                    scoreboard,
+                    name,
+                    new TeamProperties(
+                            registerEvent.getDisplayName(),
+                            registerEvent.getPrefix(),
+                            registerEvent.getSuffix(),
+                            registerEvent.getNameVisibility(),
+                            registerEvent.getCollisionRule(),
+                            registerEvent.getColor(),
+                            registerEvent.isAllowFriendlyFire(),
+                            registerEvent.isCanSeeFriendlyInvisibles()
+                    ),
+                    new StringCollection(entries)
+            );
         }
     }
 }

@@ -20,9 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
-import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
-import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
-import com.velocitypowered.api.event.scoreboard.TeamEvent;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer;
@@ -75,12 +73,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
 
     @Override
     @NotNull
-    public VelocityTeam.PropertyBuilder teamPropertyBuilder() {
-        return new VelocityTeam.PropertyBuilder();
-    }
-
-    @Override
-    @NotNull
     public VelocityObjective.Builder objectiveBuilder(@NonNull String name) {
         return new VelocityObjective.Builder(name);
     }
@@ -88,16 +80,17 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @Override
     @NotNull
     public VelocityObjective registerObjective(@NonNull ProxyObjective.Builder builder) {
-        VelocityObjective objective = ((VelocityObjective.Builder)builder).build(this);
-        if (objectives.putIfAbsent(objective.getName(), objective) != null) {
-            throw new IllegalStateException("An objective with this name (" + objective.getName() + ") already exists in this scoreboard");
+        VelocityObjective.Builder velocityBuilder = (VelocityObjective.Builder) builder;
+        if (objectives.containsKey(velocityBuilder.getName())) {
+            throw new IllegalStateException("An objective with this name (" + velocityBuilder.getName() + ") already exists in this scoreboard");
         }
-        objective.sendRegister();
-        eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, objective));
+        velocityBuilder.callAndApplyRegisterEvents(eventSource, viewer);
+        VelocityObjective objective = velocityBuilder.build(this);
+        objectives.put(objective.getName(), objective);
         if (objective.getDisplaySlot() != null) {
             displaySlots.put(objective.getDisplaySlot(), objective);
-            eventSource.fireEvent(new ObjectiveEvent.Display(viewer, this, objective, objective.getDisplaySlot()));
         }
+        objective.sendRegister();
         return objective;
     }
 
@@ -123,10 +116,12 @@ public class VelocityScoreboard implements ProxyScoreboard {
     @NotNull
     @Override
     public VelocityTeam registerTeam(@NonNull ProxyTeam.Builder builder) {
-        VelocityTeam team = ((VelocityTeam.Builder)builder).build(this);
-        if (teams.putIfAbsent(team.getName(), team) != null) {
-            throw new IllegalStateException("A team with this name (" + team.getName() + ") already exists");
+        VelocityTeam.Builder velocityBuilder = (VelocityTeam.Builder) builder;
+        if (teams.containsKey(velocityBuilder.getName())) {
+            throw new IllegalStateException("A team with this name (" + velocityBuilder.getName() + ") already exists");
         }
+        VelocityTeam team = velocityBuilder.callEventAndBuild(eventSource, this);
+        teams.put(team.getName(), team);
         if (team.getEntryCollection().getEntry() != null) {
             VelocityTeam oldTeam = teamEntries.put(team.getEntryCollection().getEntry(), team);
             if (oldTeam != null) {
@@ -142,7 +137,6 @@ public class VelocityScoreboard implements ProxyScoreboard {
         }
 
         team.sendRegister();
-        eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
         return team;
     }
 

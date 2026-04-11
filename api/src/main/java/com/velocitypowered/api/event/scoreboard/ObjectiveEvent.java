@@ -20,14 +20,14 @@
 
 package com.velocitypowered.api.event.scoreboard;
 
+import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.DisplaySlot;
-import com.velocitypowered.api.scoreboard.Objective;
-import com.velocitypowered.api.scoreboard.ProxyObjective;
-import com.velocitypowered.api.scoreboard.Scoreboard;
+import com.velocitypowered.api.scoreboard.HealthDisplay;
+import com.velocitypowered.api.scoreboard.NumberFormat;
 import lombok.Getter;
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for Objective events.
@@ -35,52 +35,62 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public abstract class ObjectiveEvent extends ScoreboardEvent {
 
-    /**
-     * Objective.
-     * If proxy is true, the objective is a {@link ProxyObjective}, otherwise it is a backend {@link Objective}
-     */
+    /** Name of the affected objective */
     @NonNull
-    private final Objective objective;
+    private final String objectiveName;
 
     /**
      * Constructs new instance with given parameters.
      *
      * @param   player
      *          Player who received the scoreboard change
-     * @param   scoreboard
-     *          Scoreboard source
-     * @param   objective
+     * @param   mutable
+     *          Whether this affects proxy scoreboard or not
+     * @param   objectiveName
      *          Name of affected objective
      */
-    public ObjectiveEvent(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
-        super(player, scoreboard);
-        this.objective = objective;
+    public ObjectiveEvent(@NonNull Player player, boolean mutable, @NonNull String objectiveName) {
+        super(player, mutable);
+        this.objectiveName = objectiveName;
     }
 
     /**
      * This event is called when an objective is assigned a display slot.
      */
+    @Getter
     public static class Display extends ObjectiveEvent {
 
         /** New display slot */
-        @NotNull
-        @Getter
-        private final DisplaySlot newSlot;
+        @NonNull
+        private DisplaySlot newSlot;
 
         /**
          * Constructs new instance with given parameters.
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   scoreboard
-         *          Scoreboard source
-         * @param   objective
+         * @param   mutable
+         *          Whether this objective is mutable (proxy) or not (backend)
+         * @param   objectiveName
          *          Name of affected objective
          * @param   newSlot
          *          New display slot
          */
-        public Display(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective, @NonNull DisplaySlot newSlot) {
-            super(player, scoreboard, objective);
+        public Display(@NonNull Player player, boolean mutable, @NonNull String objectiveName, @NonNull DisplaySlot newSlot) {
+            super(player, mutable, objectiveName);
+            this.newSlot = newSlot;
+        }
+
+        /**
+         * Sets new slot to display this objective in
+         *
+         * @param   newSlot
+         *          New display slot
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setNewSlot(@NonNull DisplaySlot newSlot) {
+            if (!isMutable()) throw NOT_MUTABLE;
             this.newSlot = newSlot;
         }
     }
@@ -88,20 +98,83 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
     /**
      * This event is called when an objective is registered.
      */
+    @Getter
     public static class Register extends ObjectiveEvent {
+
+        /** Title of the objective */
+        @NonNull
+        private TextHolder title;
+
+        /** Health display of the objective */
+        @NonNull
+        private HealthDisplay healthDisplay;
+
+        /** Default number format for all scores */
+        @Nullable
+        private NumberFormat numberFormat;
 
         /**
          * Constructs new instance with given parameters.
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   scoreboard
-         *          Scoreboard source
-         * @param   objective
+         * @param   mutable
+         *          Whether this objective is mutable (proxy) or not (backend)
+         * @param   objectiveName
          *          Name of affected objective
+         * @param   title
+         *          Title of the objective
+         * @param   healthDisplay
+         *          Health display type of the objective
+         * @param   numberFormat
+         *          Number format of the objective
          */
-        public Register(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
-            super(player, scoreboard, objective);
+        public Register(@NonNull Player player, boolean mutable, @NonNull String objectiveName,
+                        @NonNull TextHolder title, @NonNull HealthDisplay healthDisplay,
+                        @Nullable NumberFormat numberFormat) {
+            super(player, mutable, objectiveName);
+            this.title = title;
+            this.healthDisplay = healthDisplay;
+            this.numberFormat = numberFormat;
+        }
+
+        /**
+         * Sets the title to new value.
+         *
+         * @param   title
+         *          New title
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setTitle(@NonNull TextHolder title) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.title = title;
+        }
+
+        /**
+         * Sets the health display to new value.
+         *
+         * @param   healthDisplay
+         *          New health display
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.healthDisplay = healthDisplay;
+        }
+
+        /**
+         * Sets the number format to new value.
+         *
+         * @param   numberFormat
+         *          New number format
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setNumberFormat(@NonNull NumberFormat numberFormat) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.numberFormat = numberFormat;
         }
     }
 
@@ -115,14 +188,96 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *
          * @param   player
          *          Player who received the scoreboard change
-         * @param   scoreboard
-         *          Scoreboard source
-         * @param   objective
+         * @param   mutable
+         *          Whether this objective is mutable (proxy) or not (backend)
+         * @param   objectiveName
          *          Name of affected objective
          */
-        public Unregister(@NonNull Player player, @NonNull Scoreboard scoreboard, @NonNull Objective objective) {
-            super(player, scoreboard, objective);
+        public Unregister(@NonNull Player player, boolean mutable, @NonNull String objectiveName) {
+            super(player, mutable, objectiveName);
         }
     }
 
+    /**
+     * This event is called when an objective is updated.
+     */
+    @Getter
+    public static class Update extends ObjectiveEvent {
+
+        /** Title of the objective */
+        @NonNull
+        private TextHolder title;
+
+        /** Health display of the objective */
+        @NonNull
+        private HealthDisplay healthDisplay;
+
+        /** Default number format for all scores */
+        @Nullable
+        private NumberFormat numberFormat;
+
+        /**
+         * Constructs new instance with given parameters.
+         *
+         * @param   player
+         *          Player who received the scoreboard change
+         * @param   mutable
+         *          Whether this objective is mutable (proxy) or not (backend)
+         * @param   objectiveName
+         *          Name of affected objective
+         * @param   title
+         *          Title of the objective
+         * @param   healthDisplay
+         *          Health display type of the objective
+         * @param   numberFormat
+         *          Number format of the objective
+         */
+        public Update(@NonNull Player player, boolean mutable, @NonNull String objectiveName,
+                      @NonNull TextHolder title, @NonNull HealthDisplay healthDisplay,
+                      @Nullable NumberFormat numberFormat) {
+            super(player, mutable, objectiveName);
+            this.title = title;
+            this.healthDisplay = healthDisplay;
+            this.numberFormat = numberFormat;
+        }
+
+        /**
+         * Sets the title to new value.
+         *
+         * @param   title
+         *          New title
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setTitle(@NonNull TextHolder title) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.title = title;
+        }
+
+        /**
+         * Sets the health display to new value.
+         *
+         * @param   healthDisplay
+         *          New health display
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.healthDisplay = healthDisplay;
+        }
+
+        /**
+         * Sets the number format to new value.
+         *
+         * @param   numberFormat
+         *          New number format
+         * @throws  UnsupportedOperationException
+         *          If this event is not mutable (it affects backend scoreboard)
+         */
+        public void setNumberFormat(@NonNull NumberFormat numberFormat) {
+            if (!isMutable()) throw NOT_MUTABLE;
+            this.numberFormat = numberFormat;
+        }
+    }
 }

@@ -138,14 +138,6 @@ public interface ProxyScoreboard extends Scoreboard {
     ProxyTeam.Builder teamBuilder(@NonNull String name);
 
     /**
-     * Creates a new team property builder.
-     *
-     * @return  New team property builder
-     */
-    @NotNull
-    ProxyTeam.PropertyBuilder teamPropertyBuilder();
-
-    /**
      * Registers team into this scoreboard.
      *
      * @param   builder

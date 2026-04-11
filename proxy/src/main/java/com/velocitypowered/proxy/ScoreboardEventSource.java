@@ -18,7 +18,7 @@
  *  limitations under the License.
  */
 
-package com.velocitypowered.api.event.scoreboard;
+package com.velocitypowered.proxy;
 
 import lombok.NonNull;
 

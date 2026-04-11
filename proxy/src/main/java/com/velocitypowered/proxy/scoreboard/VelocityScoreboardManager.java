@@ -21,7 +21,7 @@
 package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
