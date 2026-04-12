@@ -73,7 +73,7 @@ public class VelocityObjective implements ProxyObjective {
 
     @Override
     public void setTitle(@NonNull TextHolder title) {
-        if (this.title == title) return;
+        if (this.title.equals(title)) return;
         tryUpdate(title, healthDisplay, numberFormat);
     }
 
