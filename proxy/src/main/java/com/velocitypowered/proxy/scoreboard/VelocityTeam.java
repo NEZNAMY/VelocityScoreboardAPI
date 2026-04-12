@@ -155,7 +155,7 @@ public class VelocityTeam implements ProxyTeam {
     @Override
     public void setAllowFriendlyFire(boolean friendlyFire) {
         PropertyBuilder builder = new PropertyBuilder();
-        builder.allowFriendlyFire(isAllowFriendlyFire());
+        builder.allowFriendlyFire(friendlyFire);
         tryUpdate(builder);
     }
 
@@ -469,7 +469,7 @@ public class VelocityTeam implements ProxyTeam {
                             registerEvent.isAllowFriendlyFire(),
                             registerEvent.isCanSeeFriendlyInvisibles()
                     ),
-                    new StringCollection(entries)
+                    new StringCollection(registerEvent.getEntries())
             );
         }
     }
