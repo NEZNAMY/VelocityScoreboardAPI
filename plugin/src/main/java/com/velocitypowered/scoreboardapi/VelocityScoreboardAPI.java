@@ -24,23 +24,25 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scoreboard.ScoreboardManager;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboard;
 import com.velocitypowered.proxy.scoreboard.VelocityScoreboardManager;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import org.bstats.velocity.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.event.Level;
 
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Entrypoint for Velocity Scoreboard API.
@@ -124,10 +126,18 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     }
 
     @Override
-    @SneakyThrows
     public void fireEvent(@NonNull Object event) {
         if (!pluginConfig.isCallScoreboardEvents()) return;
         CompletableFuture<Object> future = server.getEventManager().fire(event);
-        future.get(); // Wait for event to complete
+        try {
+            future.get(50, TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            LoggerManager.log(Level.WARN, "<yellow>Event processing timed out after 50ms for event " + event.getClass().getName());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (ExecutionException e) {
+            LoggerManager.log(Level.ERROR, "<red>Exception thrown while processing event " + event.getClass().getName());
+            e.printStackTrace();
+        }
     }
 }
