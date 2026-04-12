@@ -90,7 +90,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNewSlot(@NonNull DisplaySlot newSlot) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.newSlot = newSlot;
         }
     }
@@ -147,7 +147,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setTitle(@NonNull TextHolder title) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.title = title;
         }
 
@@ -160,7 +160,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.healthDisplay = healthDisplay;
         }
 
@@ -173,7 +173,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNumberFormat(@NonNull NumberFormat numberFormat) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.numberFormat = numberFormat;
         }
     }
@@ -250,7 +250,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setTitle(@NonNull TextHolder title) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.title = title;
         }
 
@@ -263,7 +263,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.healthDisplay = healthDisplay;
         }
 
@@ -276,7 +276,7 @@ public abstract class ObjectiveEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNumberFormat(@NonNull NumberFormat numberFormat) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.numberFormat = numberFormat;
         }
     }

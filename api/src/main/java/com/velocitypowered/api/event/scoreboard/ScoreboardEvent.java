@@ -33,13 +33,22 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class ScoreboardEvent {
 
-    protected static final UnsupportedOperationException NOT_MUTABLE =
-            new UnsupportedOperationException("This event affects the backend scoreboard and is not mutable.");
-
     /** Player who received the scoreboard change */
     @NotNull
     private final Player player;
 
     /** {@code true} if this event is mutable (proxy scoreboard), {@code false} if not (backend scoreboard) */
     private final boolean mutable;
+
+    /**
+     * Checks if the event is mutable and if not, throws an {@link UnsupportedOperationException}.
+     *
+     * @throws  UnsupportedOperationException
+     *          if the event is not mutable
+     */
+    protected void ensureMutable() {
+        if (!mutable) {
+            throw new UnsupportedOperationException("This event affects the backend scoreboard and is not mutable.");
+        }
+    }
 }

@@ -150,7 +150,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setDisplayName(@NonNull TextHolder displayName) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.displayName = displayName;
         }
 
@@ -163,7 +163,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setPrefix(@NonNull TextHolder prefix) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.prefix = prefix;
         }
 
@@ -176,7 +176,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setSuffix(@NonNull TextHolder suffix) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.suffix = suffix;
         }
 
@@ -189,7 +189,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNameVisibility(@NonNull NameVisibility nameVisibility) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.nameVisibility = nameVisibility;
         }
 
@@ -202,7 +202,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setCollisionRule(@NonNull CollisionRule collisionRule) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.collisionRule = collisionRule;
         }
 
@@ -215,7 +215,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setColor(@NonNull TeamColor color) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.color = color;
         }
 
@@ -228,7 +228,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setAllowFriendlyFire(boolean allowFriendlyFire) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.allowFriendlyFire = allowFriendlyFire;
         }
 
@@ -241,7 +241,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         }
 
@@ -254,7 +254,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setEntries(@NonNull Collection<String> entries) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.entries = entries;
         }
     }
@@ -366,7 +366,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setDisplayName(@NonNull TextHolder displayName) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.displayName = displayName;
         }
 
@@ -379,7 +379,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setPrefix(@NonNull TextHolder prefix) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.prefix = prefix;
         }
 
@@ -392,7 +392,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setSuffix(@NonNull TextHolder suffix) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.suffix = suffix;
         }
 
@@ -405,7 +405,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNameVisibility(@NonNull NameVisibility nameVisibility) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.nameVisibility = nameVisibility;
         }
 
@@ -418,7 +418,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setCollisionRule(@NonNull CollisionRule collisionRule) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.collisionRule = collisionRule;
         }
 
@@ -431,7 +431,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setColor(@NonNull TeamColor color) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.color = color;
         }
 
@@ -444,7 +444,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setAllowFriendlyFire(boolean allowFriendlyFire) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.allowFriendlyFire = allowFriendlyFire;
         }
 
@@ -457,7 +457,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setCanSeeFriendlyInvisibles(boolean canSeeFriendlyInvisibles) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.canSeeFriendlyInvisibles = canSeeFriendlyInvisibles;
         }
     }
@@ -498,7 +498,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setEntries(@NonNull Collection<String> entries) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.entries = entries;
         }
     }
@@ -539,7 +539,7 @@ public abstract class TeamEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setEntries(@NonNull Collection<String> entries) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.entries = entries;
         }
     }

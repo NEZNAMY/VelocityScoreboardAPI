@@ -112,7 +112,7 @@ public abstract class ScoreEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setScore(int score) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.score = score;
         }
 
@@ -125,7 +125,7 @@ public abstract class ScoreEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setDisplayName(@NonNull Component displayName) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.displayName = displayName;
         }
 
@@ -138,7 +138,7 @@ public abstract class ScoreEvent extends ScoreboardEvent {
          *          If this event is not mutable (it affects backend scoreboard)
          */
         public void setNumberFormat(@NonNull NumberFormat numberFormat) {
-            if (!isMutable()) throw NOT_MUTABLE;
+            ensureMutable();
             this.numberFormat = numberFormat;
         }
     }
