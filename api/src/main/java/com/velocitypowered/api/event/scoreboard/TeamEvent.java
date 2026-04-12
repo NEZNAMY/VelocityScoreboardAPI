@@ -323,7 +323,6 @@ public abstract class TeamEvent extends ScoreboardEvent {
     /**
      * This event is called when a team is updated.
      */
-    @Getter
     public static class Update extends TeamPropertiesEvent {
 
         /**
