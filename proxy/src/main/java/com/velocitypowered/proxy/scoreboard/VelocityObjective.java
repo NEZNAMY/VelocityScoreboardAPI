@@ -93,7 +93,7 @@ public class VelocityObjective implements ProxyObjective {
         checkState();
         ObjectiveEvent.Update event = new ObjectiveEvent.Update(scoreboard.getViewer(), true, name, title, healthDisplay, numberFormat);
         scoreboard.getEventSource().fireEvent(event);
-        if (this.title == event.getTitle() && this.healthDisplay == event.getHealthDisplay() &&
+        if (this.title.equals(event.getTitle()) && this.healthDisplay == event.getHealthDisplay() &&
                 this.numberFormat == event.getNumberFormat()) return;
         this.title = event.getTitle();
         this.healthDisplay = event.getHealthDisplay();
