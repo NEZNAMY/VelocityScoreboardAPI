@@ -20,12 +20,10 @@
 
 package com.velocitypowered.proxy.scoreboard.downstream;
 
-import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
-import com.velocitypowered.api.event.scoreboard.ScoreboardEventSource;
-import com.velocitypowered.api.event.scoreboard.TeamEntryEvent;
-import com.velocitypowered.api.event.scoreboard.TeamEvent;
+import com.velocitypowered.api.event.scoreboard.*;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.proxy.data.LoggerManager;
 import com.velocitypowered.proxy.data.StringCollection;
 import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
@@ -84,7 +82,14 @@ public class DownstreamScoreboard implements Scoreboard {
                     LoggerManager.Fatal.doubleObjectiveRegister(viewer, packet.getObjectiveName());
                     return true;
                 } else {
-                    eventSource.fireEvent(new ObjectiveEvent.Register(viewer, this, obj));
+                    eventSource.fireEvent(new ObjectiveEvent.Register(
+                            viewer,
+                            false,
+                            packet.getObjectiveName(),
+                            packet.getTitle(),
+                            packet.getHealthDisplay(),
+                            packet.getNumberFormat()
+                    ));
                 }
             }
             case UNREGISTER -> {
@@ -94,7 +99,11 @@ public class DownstreamScoreboard implements Scoreboard {
                     return true;
                 }
                 displaySlots.entrySet().removeIf(entry -> entry.getValue().getName().equals(packet.getObjectiveName()));
-                eventSource.fireEvent(new ObjectiveEvent.Unregister(viewer, this, removed));
+                eventSource.fireEvent(new ObjectiveEvent.Unregister(
+                        viewer,
+                        false,
+                        packet.getObjectiveName()
+                ));
             }
             case UPDATE -> {
                 DownstreamObjective objective = objectives.get(packet.getObjectiveName());
@@ -104,6 +113,14 @@ public class DownstreamScoreboard implements Scoreboard {
                 } else {
                     objective.update(packet);
                 }
+                eventSource.fireEvent(new ObjectiveEvent.Update(
+                        viewer,
+                        false,
+                        packet.getObjectiveName(),
+                        packet.getTitle(),
+                        packet.getHealthDisplay(),
+                        packet.getNumberFormat()
+                ));
             }
         }
         return false;
@@ -125,7 +142,7 @@ public class DownstreamScoreboard implements Scoreboard {
             DownstreamObjective previous = displaySlots.put(packet.getPosition(), objective);
             if (previous != null) previous.setDisplaySlot(null);
             objective.setDisplaySlot(packet.getPosition());
-            eventSource.fireEvent(new ObjectiveEvent.Display(viewer, this, objective, packet.getPosition()));
+            eventSource.fireEvent(new ObjectiveEvent.Display(viewer, false, packet.getObjectiveName(), packet.getPosition()));
             return false;
         }
     }
@@ -176,6 +193,15 @@ public class DownstreamScoreboard implements Scoreboard {
             return true;
         } else {
             objective.setScore(holder, value, displayName, numberFormat);
+            eventSource.fireEvent(new ScoreEvent.Set(
+                    viewer,
+                    false,
+                    objectiveName,
+                    holder,
+                    value,
+                    displayName == null ? null : displayName.getComponent(),
+                    numberFormat
+            ));
             return false;
         }
     }
@@ -184,6 +210,12 @@ public class DownstreamScoreboard implements Scoreboard {
         if (objectiveName == null || objectiveName.isEmpty()) {
             for (DownstreamObjective objective : objectives.values()) {
                 objective.removeScore(holder);
+                eventSource.fireEvent(new ScoreEvent.Reset(
+                        viewer,
+                        false,
+                        objective.getName(),
+                        holder
+                ));
             }
         } else {
             DownstreamObjective objective = objectives.get(objectiveName);
@@ -192,6 +224,12 @@ public class DownstreamScoreboard implements Scoreboard {
                 return true;
             } else {
                 objective.removeScore(holder);
+                eventSource.fireEvent(new ScoreEvent.Reset(
+                        viewer,
+                        false,
+                        objectiveName,
+                        holder
+                ));
             }
         }
         return false;
@@ -212,7 +250,20 @@ public class DownstreamScoreboard implements Scoreboard {
                 LoggerManager.Warn.doubleTeamRegister(viewer, packet.getName());
                 return true;
             } else {
-                eventSource.fireEvent(new TeamEvent.Register(viewer, this, team));
+                eventSource.fireEvent(new TeamEvent.Register(
+                        viewer,
+                        false,
+                        packet.getName(),
+                        packet.getProperties().getDisplayName(),
+                        packet.getProperties().getPrefix(),
+                        packet.getProperties().getSuffix(),
+                        packet.getProperties().getNameVisibility(),
+                        packet.getProperties().getCollisionRule(),
+                        packet.getProperties().getColor(),
+                        packet.getProperties().isAllowFriendlyFire(),
+                        packet.getProperties().isCanSeeFriendlyInvisibles(),
+                        Collections.unmodifiableCollection(packet.getEntries().getEntries())
+                ));
                 if (entries.getEntry() != null) {
                     teamEntries.put(entries.getEntry(), team);
                 } else {
@@ -230,7 +281,7 @@ public class DownstreamScoreboard implements Scoreboard {
         }
         switch (packet.getAction()) {
             case UNREGISTER -> {
-                eventSource.fireEvent(new TeamEvent.Unregister(viewer, this, teams.remove(packet.getName())));
+                eventSource.fireEvent(new TeamEvent.Unregister(viewer, false, packet.getName()));
                 if (team.getEntryCollection().getEntry() != null) {
                     teamEntries.remove(team.getEntryCollection().getEntry());
                 } else {
@@ -238,31 +289,55 @@ public class DownstreamScoreboard implements Scoreboard {
                         teamEntries.remove(entry);
                     }
                 }
+                teams.remove(packet.getName());
             }
-            case UPDATE -> team.setProperties(packet.getProperties());
+            case UPDATE -> {
+                eventSource.fireEvent(new TeamEvent.Update(
+                        viewer,
+                        false,
+                        packet.getName(),
+                        packet.getProperties().getDisplayName(),
+                        packet.getProperties().getPrefix(),
+                        packet.getProperties().getSuffix(),
+                        packet.getProperties().getNameVisibility(),
+                        packet.getProperties().getCollisionRule(),
+                        packet.getProperties().getColor(),
+                        packet.getProperties().isAllowFriendlyFire(),
+                        packet.getProperties().isCanSeeFriendlyInvisibles()
+                ));
+                team.setProperties(packet.getProperties());
+            }
             case ADD_PLAYER -> {
+                eventSource.fireEvent(new TeamEvent.AddPlayers(
+                        viewer,
+                        false,
+                        packet.getName(),
+                        Collections.unmodifiableCollection(packet.getEntries().getEntries())
+                ));
                 for (DownstreamTeam allTeams : teams.values()) {
                     allTeams.getEntryCollection().removeAll(entries);
                 }
                 team.addEntries(entries);
                 if (entries.getEntry() != null) {
-                    eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entries.getEntry()));
                     teamEntries.put(entries.getEntry(), team);
                 } else {
                     for (String entry : entries.getEntries()) {
-                        eventSource.fireEvent(new TeamEntryEvent.Add(viewer, this, team, entry));
                         teamEntries.put(entry, team);
                     }
                 }
             }
             case REMOVE_PLAYER -> {
+                eventSource.fireEvent(new TeamEvent.RemovePlayers(
+                        viewer,
+                        false,
+                        packet.getName(),
+                        Collections.unmodifiableCollection(packet.getEntries().getEntries())
+                ));
                 team.removeEntries(viewer, entries);
                 if (entries.getEntry() != null) {
-                    eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entries.getEntry()));
                     teamEntries.remove(entries.getEntry());
                 } else {
                     for (String entry : entries.getEntries()) {
-                        eventSource.fireEvent(new TeamEntryEvent.Remove(viewer, this, team, entry));
                         teamEntries.remove(entry);
                     }
                 }

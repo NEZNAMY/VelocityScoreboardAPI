@@ -21,8 +21,6 @@
 package com.velocitypowered.api.event.scoreboard;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.scoreboard.ProxyScoreboard;
-import com.velocitypowered.api.scoreboard.Scoreboard;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,18 +37,18 @@ public abstract class ScoreboardEvent {
     @NotNull
     private final Player player;
 
-    /**
-     * Scoreboard source
-     * If proxy is true, the scoreboard is a {@link ProxyScoreboard}, otherwise it is a backend {@link Scoreboard}
-     */
-    private final Scoreboard scoreboard;
+    /** {@code true} if this event is mutable (proxy scoreboard), {@code false} if not (backend scoreboard) */
+    private final boolean mutable;
 
     /**
-     * Returns if the scoreboard is a {@link ProxyScoreboard} or a backend {@link Scoreboard}.
+     * Checks if the event is mutable and if not, throws an {@link UnsupportedOperationException}.
      *
-     * @return  Scoreboard source
+     * @throws  UnsupportedOperationException
+     *          if the event is not mutable
      */
-    public boolean isProxy() {
-        return scoreboard instanceof ProxyScoreboard;
+    protected void ensureMutable() {
+        if (!mutable) {
+            throw new UnsupportedOperationException("This event affects the backend scoreboard and is not mutable.");
+        }
     }
 }

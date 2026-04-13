@@ -20,6 +20,7 @@
 
 package com.velocitypowered.proxy.scoreboard;
 
+import com.velocitypowered.api.event.scoreboard.ScoreEvent;
 import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.scoreboard.NumberFormat;
 import com.velocitypowered.api.scoreboard.ProxyScore;
@@ -27,7 +28,6 @@ import com.velocitypowered.proxy.protocol.packet.chat.ComponentHolder;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScorePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreResetPacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ScoreSetPacket;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class VelocityScore implements ProxyScore {
 
     @NonNull private final VelocityObjective objective;
@@ -47,37 +47,46 @@ public class VelocityScore implements ProxyScore {
     private int score;
     @Nullable private Component displayName;
     @Nullable private NumberFormat numberFormat;
-    private boolean registered;
+    private boolean registered = true;
 
     @Override
     public void setScore(int score) {
-        if (!registered) throw new IllegalStateException("This score was unregistered");
         if (this.score == score) return;
-        this.score = score;
-        sendUpdate();
+        update(score, displayName, numberFormat);
     }
 
     @Override
     public void setDisplayName(@Nullable Component displayName) {
-        if (!registered) throw new IllegalStateException("This score was unregistered");
         if (this.displayName == displayName) return;
-        this.displayName = displayName;
-        sendUpdate();
+        update(score, displayName, numberFormat);
     }
 
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
-        if (!registered) throw new IllegalStateException("This score was unregistered");
         if (this.numberFormat == numberFormat) return;
-        this.numberFormat = numberFormat;
-        sendUpdate();
+        update(score, displayName, numberFormat);
     }
 
-    public void updateProperties(@NonNull VelocityScore.Builder builder) {
+    public void update(int score, @Nullable Component displayName, @Nullable NumberFormat numberFormat) {
         if (!registered) throw new IllegalStateException("This score was unregistered");
-        this.score = builder.score;
-        this.displayName = builder.displayName;
-        this.numberFormat = builder.numberFormat;
+        ScoreEvent.Set event = new ScoreEvent.Set(
+                objective.getScoreboard().getViewer(),
+                true,
+                objective.getName(),
+                holder,
+                score,
+                displayName,
+                numberFormat
+        );
+        objective.getScoreboard().getEventSource().fireEvent(event);
+        if (this.score == event.getScore() &&
+                this.displayName == event.getDisplayName() &&
+                this.numberFormat == event.getNumberFormat()) {
+            return;
+        }
+        this.score = event.getScore();
+        this.displayName = event.getDisplayName();
+        this.numberFormat = event.getNumberFormat();
         sendUpdate();
     }
 
@@ -101,6 +110,12 @@ public class VelocityScore implements ProxyScore {
     public void remove() {
         if (!registered) throw new IllegalStateException("This score was unregistered");
         registered = false;
+        objective.getScoreboard().getEventSource().fireEvent(new ScoreEvent.Reset(
+                objective.getScoreboard().getViewer(),
+                true,
+                objective.getName(),
+                holder
+        ));
         sendRemove();
     }
 
@@ -120,6 +135,7 @@ public class VelocityScore implements ProxyScore {
     }
 
     @RequiredArgsConstructor
+    @Getter
     public static class Builder implements ProxyScore.Builder {
 
         @NonNull private final String holder;
@@ -146,18 +162,6 @@ public class VelocityScore implements ProxyScore {
         public ProxyScore.Builder numberFormat(@Nullable NumberFormat numberFormat) {
             this.numberFormat = numberFormat;
             return this;
-        }
-
-        /**
-         * Builds this score.
-         *
-         * @param   objective
-         *          Objective to build this score into
-         * @return  New built score
-         */
-        @NotNull
-        public VelocityScore build(@NonNull VelocityObjective objective) {
-            return new VelocityScore(objective, holder, score, displayName, numberFormat, true);
         }
     }
 }

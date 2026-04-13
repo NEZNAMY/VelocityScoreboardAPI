@@ -22,6 +22,8 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
+import com.velocitypowered.proxy.ScoreboardEventSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.*;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
@@ -61,35 +63,42 @@ public class VelocityObjective implements ProxyObjective {
     @Override
     public void setDisplaySlot(@NonNull DisplaySlot displaySlot) {
         checkState();
-        if (this.displaySlot == displaySlot) return;
-        scoreboard.setDisplaySlot(displaySlot, this);
-        this.displaySlot = displaySlot;
-        scoreboard.sendPacket(new DisplayObjectivePacket(displaySlot, name));
-        scoreboard.getEventSource().fireEvent(new ObjectiveEvent.Display(scoreboard.getViewer(), scoreboard, this, displaySlot));
+        ObjectiveEvent.Display displayEvent = new ObjectiveEvent.Display(scoreboard.getViewer(), true, name, displaySlot);
+        scoreboard.getEventSource().fireEvent(displayEvent);
+        if (this.displaySlot == displayEvent.getNewSlot()) return;
+        scoreboard.setDisplaySlot(displayEvent.getNewSlot(), this);
+        this.displaySlot = displayEvent.getNewSlot();
+        scoreboard.sendPacket(new DisplayObjectivePacket(displayEvent.getNewSlot(), name));
     }
 
     @Override
     public void setTitle(@NonNull TextHolder title) {
-        checkState();
-        if (this.title == title) return;
-        this.title = title;
-        sendUpdate();
+        if (this.title.equals(title)) return;
+        tryUpdate(title, healthDisplay, numberFormat);
     }
 
     @Override
     public void setHealthDisplay(@NonNull HealthDisplay healthDisplay) {
-        checkState();
         if (this.healthDisplay == healthDisplay) return;
-        this.healthDisplay = healthDisplay;
-        sendUpdate();
+        tryUpdate(title, healthDisplay, numberFormat);
     }
 
     @Override
     public void setNumberFormat(@Nullable NumberFormat numberFormat) {
-        checkState();
         if (this.numberFormat == numberFormat) return;
-        this.numberFormat = numberFormat;
-        sendUpdate();
+        tryUpdate(title, healthDisplay, numberFormat);
+    }
+
+    private void tryUpdate(@NonNull TextHolder title, @NonNull HealthDisplay healthDisplay, @Nullable NumberFormat numberFormat) {
+        checkState();
+        ObjectiveEvent.Update event = new ObjectiveEvent.Update(scoreboard.getViewer(), true, name, title, healthDisplay, numberFormat);
+        scoreboard.getEventSource().fireEvent(event);
+        if (this.title.equals(event.getTitle()) && this.healthDisplay == event.getHealthDisplay() &&
+                this.numberFormat == event.getNumberFormat()) return;
+        this.title = event.getTitle();
+        this.healthDisplay = event.getHealthDisplay();
+        this.numberFormat = event.getNumberFormat();
+        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UPDATE, this.name, this.title, this.healthDisplay, this.numberFormat));
     }
 
     @Override
@@ -99,13 +108,11 @@ public class VelocityObjective implements ProxyObjective {
         VelocityScore.Builder builder = new VelocityScore.Builder(holder);
         consumer.accept(builder);
         VelocityScore score = scores.get(holder);
-        if (score != null) {
-            score.updateProperties(builder);
-        } else {
-            score = builder.build(this);
-            scores.put(score.getHolder(), score);
-            score.sendUpdate();
+        if (score == null) {
+            score = new VelocityScore(this, holder);
+            scores.put(holder, score);
         }
+        score.update(builder.getScore(), builder.getDisplayName(), builder.getNumberFormat());
         return score;
     }
 
@@ -138,14 +145,10 @@ public class VelocityObjective implements ProxyObjective {
         }
     }
 
-    private void sendUpdate() {
-        scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UPDATE, name, title, healthDisplay, numberFormat));
-    }
-
     public void unregister() {
         checkState();
         scoreboard.sendPacket(new ObjectivePacket(ObjectiveAction.UNREGISTER, name, title, HealthDisplay.INTEGER, null));
-        scoreboard.getEventSource().fireEvent(new ObjectiveEvent.Unregister(scoreboard.getViewer(), scoreboard, this));
+        scoreboard.getEventSource().fireEvent(new ObjectiveEvent.Unregister(scoreboard.getViewer(), true, name));
         registered = false;
     }
 
@@ -177,6 +180,7 @@ public class VelocityObjective implements ProxyObjective {
         return content;
     }
 
+    @Getter
     public static class Builder implements ProxyObjective.Builder {
 
         @NonNull private final String name;
@@ -217,6 +221,20 @@ public class VelocityObjective implements ProxyObjective {
         public ProxyObjective.Builder numberFormat(@Nullable NumberFormat numberFormat) {
             this.numberFormat = numberFormat;
             return this;
+        }
+
+        public void callAndApplyRegisterEvents(@NonNull ScoreboardEventSource eventSource, @NonNull Player viewer) {
+            ObjectiveEvent.Register registerEvent = new ObjectiveEvent.Register(viewer, true, name, title, healthDisplay, numberFormat);
+            eventSource.fireEvent(registerEvent);
+            title = registerEvent.getTitle();
+            healthDisplay = registerEvent.getHealthDisplay();
+            numberFormat = registerEvent.getNumberFormat();
+
+            if (displaySlot != null) {
+                ObjectiveEvent.Display displayEvent = new ObjectiveEvent.Display(viewer, true, name, displaySlot);
+                eventSource.fireEvent(displayEvent);
+                displaySlot = displayEvent.getNewSlot();
+            }
         }
 
         /**

@@ -163,4 +163,13 @@ public class TextHolderImpl extends TextHolder {
     public String toString() {
         return "TextHolderImpl{legacyText=" + getLegacyText() + ", modernText=" + getModernText() + ", holder=" + holder + "}";
     }
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (this == o) return true;
+        if (o instanceof TextHolderImpl that) {
+            return getLegacyText().equals(that.getLegacyText()) && getModernText().equals(that.getModernText());
+        }
+        return false;
+    }
 }
