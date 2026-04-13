@@ -28,7 +28,7 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Class for Objective events.
+ * Class for objective score events.
  */
 @Getter
 public abstract class ScoreEvent extends ScoreboardEvent {
