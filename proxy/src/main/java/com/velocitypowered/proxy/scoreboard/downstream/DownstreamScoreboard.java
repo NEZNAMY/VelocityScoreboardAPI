@@ -289,6 +289,7 @@ public class DownstreamScoreboard implements Scoreboard {
                         teamEntries.remove(entry);
                     }
                 }
+                teams.remove(packet.getName());
             }
             case UPDATE -> {
                 eventSource.fireEvent(new TeamEvent.Update(
