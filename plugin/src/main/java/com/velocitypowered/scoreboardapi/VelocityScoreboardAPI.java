@@ -121,7 +121,7 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
 
         ScoreboardManager.setInstance(new VelocityScoreboardManager(server, this));
         LoggerManager.log(Level.INFO,"<green>Successfully injected Scoreboard API.");
-        server.getEventManager().register(this, new EventListener(this));
+        server.getEventManager().register(this, new ServerSwitchManager(this));
         metricsFactory.make(this, 22437);
     }
 

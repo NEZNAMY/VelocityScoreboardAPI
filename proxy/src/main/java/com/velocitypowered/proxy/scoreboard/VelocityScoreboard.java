@@ -194,6 +194,7 @@ public class VelocityScoreboard implements ProxyScoreboard {
      */
     public synchronized void resend() {
         if (viewer.getProtocolVersion().greaterThan(MAXIMUM_SUPPORTED_VERSION)) return;
+        if (!frozen && viewer.getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_2)) return;
         for (VelocityTeam team : teams.values()) {
             viewer.getConnection().write(new TeamPacket(
                     TeamPacket.TeamAction.REGISTER,
