@@ -83,7 +83,7 @@ public class ServerSwitchManager {
     public void onJoinGamePacket(@NotNull Player player) {
         DownstreamScoreboard downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
         VelocityScoreboard proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);
-        if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+        if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
             downstreamScoreboard.clear();
             proxyScoreboard.freeze();
         }
@@ -111,7 +111,7 @@ public class ServerSwitchManager {
 
     /**
      * Listens to configuration event start for 1.20.2+ to freeze scoreboard as the client
-     * is about to reset it.
+     * has just reset it.
      *
      * @param   e
      *          Configuration start event
