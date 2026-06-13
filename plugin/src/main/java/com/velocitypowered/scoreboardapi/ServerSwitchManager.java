@@ -45,21 +45,18 @@ import java.util.NoSuchElementException;
  * on server switch, so it needs to be reset. Sadly, it is not that simple.
  * Let's break it down per version - what events are called and what happens and when.
  * 1.20.1-:
- *   - JoinGamePacket is sent, which resets the scoreboard. It can be resent immediately
+ *   - JoinGamePacket is sent - Creates a new scoreboard. It can be resent immediately
  *     (but not in Netty thread, so resend has to be scheduled and therefore scoreboard frozen for a moment).
  * 1.20.2 - 1.20.4:
- *   - (on initial connect, PlayerFinishConfigurationEvent is called and JoinGamePacket is sent)
- *   - PlayerEnterConfigurationEvent is called - world is set to null (scoreboard is reset and packets would cause NPE?)
+ *   - PlayerEnterConfigurationEvent is called - level is set to null - scoreboard is reset
  *   - PlayerFinishConfigurationEvent is called
- *   - JoinGamePacket is sent - new scoreboard is created
+ *   - JoinGamePacket is sent - level is instantiated (and new scoreboard created)
  * 1.20.5+:
- *   - (on initial connect, PlayerFinishConfigurationEvent is called and JoinGamePacket is sent)
- *   - PlayerEnterConfigurationEvent is called - world is set to null (scoreboard is reset and packets would cause NPE?)
- *   - PlayerFinishConfigurationEvent is called - new scoreboard is created
+ *   - PlayerEnterConfigurationEvent is called - Start configuration phase - scoreboard is reset
+ *   - PlayerFinishConfigurationEvent is called - Back to game phase - creates a new scoreboard
  *   - JoinGamePacket is sent - this is where broken clients actually create new scoreboard
  * Additionally, we have a new problem - VeloFlame avoids configuration phase, which causes the
- * scoreboard to not get reset (but only on 1.20.5+, because for 1.20.2 - 1.20.4 scoreboard is reset
- * during JoinGamePacket handling).
+ * scoreboard to not get reset for 1.20.5+.
  * Let's put this all together to decide on the correct behavior.
  * First, we need to freeze the scoreboard when the client clears it:
  *   - 1.20.1- - Freeze it on JoinGamePacket.
