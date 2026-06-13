@@ -86,8 +86,8 @@ public class ServerSwitchManager {
     public void onJoinGamePacket(@NotNull Player player) {
         DownstreamScoreboard downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
         VelocityScoreboard proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);
-        downstreamScoreboard.clear();
         if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+            downstreamScoreboard.clear();
             proxyScoreboard.freeze();
         }
         plugin.getServer().getScheduler().buildTask(plugin, proxyScoreboard::resend).schedule();
