@@ -44,7 +44,7 @@ import java.util.NoSuchElementException;
  * This is a class for managing server switching. The client usually resets the scoreboard
  * on server switch, so it needs to be reset. Sadly, it is not that simple.
  * Let's break it down per version - what events are called and what happens and when.
- * 1.20.2-:
+ * 1.20.1-:
  *   - JoinGamePacket is sent, which resets the scoreboard. It can be resent immediately
  *     (but not in Netty thread, so resend has to be scheduled and therefore scoreboard frozen for a moment).
  * 1.20.2 - 1.20.4:
@@ -62,10 +62,10 @@ import java.util.NoSuchElementException;
  * during JoinGamePacket handling).
  * Let's put this all together to decide on the correct behavior.
  * First, we need to freeze the scoreboard when the client clears it:
- *   - 1.20.2- - Freeze it on JoinGamePacket.
+ *   - 1.20.1- - Freeze it on JoinGamePacket.
  *   - 1.20.2+ - Freeze it on PlayerEnterConfigurationEvent (not called when configuration phase is disabled).
  * Then, we need to resend the scoreboard after the client creates a new instance:
- *   - 1.20.5- - Resend it on JoinGamePacket.
+ *   - 1.20.4- - Resend it on JoinGamePacket.
  *   - 1.20.5+ - Resend it on PlayerFinishConfigurationEvent (not called when configuration phase is disabled).
  */
 @RequiredArgsConstructor
