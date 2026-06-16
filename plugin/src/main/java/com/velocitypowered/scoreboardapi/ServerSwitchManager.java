@@ -50,7 +50,7 @@ import java.util.NoSuchElementException;
  * 1.20.2 - 1.20.4:
  *   - PlayerEnterConfigurationEvent is called - level is set to null - scoreboard is reset
  *   - PlayerFinishConfigurationEvent is called
- *   - JoinGamePacket is sent - level is instantiated (and new scoreboard created)
+ *   - JoinGamePacket is sent - level is instantiated and new scoreboard created (even if it was not set to null with configuration phase)
  * 1.20.5+:
  *   - PlayerEnterConfigurationEvent is called - Start configuration phase - scoreboard is reset
  *   - PlayerFinishConfigurationEvent is called - Back to game phase - creates a new scoreboard
@@ -59,7 +59,7 @@ import java.util.NoSuchElementException;
  * scoreboard to not get reset for 1.20.5+.
  * Let's put this all together to decide on the correct behavior.
  * First, we need to freeze the scoreboard when the client clears it:
- *   - 1.20.1- - Freeze it on JoinGamePacket.
+ *   - 1.20.4- - Freeze it on JoinGamePacket.
  *   - 1.20.2+ - Freeze it on PlayerEnterConfigurationEvent (not called when configuration phase is disabled).
  * Then, we need to resend the scoreboard after the client creates a new instance:
  *   - 1.20.4- - Resend it on JoinGamePacket.
@@ -83,7 +83,7 @@ public class ServerSwitchManager {
     public void onJoinGamePacket(@NotNull Player player) {
         DownstreamScoreboard downstreamScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getBackendScoreboard(player);
         VelocityScoreboard proxyScoreboard = ((VelocityScoreboardManager) ScoreboardManager.getInstance()).getProxyScoreboard(player);
-        if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_2)) {
+        if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
             downstreamScoreboard.clear();
             proxyScoreboard.freeze();
         }
