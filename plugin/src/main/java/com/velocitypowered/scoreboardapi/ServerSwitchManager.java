@@ -68,9 +68,6 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 public class ServerSwitchManager {
 
-    /** Including, but not limited to Labymod */
-    private final boolean COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS = true; // Velocity-styled variable name :P
-
     /** Plugin instance */
     private final VelocityScoreboardAPI plugin;
 
@@ -97,7 +94,7 @@ public class ServerSwitchManager {
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
-        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5) || COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS) {
+        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
             try {
                 ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
                         "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer())
@@ -131,7 +128,7 @@ public class ServerSwitchManager {
      */
     @Subscribe
     public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
-        if (e.player().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_5) && !COMPENSATE_FOR_BRAIN_DAMAGED_CLIENTS) {
+        if (e.player().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
             ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
         }
     }
