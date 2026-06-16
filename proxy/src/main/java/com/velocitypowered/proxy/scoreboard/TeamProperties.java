@@ -85,6 +85,20 @@ public class TeamProperties {
      *          Protocol version used to decode the data
      */
     public TeamProperties(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
+        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_26_2)) {
+            displayName = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
+            prefix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
+            suffix = new TextHolderImpl(ComponentHolder.read(buf, protocolVersion));
+            nameVisibility = NameVisibility.values()[ProtocolUtils.readVarInt(buf)];
+            collisionRule = CollisionRule.values()[ProtocolUtils.readVarInt(buf)];
+            if (buf.readBoolean()) {
+                color = COLORS[ProtocolUtils.readVarInt(buf)];
+            }
+            byte flags = buf.readByte();
+            allowFriendlyFire = (flags & 0x01) > 0;
+            canSeeFriendlyInvisibles = (flags & 0x02) > 0;
+            return;
+        }
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
             displayName = TextHolder.of(ProtocolUtils.readString(buf));
             prefix = TextHolder.of((ProtocolUtils.readString(buf)));
@@ -125,6 +139,23 @@ public class TeamProperties {
      *          Protocol version used to encode data
      */
     public void encode(@NonNull ByteBuf buf, @NonNull ProtocolVersion protocolVersion) {
+        byte flags = 0;
+        if (allowFriendlyFire) flags += 0x01;
+        if (canSeeFriendlyInvisibles) flags += 0x02;
+
+        if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_26_2)) {
+            ((TextHolderImpl)displayName).getHolder(protocolVersion).write(buf);
+            ((TextHolderImpl)prefix).getHolder(protocolVersion).write(buf);
+            ((TextHolderImpl)suffix).getHolder(protocolVersion).write(buf);
+            ProtocolUtils.writeVarInt(buf, nameVisibility.ordinal());
+            ProtocolUtils.writeVarInt(buf, collisionRule.ordinal());
+            buf.writeBoolean(color != TeamColor.RESET); // Since field is NotNull, let's make RESET act as null here
+            if (color != TeamColor.RESET) {
+                ProtocolUtils.writeVarInt(buf, Math.min(15, color.ordinal()));
+            }
+            buf.writeByte(flags);
+            return;
+        }
         if (protocolVersion.lessThan(ProtocolVersion.MINECRAFT_1_13)) {
             ProtocolUtils.writeString(buf, displayName.getLegacyText(16));
             ProtocolUtils.writeString(buf, prefix.getLegacyText(16));
@@ -132,9 +163,6 @@ public class TeamProperties {
         } else {
             ((TextHolderImpl)displayName).getHolder(protocolVersion).write(buf);
         }
-        byte flags = 0;
-        if (allowFriendlyFire) flags += 0x01;
-        if (canSeeFriendlyInvisibles) flags += 0x02;
         buf.writeByte(flags);
         if (protocolVersion.noLessThan(ProtocolVersion.MINECRAFT_1_21_5)) {
             ProtocolUtils.writeVarInt(buf, nameVisibility.ordinal());
