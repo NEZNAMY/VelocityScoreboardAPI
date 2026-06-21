@@ -314,17 +314,24 @@ public class DownstreamScoreboard implements Scoreboard {
                         packet.getName(),
                         Collections.unmodifiableCollection(packet.getEntries().getEntries())
                 ));
-                for (DownstreamTeam allTeams : teams.values()) {
-                    allTeams.getEntryCollection().removeAll(entries);
-                }
-                team.addEntries(entries);
+
                 if (entries.getEntry() != null) {
-                    teamEntries.put(entries.getEntry(), team);
+                    String entry = entries.getEntry();
+                    DownstreamTeam previous = getTeamByEntry(entry);
+                    if (previous != null) {
+                        previous.getEntryCollection().remove(entry);
+                    }
+                    teamEntries.put(entry, team);
                 } else {
                     for (String entry : entries.getEntries()) {
+                        DownstreamTeam previous = getTeamByEntry(entry);
+                        if (previous != null) {
+                            previous.getEntryCollection().remove(entry);
+                        }
                         teamEntries.put(entry, team);
                     }
                 }
+                team.addEntries(entries);
             }
             case REMOVE_PLAYER -> {
                 eventSource.fireEvent(new TeamEvent.RemovePlayers(
@@ -376,14 +383,7 @@ public class DownstreamScoreboard implements Scoreboard {
         return Collections.unmodifiableCollection(teams.values());
     }
 
-    /**
-     * Returns team the specified entry belongs to. If it does not belong to any,
-     * {@code null} is returned.
-     *
-     * @param   entry
-     *          Entry to get team of
-     * @return  Team where this entry belongs or {@code null} if none
-     */
+    @Override
     @Nullable
     public DownstreamTeam getTeamByEntry(@NonNull String entry) {
         return teamEntries.get(entry);
