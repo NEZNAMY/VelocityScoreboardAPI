@@ -226,8 +226,19 @@ public class PacketHandler {
         } else {
             // Remove all entries occupied by a proxy team
             if (packet.getEntries() != null) { // Any player action
-                for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
-                    packet.getEntries().removeAll(proxyTeam.getEntryCollection());
+                VelocityScoreboard scoreboard = getProxy(handler);
+                if (packet.getEntries().getEntry() != null) {
+                    VelocityTeam teamByEntry = scoreboard.getTeamByEntry(packet.getEntries().getEntry());
+                    if (teamByEntry != null) {
+                        packet.getEntries().remove(packet.getEntries().getEntry());
+                    }
+                } else {
+                    for (String entry : packet.getEntries().getEntries()) {
+                        VelocityTeam teamByEntry = scoreboard.getTeamByEntry(entry);
+                        if (teamByEntry != null) {
+                            packet.getEntries().remove(entry);
+                        }
+                    }
                 }
             }
         }

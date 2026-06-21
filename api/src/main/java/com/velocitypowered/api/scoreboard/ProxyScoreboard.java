@@ -128,6 +128,17 @@ public interface ProxyScoreboard extends Scoreboard {
     Collection<ProxyTeam> getTeams();
 
     /**
+     * Returns team which the given entry is a member of. If the entry is
+     * not a member of any team, returns {@code null}.
+     *
+     * @param   entry
+     *          Entry to check for team membership
+     * @return  Team which the entry is a member of, or {@code null} if the entry is not a member of any team
+     */
+    @Nullable
+    ProxyTeam getTeamByEntry(@NonNull String entry);
+
+    /**
      * Creates a new team builder.
      *
      * @param   name
