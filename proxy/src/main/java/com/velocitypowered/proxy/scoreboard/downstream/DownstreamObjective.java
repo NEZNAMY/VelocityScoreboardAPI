@@ -117,22 +117,24 @@ public class DownstreamObjective implements Objective {
     }
 
     /**
-     * Creates a dump of this objective into a list of lines.
+     * Creates a dump of this objective.
      *
      * @return  dump of this objective
      */
     @NotNull
-    public List<String> dump() {
-        List<String> content = new ArrayList<>();
-        content.add("  " + name + ":");
-        content.add("    Title: " + title);
-        content.add("    HealthDisplay: " + healthDisplay);
-        content.add("    NumberFormat: " + numberFormat);
-        content.add("    DisplaySlot: " + displaySlot);
-        content.add("    Scores (" + scores.size() + "):");
-        for (DownstreamScore score : scores.values()) {
-            content.addAll(score.dump());
+    public Map<String, Object> dump() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("Title", title);
+        map.put("HealthDisplay", healthDisplay);
+        map.put("NumberFormat", numberFormat);
+        map.put("DisplaySlot", displaySlot);
+
+        Map<String, Object> scores = new LinkedHashMap<>();
+        for (DownstreamScore score : this.scores.values()) {
+            scores.put(score.getHolder(), score.dump());
         }
-        return content;
+        map.put("Scores (" + scores.size() + ")", scores);
+
+        return map;
     }
 }

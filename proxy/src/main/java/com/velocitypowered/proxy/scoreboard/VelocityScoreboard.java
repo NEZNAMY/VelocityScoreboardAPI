@@ -377,18 +377,28 @@ public class VelocityScoreboard implements ProxyScoreboard {
     }
 
     /**
-     * Creates a dump of this scoreboard into a list of lines.
+     * Creates a dump of this scoreboard.
      *
      * @return  dump of this scoreboard
      */
     @NotNull
-    public List<String> dump() {
-        ArrayList<String> dump = new ArrayList<>();
-        dump.add("--- ProxyScoreboard of player " + viewer.getUsername() + " ---");
-        dump.add("Teams (" + teams.size() + "):");
-        teams.values().forEach(team -> dump.addAll(team.dump()));
-        dump.add("Objectives (" + objectives.size() + "):");
-        objectives.values().forEach(objective -> dump.addAll(objective.dump()));
-        return dump;
+    public Map<String, Object> dump() {
+        Map<String, Object> map = new LinkedHashMap<>();
+
+        // Teams
+        Map<String, Object> teams = new HashMap<>();
+        for (VelocityTeam team : this.teams.values()) {
+            teams.put(team.getName(), team.dump());
+        }
+        map.put("Teams (" +  teams.size() + ")", teams);
+
+        // Objectives
+        Map<String, Object> objectives = new HashMap<>();
+        for (VelocityObjective objective : this.objectives.values()) {
+            objectives.put(objective.getName(), objective.dump());
+        }
+        map.put("Objectives (" + objectives.size() + ")", objectives);
+
+        return map;
     }
 }

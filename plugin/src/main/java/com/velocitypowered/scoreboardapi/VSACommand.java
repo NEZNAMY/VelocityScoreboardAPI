@@ -40,7 +40,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Plugin's main command
@@ -59,25 +60,18 @@ public class VSACommand implements SimpleCommand {
             return;
         }
         String[] args = invocation.arguments();
-        if (args.length == 3) {
+        if (args.length == 2) {
             if (args[0].equalsIgnoreCase("dump")) {
-                Player player = server.getPlayer(args[2]).orElse(null);
+                Player player = server.getPlayer(args[1]).orElse(null);
                 if (player == null) {
-                    sender.sendMessage(Component.text("No online player found with the name \"" + args[2] + "\""));
+                    sender.sendMessage(Component.text("No online player found with the name \"" + args[1] + "\""));
                     return;
                 }
                 try {
-                    String link;
-                    if (args[1].equalsIgnoreCase("proxy")) {
-                        VelocityScoreboard scoreboard = ((VelocityScoreboard) ScoreboardManager.getInstance().getProxyScoreboard(player));
-                        link = upload(scoreboard.dump());
-                    } else if (args[1].equalsIgnoreCase("backend")) {
-                        DownstreamScoreboard scoreboard = ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player));
-                        link = upload(scoreboard.dump());
-                    } else {
-                        sender.sendMessage(Component.text("Usage: /vsa dump <proxy/backend> <player> (unknown type \"" + args[1] + "\")"));
-                        return;
-                    }
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put("Proxy", ((VelocityScoreboard) ScoreboardManager.getInstance().getProxyScoreboard(player)).dump());
+                    map.put("Backend", ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player)).dump());
+                    String link = upload(map);
                     TextComponent message = Component.text("See the result at " + link, TextColor.color(0x00aa00));
                     message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, link));
                     sender.sendMessage(message);
@@ -87,13 +81,47 @@ public class VSACommand implements SimpleCommand {
                 }
             }
         } else {
-            sender.sendMessage(Component.text("Usage: /vsa dump <proxy/backend> <player>"));
+            sender.sendMessage(Component.text("Usage: /vsa dump <player>"));
         }
     }
 
+    /**
+     * Recursively converts a Map to a YAML-like string representation
+     * @param map the map to convert
+     * @return YAML-like string
+     */
     @NotNull
-    private String upload(@NotNull List<String> dump) throws Exception {
-        String contentString = String.join("\n", dump) + "\n";
+    private String mapToYaml(@NotNull Map<String, Object> map) {
+        return mapToYamlWithIndent(map, 0);
+    }
+
+    /**
+     * Helper method for recursive YAML conversion with indentation
+     * @param map the map to convert
+     * @param indent the current indentation level
+     * @return YAML-like string with appropriate indentation
+     */
+    @NotNull
+    @SuppressWarnings("unchecked")
+    private String mapToYamlWithIndent(@NotNull Map<String, Object> map, int indent) {
+        StringBuilder sb = new StringBuilder();
+        String indentStr = "  ".repeat(indent);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map) {
+                sb.append(indentStr).append(entry.getKey()).append(":\n");
+                sb.append(mapToYamlWithIndent((Map<String, Object>) entry.getValue(), indent + 1));
+            } else if (entry.getValue() != null) {
+                sb.append(indentStr).append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+            } else {
+                sb.append(indentStr).append(entry.getKey()).append(": null\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    @NotNull
+    private String upload(@NotNull Map<String, Object> dump) throws Exception {
+        String contentString = mapToYaml(dump) + "\n";
 
         URL url = new URL("https://api.pastes.dev/post");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

@@ -22,9 +22,9 @@ package com.velocitypowered.proxy.scoreboard;
 
 import com.velocitypowered.api.TextHolder;
 import com.velocitypowered.api.event.scoreboard.ObjectiveEvent;
-import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.scoreboard.*;
+import com.velocitypowered.proxy.ScoreboardEventSource;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.DisplayObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket;
 import com.velocitypowered.proxy.protocol.packet.scoreboard.ObjectivePacket.ObjectiveAction;
@@ -33,7 +33,10 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -161,23 +164,25 @@ public class VelocityObjective implements ProxyObjective {
     }
 
     /**
-     * Creates a dump of this objective into a list of lines.
+     * Creates a dump of this objective.
      *
      * @return  dump of this objective
      */
     @NotNull
-    public List<String> dump() {
-        List<String> content = new ArrayList<>();
-        content.add("  " + name + ":");
-        content.add("    Title: " + title);
-        content.add("    HealthDisplay: " + healthDisplay);
-        content.add("    NumberFormat: " + numberFormat);
-        content.add("    DisplaySlot: " + displaySlot);
-        content.add("    Scores (" + scores.size() + "):");
-        for (VelocityScore score : scores.values()) {
-            content.addAll(score.dump());
+    public Map<String, Object> dump() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("Title", title);
+        map.put("HealthDisplay", healthDisplay);
+        map.put("NumberFormat", numberFormat);
+        map.put("DisplaySlot", displaySlot);
+
+        Map<String, Object> scores = new LinkedHashMap<>();
+        for (VelocityScore score : this.scores.values()) {
+            scores.put(score.getHolder(), score.dump());
         }
-        return content;
+        map.put("Scores (" + scores.size() + ")", scores);
+
+        return map;
     }
 
     @Getter

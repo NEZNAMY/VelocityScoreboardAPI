@@ -37,10 +37,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Getter
@@ -270,19 +267,23 @@ public class VelocityTeam implements ProxyTeam {
     }
 
     /**
-     * Creates a dump of this team into a list of lines.
+     * Creates a dump of this team.
      *
      * @return  dump of this team
      */
     @NotNull
-    public List<String> dump() {
-        List<String> content = new ArrayList<>();
-        content.add("  " + name + ":");
-        content.add("    DisplayName: " + properties.getDisplayName());
-        content.add("    Prefix: " + properties.getPrefix());
-        content.add("    Suffix: " + properties.getSuffix());
-        content.add("    Entries: " + entries);
-        return content;
+    public Map<String, Object> dump() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("DisplayName", properties.getDisplayName());
+        map.put("Prefix", properties.getPrefix());
+        map.put("Suffix", properties.getSuffix());
+        map.put("Color", properties.getColor());
+        map.put("NameVisibility", properties.getNameVisibility());
+        map.put("CollisionRule", properties.getCollisionRule());
+        map.put("AllowFriendlyFire", properties.isAllowFriendlyFire());
+        map.put("CanSeeFriendlyInvisibles", properties.isCanSeeFriendlyInvisibles());
+        map.put("Entries", entries);
+        return map;
     }
 
     public static class PropertyBuilder implements ProxyTeam.PropertyBuilder {

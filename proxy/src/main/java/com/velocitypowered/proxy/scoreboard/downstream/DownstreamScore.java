@@ -29,8 +29,8 @@ import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A score that comes from a backend scoreboard.
@@ -77,17 +77,16 @@ public class DownstreamScore implements Score {
     }
 
     /**
-     * Creates a dump of this score into a list of lines.
+     * Creates a dump of this score.
      *
      * @return  dump of this score
      */
     @NotNull
-    public List<String> dump() {
-        List<String> content = new ArrayList<>();
-        content.add("      " + holder + ":");
-        content.add("        Score: " + score);
-        content.add("        DisplayName: " + displayNameHolder);
-        content.add("        NumberFormat: " + numberFormat);
-        return content;
+    public Map<String, Object> dump() {
+        Map<String, Object> values = new LinkedHashMap<>();
+        values.put("Score", score);
+        values.put("DisplayName", displayNameHolder);
+        values.put("NumberFormat", numberFormat);
+        return values;
     }
 }
