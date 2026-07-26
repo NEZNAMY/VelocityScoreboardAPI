@@ -152,9 +152,10 @@ public class VelocityScoreboard implements ProxyScoreboard {
         return Collections.unmodifiableCollection(teams.values());
     }
 
-    @NotNull
-    public Collection<VelocityTeam> getTeamsRaw() {
-        return teams.values();
+    @Override
+    @Nullable
+    public VelocityTeam getTeamByEntry(@NonNull String entry) {
+        return teamEntries.get(entry);
     }
 
     @ApiStatus.Internal

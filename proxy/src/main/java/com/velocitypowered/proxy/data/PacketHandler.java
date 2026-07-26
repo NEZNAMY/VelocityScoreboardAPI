@@ -33,6 +33,7 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * This class handles outgoing scoreboard packets, allowing to cancel them.
@@ -226,8 +227,19 @@ public class PacketHandler {
         } else {
             // Remove all entries occupied by a proxy team
             if (packet.getEntries() != null) { // Any player action
-                for (VelocityTeam proxyTeam : getProxy(handler).getTeamsRaw()) {
-                    packet.getEntries().removeAll(proxyTeam.getEntryCollection());
+                VelocityScoreboard scoreboard = getProxy(handler);
+                if (packet.getEntries().getEntry() != null) {
+                    VelocityTeam teamByEntry = scoreboard.getTeamByEntry(packet.getEntries().getEntry());
+                    if (teamByEntry != null) {
+                        packet.getEntries().remove(packet.getEntries().getEntry());
+                    }
+                } else {
+                    for (String entry : new ArrayList<>(packet.getEntries().getEntries())) {
+                        VelocityTeam teamByEntry = scoreboard.getTeamByEntry(entry);
+                        if (teamByEntry != null) {
+                            packet.getEntries().remove(entry);
+                        }
+                    }
                 }
             }
         }
