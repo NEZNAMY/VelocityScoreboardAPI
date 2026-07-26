@@ -52,6 +52,8 @@ public class VelocityScoreboardAPI implements ScoreboardEventSource {
     @Getter
     private final ProxyServer server;
     private final Metrics.Factory metricsFactory;
+
+    @Getter
     private final PluginConfig pluginConfig;
 
     /**

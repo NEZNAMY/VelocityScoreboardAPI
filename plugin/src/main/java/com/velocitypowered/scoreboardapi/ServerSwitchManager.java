@@ -84,7 +84,9 @@ public class ServerSwitchManager {
             downstreamScoreboard.clear();
             proxyScoreboard.freeze();
         }
-        plugin.getServer().getScheduler().buildTask(plugin, proxyScoreboard::resend).schedule();
+        if (player.getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5) || plugin.getPluginConfig().isLabymodBugCompensation()) {
+            plugin.getServer().getScheduler().buildTask(plugin, proxyScoreboard::resend).schedule();
+        }
     }
 
     /**
@@ -94,7 +96,7 @@ public class ServerSwitchManager {
      */
     @Subscribe
     public void onJoin(PostLoginEvent e) {
-        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+        if (e.getPlayer().getProtocolVersion().lessThan(ProtocolVersion.MINECRAFT_1_20_5) || plugin.getPluginConfig().isLabymodBugCompensation()) {
             try {
                 ((ConnectedPlayer) e.getPlayer()).getConnection().getChannel().pipeline().addBefore(
                         "handler", "VelocityScoreboardAPI", new ChannelInjection(e.getPlayer())
@@ -128,7 +130,7 @@ public class ServerSwitchManager {
      */
     @Subscribe
     public void onConfigFinish(@NotNull PlayerFinishConfigurationEvent e) {
-        if (e.player().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_5)) {
+        if (e.player().getProtocolVersion().noLessThan(ProtocolVersion.MINECRAFT_1_20_5) && !plugin.getPluginConfig().isLabymodBugCompensation()) {
             ((VelocityScoreboard) VelocityScoreboardManager.getInstance().getProxyScoreboard(e.player())).resend();
         }
     }

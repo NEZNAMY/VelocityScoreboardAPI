@@ -56,6 +56,9 @@ public class PluginConfig {
     @Comment("Whether to log invalid packets received from downstream servers")
     private boolean printInvalidDownstreamPacketWarnings = true;
 
+    @Comment("Whether to compensate for a bug in LabyMod. Enabling this breaks support for proxies with disabled configuration phase.")
+    private boolean labymodBugCompensation = true;
+
     @NotNull
     public static PluginConfig load(@NotNull Path directory) {
         return YamlConfigurations.update(
