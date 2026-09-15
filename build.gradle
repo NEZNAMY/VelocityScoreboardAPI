@@ -1,8 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'io.github.goooler.shadow' version '8.1.7'
-    // id 'org.cadixdev.licenser' version '0.6.1' apply false  // Disabled: incompatible with Gradle 9 (StackOverflowError)
+    id 'com.gradleup.shadow' version '9.6.1'
+    id 'net.kyori.indra.licenser.spotless' version '4.0.0' apply false
     id 'org.ajoberstar.grgit' version '5.2.2'
     id 'maven-publish'
     id 'java'
@@ -51,8 +51,8 @@ publishing {
 }
 
 allprojects {
-    apply plugin: 'io.github.goooler.shadow'
-    // apply plugin: 'org.cadixdev.licenser'  // Disabled: incompatible with Gradle 9
+    apply plugin: 'com.gradleup.shadow'
+    apply plugin: 'net.kyori.indra.licenser.spotless'
     apply plugin: 'java'
 
     compileJava.options.encoding = 'UTF-8'
@@ -72,11 +72,14 @@ allprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.44'
     }
 
-//    license {
-//        header = rootProject.file('HEADER')
-//        include '**/*.java'
-//        newLine = true
-//    }
+    indraSpotlessLicenser {
+        licenseHeaderFile(rootProject.file('HEADER'))
+        newLine(true)
+    }
+
+    tasks.register('licenseFormat') {
+        dependsOn tasks.named('spotlessApply')
+    }
 
     processResources {
         filesMatching(['**/*.json']) {
