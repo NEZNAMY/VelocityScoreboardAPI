@@ -10,8 +10,8 @@ dependencies {
     implementation 'org.bstats:bstats-velocity:3.0.1'
     implementation 'de.exlll:configlib-yaml:4.5.0'
     compileOnly 'it.unimi.dsi:fastutil:8.5.12'
-    compileOnly 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
-    compileOnly 'com.velocitypowered:velocity-proxy:3.5.0-SNAPSHOT'
+    compileOnly 'com.velocitypowered:velocity-api:4.2.0'
+    compileOnly 'com.velocitypowered:velocity-proxy:4.2.0'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
 }
 
@@ -28,6 +28,6 @@ shadowJar {
 
 tasks {
     runVelocity {
-        velocityVersion("3.5.0-SNAPSHOT")
+        velocityVersion("4.2.0")
     }
 }

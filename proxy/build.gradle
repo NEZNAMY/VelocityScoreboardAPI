@@ -6,8 +6,8 @@ dependencies {
     implementation project(':api')
 
     compileOnly 'it.unimi.dsi:fastutil:8.5.12'
-    compileOnly 'com.velocitypowered:velocity-api:3.5.0-SNAPSHOT'
-    compileOnly 'com.velocitypowered:velocity-proxy:3.5.0-SNAPSHOT'
+    compileOnly 'com.velocitypowered:velocity-api:4.2.0'
+    compileOnly 'com.velocitypowered:velocity-proxy:4.2.0'
     compileOnly 'io.netty:netty-codec-http:4.1.111.Final'
     compileOnlyApi 'net.kyori:adventure-nbt:4.17.0'
 

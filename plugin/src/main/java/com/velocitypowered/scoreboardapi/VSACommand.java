@@ -73,7 +73,7 @@ public class VSACommand implements SimpleCommand {
                     map.put("Backend", ((DownstreamScoreboard) ScoreboardManager.getInstance().getBackendScoreboard(player)).dump());
                     String link = upload(map);
                     TextComponent message = Component.text("See the result at " + link, TextColor.color(0x00aa00));
-                    message = message.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, link));
+                    message = message.clickEvent(ClickEvent.openUrl(link));
                     sender.sendMessage(message);
                 } catch (Exception e) {
                     sender.sendMessage(Component.text("Failed to upload result, see console for more info", TextColor.color(0xff0000)));
