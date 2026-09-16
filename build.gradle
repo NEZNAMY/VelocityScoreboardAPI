@@ -1,8 +1,8 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
-    id 'io.github.goooler.shadow' version '8.1.7'
-    id 'org.cadixdev.licenser' version '0.6.1' apply false
+    id 'com.gradleup.shadow' version '9.6.1'
+    id 'net.kyori.indra.licenser.spotless' version '4.0.0' apply false
     id 'org.ajoberstar.grgit' version '5.2.2'
     id 'maven-publish'
     id 'java'
@@ -11,7 +11,7 @@ plugins {
 group 'net.william278'
 version "$ext.project_version${versionMetadata()}"
 description "$ext.project_description"
-defaultTasks 'licenseFormat', 'build'
+defaultTasks 'build'
 
 
 ext {
@@ -51,12 +51,12 @@ publishing {
 }
 
 allprojects {
-    apply plugin: 'io.github.goooler.shadow'
-    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'com.gradleup.shadow'
+    apply plugin: 'net.kyori.indra.licenser.spotless'
     apply plugin: 'java'
 
     compileJava.options.encoding = 'UTF-8'
-    compileJava.options.release.set 21
+    compileJava.options.release.set 25
     javadoc.options.encoding = 'UTF-8'
     javadoc.options.addStringOption('Xdoclint:none', '-quiet')
 
@@ -72,10 +72,19 @@ allprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.44'
     }
 
-    license {
-        header = rootProject.file('HEADER')
-        include '**/*.java'
-        newLine = true
+    indraSpotlessLicenser {
+        licenseHeaderFile(rootProject.file('HEADER'))
+        newLine(true)
+    }
+
+    tasks.register('licenseFormat') {
+        dependsOn tasks.named('spotlessApply')
+    }
+
+    tasks.register('updateLicenses') {
+        group = 'formatting'
+        description = 'Updates source license headers (compatibility alias for spotlessApply).'
+        dependsOn tasks.named('spotlessApply')
     }
 
     processResources {
@@ -88,7 +97,9 @@ allprojects {
 
 subprojects {
     version rootProject.version
-    archivesBaseName = "${rootProject.name}" + (project.name == 'plugin' ? '' : "-${project.name}")
+    base {
+        archivesName.set("${rootProject.name}" + (project.name == 'plugin' ? '' : "-${project.name}"))
+    }
 
     jar {
         from '../LICENSE'
