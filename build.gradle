@@ -81,6 +81,12 @@ allprojects {
         dependsOn tasks.named('spotlessApply')
     }
 
+    tasks.register('updateLicenses') {
+        group = 'formatting'
+        description = 'Updates source license headers (compatibility alias for spotlessApply).'
+        dependsOn tasks.named('spotlessApply')
+    }
+
     processResources {
         filesMatching(['**/*.json']) {
             filter ReplaceTokens as Class, beginToken: '${', endToken: '}',

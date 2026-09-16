@@ -6,8 +6,8 @@ Build and check source license headers (JDK 25):
 bash ./gradlew clean build --refresh-dependencies
 ```
 
-`build` runs Spotless license checks. `licenseFormat` remains an alias for
-`spotlessApply`; checks do not silently rewrite source files.
+`build` runs Spotless license checks. `licenseFormat` and `updateLicenses` are
+compatibility aliases for `spotlessApply`; checks do not silently rewrite source files.
 
 Run the standalone integration probe against the **built plugin JAR** and the
 **distributed Velocity 4.2.0 build 30 JAR** (not its Maven compile-only artifact):
